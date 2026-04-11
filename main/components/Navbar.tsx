@@ -224,8 +224,8 @@ export default function Navbar() {
 
       {/* Margin Bar */}
       <div className="w-full bg-[#001845] px-6 sm:px-8 lg:px-14 py-2 flex items-center justify-between">
-        <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/50">
-          Arneg Distribution
+        <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-red-500">
+          Arneg Distribution Partner 
         </p>
         <div className="flex items-center gap-1">
           {socials.map((s) => (
