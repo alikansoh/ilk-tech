@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 
 const products = [
   { name: "Osaka 2", href: "/products/osaka-2" },
-  { name: "Osaka 3", href: "/products/osaka-3" },
-  { name: "Panama 3", href: "/products/panama-3" },
+  { name: "Osaka 31", href: "/products/osaka-3", colorClass: "text-[#293133]" },
+  { name: "Panama 3", href: "/products/panama-3", colorClass: "text-[#293133]" },
 ];
 
 const navLinks = [
@@ -67,7 +67,6 @@ export default function Navbar() {
 
       <div className="bg-white shadow-[0_1px_0_rgba(0,24,69,0.06),0_4px_32px_rgba(0,24,69,0.08)]">
         <div className="mx-auto flex h-[84px] max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-14">
-
           {/* Brand */}
           <Link href="/" className="group flex-shrink-0">
             <div className="relative h-[72px] w-[108px] transition-all duration-500 group-hover:opacity-80">
@@ -98,7 +97,8 @@ export default function Navbar() {
 
             {/* Products Dropdown */}
             <div className="group/drop relative">
-              <button className={`relative flex items-center gap-1.5 px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
+              <button
+                className={`relative flex items-center gap-1.5 px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
                 ${isProductActive ? "text-[#001845]" : "text-[#001845]/45 hover:text-[#001845]"}`}
               >
                 Products
@@ -142,7 +142,8 @@ export default function Navbar() {
                           className={`group/item flex items-center gap-4 px-6 py-3.5 transition-all duration-150
                             ${productActive ? "bg-[#001845]/[0.03]" : "hover:bg-[#001845]/[0.025]"}`}
                         >
-                          <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center border transition-all duration-150
+                          <div
+                            className={`flex h-9 w-9 flex-shrink-0 items-center justify-center border transition-all duration-150
                             ${productActive
                               ? "border-red-600 bg-red-600 text-white"
                               : "border-[#001845]/12 bg-transparent text-[#001845]/25 group-hover/item:border-red-600 group-hover/item:text-red-600"
@@ -150,10 +151,17 @@ export default function Navbar() {
                           >
                             <span className="text-[11px] font-black tabular-nums">0{i + 1}</span>
                           </div>
-                          <p className={`flex-1 text-[13px] font-bold tracking-wide transition-colors duration-150
-                            ${productActive ? "text-[#001845]" : "text-[#001845]/70 group-hover/item:text-[#001845]"}`}>
+
+                          <p
+                            className={`flex-1 text-[13px] font-bold tracking-wide transition-colors duration-150
+                            ${p.colorClass ?? (productActive
+                              ? "text-[#001845]"
+                              : "text-[#001845]/70 group-hover/item:text-[#001845]")}
+                            `}
+                          >
                             {p.name}
                           </p>
+
                           <svg
                             className={`h-3.5 w-3.5 flex-shrink-0 transition-all duration-200
                               ${productActive
@@ -168,29 +176,14 @@ export default function Navbar() {
                       );
                     })}
                   </div>
-
-                  <div className="border-t border-[#001845]/8 bg-[#001845]/[0.02] px-6 py-3 flex items-center justify-between">
-                    <p className="text-[10px] text-[#001845]/35 tracking-widest uppercase font-semibold">
-                      Arneg Distribution
-                    </p>
-                    <Link
-                      href="/products"
-                      className="group/all flex items-center gap-1.5 text-[10px] font-black tracking-[0.18em] uppercase text-[#001845]/40 hover:text-red-600 transition-colors duration-150"
-                    >
-                      View All
-                      <svg className="h-3 w-3 transition-transform duration-200 group-hover/all:translate-x-0.5"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </div>
                 </div>
               </div>
             </div>
 
             <div className="mx-5 h-5 w-px bg-[#001845]/12" />
 
-            <Link href="/contact"
+            <Link
+              href="/contact"
               className={`group/cta relative inline-flex items-center gap-2.5 border-[1.5px] px-7 py-2.5 text-[11.5px] font-black tracking-[0.22em] uppercase transition-all duration-300
                 ${isActive("/contact")
                   ? "border-[#001845] bg-white text-[#001845]"
@@ -225,7 +218,7 @@ export default function Navbar() {
       {/* Margin Bar */}
       <div className="w-full bg-[#001845] px-6 sm:px-8 lg:px-14 py-2 flex items-center justify-between">
         <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-red-500">
-          Arneg Distribution Partner 
+          Arneg Distribution Partner
         </p>
         <div className="flex items-center gap-1">
           {socials.map((s) => (
@@ -256,7 +249,10 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    onClick={() => { setOpen(false); setProductsOpen(false); }}
+                    onClick={() => {
+                      setOpen(false);
+                      setProductsOpen(false);
+                    }}
                     className={`flex items-center justify-between border-l-[2px] px-4 py-3.5 text-[12px] font-bold tracking-[0.18em] uppercase transition-all duration-200
                       ${link.name === "ARNEG"
                         ? active
@@ -296,8 +292,12 @@ export default function Navbar() {
                         Active
                       </span>
                     )}
-                    <svg className={`h-3.5 w-3.5 transition-transform duration-300 ${productsOpen ? "rotate-180" : ""}`}
-                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      className={`h-3.5 w-3.5 transition-transform duration-300 ${productsOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
@@ -320,7 +320,8 @@ export default function Navbar() {
                             className={`flex items-center gap-4 px-5 py-4 transition-all
                               ${productActive ? "bg-[#001845]/[0.03]" : "hover:bg-[#001845]/[0.02]"}`}
                           >
-                            <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center border transition-all
+                            <div
+                              className={`flex h-8 w-8 flex-shrink-0 items-center justify-center border transition-all
                               ${productActive
                                 ? "border-red-600 bg-red-600 text-white"
                                 : "border-[#001845]/12 text-[#001845]/25"
@@ -328,8 +329,10 @@ export default function Navbar() {
                             >
                               <span className="text-[10px] font-black">0{i + 1}</span>
                             </div>
-                            <p className={`flex-1 text-[12px] font-bold tracking-wide
-                              ${productActive ? "text-[#001845]" : "text-[#001845]/65"}`}>
+                            <p
+                              className={`flex-1 text-[12px] font-bold tracking-wide
+                              ${p.colorClass ?? (productActive ? "text-[#001845]" : "text-[#001845]/65")}`}
+                            >
                               {p.name}
                             </p>
                             {productActive && (
@@ -341,18 +344,6 @@ export default function Navbar() {
                           </Link>
                         );
                       })}
-                    </div>
-                    <div className="border-t border-[#001845]/8 bg-[#001845]/[0.02] px-5 py-3">
-                      <Link
-                        href="/products"
-                        onClick={() => setOpen(false)}
-                        className="flex items-center justify-between text-[10px] font-black tracking-[0.18em] uppercase text-[#001845]/40 hover:text-red-600 transition-colors"
-                      >
-                        <span>View All Products</span>
-                        <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
                     </div>
                   </div>
                 )}
