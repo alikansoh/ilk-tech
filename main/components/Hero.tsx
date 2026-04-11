@@ -1,376 +1,383 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 
-export default function HeroSection() {
-  const heroRef    = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const badgeRef   = useRef<HTMLDivElement>(null);
-  const lineRef    = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const subRef     = useRef<HTMLParagraphElement>(null);
-  const ctaRef     = useRef<HTMLDivElement>(null);
-  const statsRef   = useRef<HTMLDivElement>(null);
-  const scrollRef  = useRef<HTMLDivElement>(null);
-  const noiseRef   = useRef<HTMLDivElement>(null);
+/* ─────────────────────────────────────────────
+   Count-up hook — cubic ease-out
+───────────────────────────────────────────── */
+function useCountUp(target: number, duration: number, started: boolean) {
+  const [value, setValue] = useState(0);
 
   useEffect(() => {
-    const init = async () => {
-      const { gsap }        = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      gsap.registerPlugin(ScrollTrigger);
+    if (!started) return;
+    const t0 = performance.now();
+    let raf: number;
 
-      /* ── master timeline ── */
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      /* 1 · cinematic wipe */
-      tl.fromTo(
-        overlayRef.current,
-        { scaleX: 1, transformOrigin: "left" },
-        { scaleX: 0, duration: 1.4, ease: "expo.inOut" }
-      );
-
-      /* 2 · noise grain fade-in */
-      tl.fromTo(noiseRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6 }, "-=0.2");
-
-      /* 3 · badge */
-      tl.fromTo(
-        badgeRef.current,
-        { y: 16, opacity: 0, filter: "blur(6px)" },
-        { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.7 },
-        "-=0.3"
-      );
-
-      /* 4 · red line */
-      tl.fromTo(
-        lineRef.current,
-        { scaleX: 0 },
-        { scaleX: 1, duration: 0.9, ease: "expo.out" },
-        "-=0.4"
-      );
-
-      /* 5 · heading words – split reveal */
-      if (headingRef.current) {
-        const words = headingRef.current.querySelectorAll(".word");
-        tl.fromTo(
-          words,
-          { y: "110%", opacity: 0, rotateX: -30, filter: "blur(4px)" },
-          {
-            y: "0%",
-            opacity: 1,
-            rotateX: 0,
-            filter: "blur(0px)",
-            duration: 1,
-            stagger: 0.07,
-            ease: "power4.out",
-          },
-          "-=0.55"
-        );
-      }
-
-      /* 6 · sub-copy */
-      tl.fromTo(
-        subRef.current,
-        { y: 22, opacity: 0, filter: "blur(4px)" },
-        { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.8 },
-        "-=0.55"
-      );
-
-      /* 7 · CTAs */
-      tl.fromTo(
-        ctaRef.current,
-        { y: 18, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7 },
-        "-=0.45"
-      );
-
-      /* 8 · stats */
-      if (statsRef.current) {
-        const items = statsRef.current.querySelectorAll(".stat-item");
-        tl.fromTo(
-          items,
-          { y: 28, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, stagger: 0.09 },
-          "-=0.4"
-        );
-      }
-
-      /* 9 · scroll caret */
-      tl.fromTo(
-        scrollRef.current,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        "-=0.3"
-      );
-
-      /* ── scroll-driven parallax (all devices) ── */
-      gsap.to(".hero-bg-img", {
-        yPercent: 15,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.2,
-        },
-      });
-
-      /* ── continuous caret bounce ── */
-      gsap.to(".scroll-caret", {
-        y: 7,
-        duration: 1.1,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      /* ── subtle red glow pulse ── */
-      gsap.to(".red-glow", {
-        opacity: 0.55,
-        scale: 1.12,
-        duration: 2.8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+    const tick = (now: number) => {
+      const p = Math.min((now - t0) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      setValue(Math.floor(ease * target));
+      if (p < 1) raf = requestAnimationFrame(tick);
     };
 
-    init();
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration, started]);
+
+  return value;
+}
+
+/* ─────────────────────────────────────────────
+   Single animated stat number
+───────────────────────────────────────────── */
+function AnimatedNumber({
+  target,
+  suffix,
+  started,
+}: {
+  target: number;
+  suffix: string;
+  started: boolean;
+}) {
+  const n = useCountUp(target, 2400, started);
+  return (
+    <>
+      {n}
+      {suffix}
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   HERO SECTION
+───────────────────────────────────────────── */
+export default function HeroSection() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const wipeRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
+  const descRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  const [counting, setCounting] = useState(false);
+
+  const boot = useCallback(async () => {
+    const { gsap } = await import("gsap");
+    const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    /* 1 — wipe */
+    tl.fromTo(
+      wipeRef.current,
+      { scaleX: 1, transformOrigin: "left" },
+      { scaleX: 0, duration: 1.4, ease: "expo.inOut" }
+    );
+
+    /* 2 — bg zoom-out */
+    tl.fromTo(
+      bgRef.current,
+      { scale: 1.35 },
+      { scale: 1.05, duration: 2.8, ease: "power2.out" },
+      "-=1.0"
+    );
+
+    /* 3 — red line */
+    tl.fromTo(
+      lineRef.current,
+      { scaleX: 0 },
+      { scaleX: 1, duration: 1, ease: "expo.out" },
+      "-=2.0"
+    );
+
+    /* 4 — heading words */
+    if (headRef.current) {
+      tl.fromTo(
+        headRef.current.querySelectorAll(".word"),
+        { y: "120%", opacity: 0, rotateX: -45 },
+        {
+          y: "0%",
+          opacity: 1,
+          rotateX: 0,
+          duration: 1.1,
+          stagger: 0.09,
+          ease: "power4.out",
+        },
+        "-=1.6"
+      );
+    }
+
+    /* 5 — description */
+    tl.fromTo(
+      descRef.current,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1 },
+      "-=0.5"
+    );
+
+    /* 6 — buttons */
+    if (ctaRef.current) {
+      tl.fromTo(
+        ctaRef.current.querySelectorAll(".cta"),
+        { y: 22, opacity: 0, scale: 0.96 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "back.out(1.4)",
+        },
+        "-=0.5"
+      );
+    }
+
+    /* 7 — stats */
+    if (statsRef.current) {
+      tl.fromTo(
+        statsRef.current.querySelectorAll(".stat"),
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+          onStart: () => setCounting(true),
+        },
+        "-=0.35"
+      );
+    }
+
+    /* scroll parallax */
+    gsap.to(bgRef.current, {
+      yPercent: 16,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1.2,
+      },
+    });
   }, []);
 
-  const words = ["Commercial", "Refrigeration,", "Engineered", "for the UK."];
+  useEffect(() => {
+    boot();
+  }, [boot]);
+
+  const heading = ["Commercial", "Refrigeration,", "Engineered", "for the UK."];
+
+  const stats = [
+    { n: 20, suf: "+", label: "Years" },
+    { n: 500, suf: "+", label: "Projects" },
+    { n: 100, suf: "%", label: "Coverage" },
+    { n: 24, suf: "/7", label: "Support" },
+  ];
 
   return (
     <section
       ref={heroRef}
-      className="relative min-h-[100dvh] w-full overflow-hidden bg-[#000d1f] flex flex-col"
+      className="relative min-h-[100dvh] w-full overflow-hidden bg-[#060b14] flex flex-col"
     >
-      {/* ════════════════════════════════════
-          BACKGROUND — photo always visible
-      ════════════════════════════════════ */}
-      <div className="hero-bg-img absolute inset-0 scale-[1.08]">
+      {/* ─── BACKGROUND ─── */}
+      <div ref={bgRef} className="absolute inset-0 will-change-transform">
         <Image
           src="/hero-bg.jpeg"
-          alt="ILK Technology – commercial refrigeration"
+          alt="ILK Technology commercial refrigeration"
           fill
-          /* on mobile show right side of image (equipment); shift left on desktop */
-          className="object-cover object-[62%_50%] sm:object-[55%_50%] lg:object-center"
           priority
           quality={90}
+          className="object-cover object-[65%_50%] sm:object-[55%_50%] lg:object-center"
         />
-
-        {/* Mobile: dark left + bottom vignette so text is always legible */}
-        <div className="absolute inset-0 bg-gradient-to-r
-          from-[#000d1f]/92 via-[#000d1f]/70 to-[#000d1f]/30
-          sm:from-[#000d1f]/90 sm:via-[#000d1f]/60 sm:to-[#000d1f]/15" />
-        <div className="absolute inset-0 bg-gradient-to-t
-          from-[#000d1f] via-[#000d1f]/20 to-transparent" />
-
-        {/* Subtle red bloom bottom-left — depth cue */}
-        <div className="red-glow absolute -bottom-20 -left-20 w-[420px] h-[420px]
-          rounded-full bg-red-700/25 blur-[90px] opacity-40 pointer-events-none" />
+        <div
+          className="absolute inset-0 bg-gradient-to-r
+          from-[#060b14]/90 via-[#060b14]/60 to-[#060b14]/20
+          sm:from-[#060b14]/88 sm:via-[#060b14]/50 sm:to-transparent"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-t
+          from-[#060b14] via-[#060b14]/30 to-transparent"
+        />
       </div>
 
-      {/* ════════════════════════════════════
-          NOISE GRAIN TEXTURE — premium feel
-      ════════════════════════════════════ */}
+      {/* ─── WIPE ─── */}
+      <div ref={wipeRef} className="absolute inset-0 z-30 bg-[#060b14]" />
+
+      {/* ─── CONTENT ─── */}
       <div
-        ref={noiseRef}
-        className="absolute inset-0 z-[1] opacity-0 pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")`,
-          backgroundSize: "180px 180px",
-          mixBlendMode: "overlay",
-        }}
-      />
-
-      {/* ════════════════════════════════════
-          CINEMATIC WIPE OVERLAY
-      ════════════════════════════════════ */}
-      <div
-        ref={overlayRef}
-        className="absolute inset-0 z-30 bg-[#000d1f]"
-      />
-
-      {/* ════════════════════════════════════
-          LEFT RULE — sm and up
-      ════════════════════════════════════ */}
-      <div className="hidden sm:block absolute left-8 lg:left-12 top-0 bottom-0 w-px bg-white/[0.07] z-10" />
-
-      {/* ════════════════════════════════════
-          MAIN CONTENT
-      ════════════════════════════════════ */}
-      <div className="relative z-10 flex flex-col justify-center
-        min-h-[100dvh] max-w-7xl mx-auto w-full
-        px-5 sm:px-10 lg:px-16
-        pt-24 pb-10 sm:py-0">
-
-        {/* BADGE */}
-        <div ref={badgeRef} className="mb-5 opacity-0">
-          <span className="inline-flex items-center gap-2
-            border border-white/[0.12] bg-white/[0.05] backdrop-blur-md
-            px-3.5 py-1.5
-            text-[9px] sm:text-[10px] font-bold tracking-[0.32em] uppercase text-white/55">
-            <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse shrink-0" />
-            Arneg UK Distribution Partner
-          </span>
-        </div>
-
-        {/* RED LINE */}
+        className="relative z-10 flex flex-col items-center justify-center text-center
+        min-h-[100dvh] max-w-5xl mx-auto w-full px-5 sm:px-10 lg:px-16 pt-20 pb-8 sm:py-0"
+      >
+        {/* red accent */}
         <div
           ref={lineRef}
-          className="mb-6 sm:mb-8 h-[2px] w-12 sm:w-20 bg-red-600 origin-left scale-x-0"
+          className="mb-7 sm:mb-9 h-[2px] w-12 sm:w-20 bg-red-500 origin-center scale-x-0"
         />
-
-        {/* HEADING */}
+        {/* ─── HEADING ─── */}
         <div
-          ref={headingRef}
-          className="mb-5 sm:mb-6"
-          style={{ perspective: "900px" }}
+          ref={headRef}
+          className="mb-6 sm:mb-8"
+          style={{ perspective: "1000px" }}
         >
-          <h1 className="
-            text-[clamp(2.6rem,10.5vw,6rem)]
-            sm:text-[clamp(2.8rem,7vw,6rem)]
-            font-black leading-[1.0] tracking-[-0.025em] text-white uppercase">
-            {words.map((word, i) => (
-              /* clip wrapper so words slide up from beneath */
-              <span key={i} className="inline-block overflow-hidden mr-[0.22em] align-top">
-                <span className="word inline-block opacity-0">
-                  {word.includes("Refrigeration") ? (
+          <h1
+            className="text-[clamp(2.5rem,10vw,5.8rem)] sm:text-[clamp(3rem,7vw,6rem)]
+            font-black leading-[1.0] tracking-[-0.03em] text-white uppercase"
+          >
+            {heading.map((w, i) => (
+              <span
+                key={i}
+                className="inline-block overflow-hidden mr-[0.2em] align-top"
+              >
+                <span className="word inline-block opacity-0 will-change-transform">
+                  {w.includes("Refrigeration") ? (
                     <span
-                      className="text-transparent bg-clip-text"
-                      style={{ WebkitTextStroke: "1.5px rgba(255,255,255,0.32)" }}
+                      className="text-transparent"
+                      style={{
+                        WebkitTextStroke: "3px rgba(255,255,255,0.5)",
+                      }}
                     >
-                      {word}
+                      {w}
                     </span>
-                  ) : word.includes("UK") ? (
-                    <span className="text-red-500">{word}</span>
+                  ) : w.includes("UK") ? (
+                    <span className="text-red-500">{w}</span>
                   ) : (
-                    word
+                    w
                   )}
                 </span>
               </span>
             ))}
           </h1>
         </div>
-
-        {/* SUB-COPY */}
-        <p
-          ref={subRef}
-          className="mb-8 max-w-[min(420px,90vw)] sm:max-w-lg
-            text-[13.5px] sm:text-[15px] leading-[1.85] text-white/45 font-light opacity-0"
-        >
-          We&apos;re{" "}
-          <span className="text-white font-semibold">ILK Technology</span> —
-          a UK-based commercial refrigeration supplier and proud{" "}
-          <span className="text-white/70 font-medium">Arneg</span> distribution
-          partner delivering industry-leading cooling solutions for retail, food
-          service, and industrial environments.
-        </p>
-
-        {/* CTAs */}
+        {/* ─── DESCRIPTION — bigger, with Arneg in red ─── */}
+        <div ref={descRef} className="mb-10 sm:mb-12 opacity-0 max-w-2xl">
+          <p
+            className="text-[15px] sm:text-[18px] lg:text-[20px] leading-[1.8] sm:leading-[1.9]
+            text-white/60 font-light"
+          >
+            We&apos;re{" "}
+            <span className="text-white font-semibold">ILK Technology</span> — a
+            UK-based commercial refrigeration supplier and proud{" "}
+            <span className="text-red-500 font-semibold">Arneg</span>{" "}
+            distribution partner delivering industry-leading cooling solutions
+            for retail, food service, and industrial environments.
+          </p>
+        </div>
+        {/* ─── BUTTONS ─── */}
         <div
           ref={ctaRef}
-          className="flex flex-col xs:flex-row gap-3 mb-10 sm:mb-14 opacity-0"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-16 sm:mb-20 w-full sm:w-auto"
         >
           <a
-            href="/products"
-            className="group relative inline-flex items-center justify-center gap-3
-              bg-red-600 hover:bg-red-500 active:bg-red-700
-              overflow-hidden
-              px-7 py-3.5 sm:px-8 sm:py-4
-              text-[11px] sm:text-[11.5px] font-black tracking-[0.22em] uppercase text-white
-              transition-colors duration-300 w-full xs:w-auto"
+            href="/about"
+            className="cta group relative inline-flex items-center justify-center gap-3
+              bg-red-500 hover:bg-red-400 active:bg-red-600 overflow-hidden
+              px-9 py-4 text-[11px] sm:text-[12px] font-black tracking-[0.25em] uppercase text-white
+              transition-colors duration-300
+              shadow-[0_0_32px_rgba(239,68,68,0.2)] hover:shadow-[0_0_48px_rgba(239,68,68,0.35)]
+              w-full sm:w-auto opacity-0"
           >
-            {/* shimmer sweep */}
-            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full
-              bg-gradient-to-r from-transparent via-white/15 to-transparent
-              transition-transform duration-700 ease-in-out" />
-            View Products
-            <svg
-              className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1.5"
-              fill="none" stroke="currentColor" viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
-                d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
+            <span
+              className="absolute inset-0 -translate-x-full group-hover:translate-x-full
+              bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700"
+            />
+            <span className="relative flex items-center gap-3">
+              About Us
+              <svg
+                className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </span>
           </a>
 
           <a
             href="/contact"
-            className="group inline-flex items-center justify-center gap-3
-              border border-white/20 hover:border-white/50
+            className="cta group inline-flex items-center justify-center gap-3
+              border border-white/10 hover:border-white/30
               bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-sm
-              px-7 py-3.5 sm:px-8 sm:py-4
-              text-[11px] sm:text-[11.5px] font-black tracking-[0.22em] uppercase
-              text-white/60 hover:text-white
-              transition-all duration-300 w-full xs:w-auto"
+              px-9 py-4 text-[11px] sm:text-[12px] font-black tracking-[0.25em] uppercase
+              text-white/50 hover:text-white transition-all duration-300
+              w-full sm:w-auto opacity-0"
           >
-            Get in Touch
+            <span className="relative flex items-center gap-3">
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+              Let&apos;s Talk
+            </span>
           </a>
         </div>
-
-        {/* STATS */}
+        {/* ═════════════════════════════════════
+    STATS — high contrast cards
+═════════════════════════════════════ */}
         <div
           ref={statsRef}
-          className="grid grid-cols-2 sm:grid-cols-4
-            border-t border-white/[0.08] pt-6 sm:pt-7
-            gap-y-5 sm:gap-y-0"
+          className="w-full max-w-3xl grid grid-cols-4 gap-2 sm:gap-3"
         >
-          {[
-            { value: "20+",   label: "Years Experience" },
-            { value: "500+",  label: "Installations"    },
-            { value: "Arneg", label: "Official Partner" },
-            { value: "UK",    label: "Nationwide"       },
-          ].map((stat, i) => (
-            <div key={i} className="stat-item opacity-0 pr-4 sm:pr-8">
-              {/* thin left accent on each stat */}
-              <div className="flex items-start gap-2.5">
-                <span className="mt-1.5 block w-[2px] h-7 sm:h-8 bg-red-600/60 shrink-0" />
-                <div>
-                  <p className="text-[clamp(1.45rem,4.5vw,2rem)] sm:text-[clamp(1.4rem,2.2vw,1.9rem)]
-                    font-black text-white tracking-tight leading-none mb-1">
-                    {stat.value}
-                  </p>
-                  <p className="text-[9px] sm:text-[10px] font-semibold
-                    tracking-[0.2em] uppercase text-white/30">
-                    {stat.label}
-                  </p>
-                </div>
-              </div>
+          {stats.map((s, i) => (
+            <div
+              key={i}
+              className="stat group opacity-0
+        rounded-xl
+        bg-white/[0.08] border border-white/[0.1]
+        hover:border-red-500/40
+        px-3 py-4 sm:px-5 sm:py-6
+        backdrop-blur-md
+        transition-all duration-400
+        text-center"
+            >
+              {/* number */}
+              <p
+                className="text-xl sm:text-3xl font-black text-white leading-none
+        tracking-tight tabular-nums mb-1.5"
+              >
+                <AnimatedNumber
+                  target={s.n}
+                  suffix={s.suf}
+                  started={counting}
+                />
+              </p>
+
+              {/* label */}
+              <p
+                className="text-[9px] sm:text-[11px] font-extrabold tracking-[0.15em] sm:tracking-[0.2em]
+        uppercase text-red-400 group-hover:text-red-300 transition-colors duration-400"
+              >
+                {s.label}
+              </p>
             </div>
           ))}
-        </div>
+        </div>{" "}
       </div>
 
-      {/* ════════════════════════════════════
-          BOTTOM FADE
-      ════════════════════════════════════ */}
-      <div className="absolute bottom-0 left-0 right-0 h-28 sm:h-36
-        bg-gradient-to-t from-[#000d1f] to-transparent z-10 pointer-events-none" />
-
-      {/* ════════════════════════════════════
-          SCROLL INDICATOR
-      ════════════════════════════════════ */}
+      {/* ─── BOTTOM FADE ─── */}
       <div
-        ref={scrollRef}
-        className="absolute bottom-6 sm:bottom-9 left-1/2 -translate-x-1/2
-          z-10 flex flex-col items-center gap-2 opacity-0"
-      >
-        <span className="text-[8px] font-bold tracking-[0.45em] uppercase text-white/20">
-          Scroll
-        </span>
-        <div className="scroll-caret flex flex-col items-center gap-[3px]">
-          <span className="block w-px h-6 bg-gradient-to-b from-white/25 to-transparent" />
-          {/* chevron */}
-          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"
-            className="text-white/20">
-            <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5"
-              strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-      </div>
+        className="absolute bottom-0 inset-x-0 h-32 sm:h-40
+        bg-gradient-to-t from-[#060b14] to-transparent z-10 pointer-events-none"
+      />
     </section>
   );
 }
