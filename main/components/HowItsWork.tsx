@@ -20,7 +20,7 @@ const steps = [
     index: "03",
     label: "Supply",
     headline: "Delivered to Your Door",
-    desc: "As an authorised Arneg distribution partner, we source and deliver your units directly from the factory — on schedule, fully tracked, with zero compromise on quality.",
+    desc: "As an authorised Arneg distribution partner, we source and deliver your units directly from our warehouse  on schedule, fully tracked, with zero compromise on quality.",
   },
   {
     index: "04",
@@ -283,11 +283,11 @@ export default function HowItWorks() {
             </h3>
             {/* ✅ Fixed: was text-white/35 font-light — now readable */}
             <p className="text-[15px] leading-[1.85] text-white/60 font-medium max-w-[300px] mb-10">
-              Direct from our Arneg-authorised warehouse. Fully tracked,
-              blanket-wrapped, and delivered to your site — not just your kerb.
+              Direct from our ILK warehouse warehouse. Fully tracked,
+              blanket-wrapped, and delivered to your site .
             </p>
             <div className="flex flex-col gap-4">
-              {["Direct from Arneg warehouse", "Fully tracked delivery", "On-site, not kerb-side"].map((tag) => (
+              {["Direct from ILK warehouse", "Fully tracked delivery", "Carefully handled delivery to your location"].map((tag) => (
                 <div key={tag} className="flex items-center gap-4">
                   <div className="w-5 h-[2px] bg-red-600 flex-shrink-0" />
                   {/* ✅ Fixed: was text-white/40 — now text-white/65 */}

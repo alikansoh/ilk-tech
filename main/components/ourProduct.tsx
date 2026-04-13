@@ -191,7 +191,7 @@ export default function OurProducts() {
 
           <p className="hdesc opacity-0 text-[15px] sm:text-[16px] leading-[1.85] text-[#001845]/50 font-light max-w-xl">
             Engineered for UK retail. Every unit in our range is an{" "}
-            <span className="text-red-500 font-semibold">authorised Arneg Group</span>{" "}
+            <span className="text-red-500 font-semibold">authorised Arneg </span>{" "}
             product — built for performance, efficiency, and longevity.
           </p>
         </div>
