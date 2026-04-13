@@ -6,14 +6,14 @@ import Link from "next/link";
 
 const products = [
     {
-      index: "01",
-      name: "Osaka 2",
-      href: "/products/osaka-2",
-      image: "/product1.png",
-      tag: "Plug-in Multideck Cabinet",
-      desc: "Compact plug-in vertical multideck refrigerator designed for small to medium retail spaces with efficient performance and easy installation.",
-      specs: ["Plug-in system", "Self-contained refrigeration", "Energy efficient", "Multi-deck display"],
-    },
+        index: "01",
+        name: "Osaka 2",
+        href: "/products/osaka-2",
+        image: "/product1.png",
+        tag: "Remote Multideck Cabinet",
+        desc: "Compact remote vertical multideck refrigeration cabinet designed for small to medium retail spaces, offering efficient performance and flexible installation with a central refrigeration system.",
+        specs: ["Remote system", "Energy efficient", "Multi-deck display", "Supermarket-ready"],
+      },
     {
       index: "02",
       name: "Osaka 3",
@@ -21,7 +21,7 @@ const products = [
       image: "/product2.png",
       tag: "Remote Multideck Cabinet",
       desc: "Extended-range remote vertical multideck refrigeration cabinet designed for supermarkets and large retail environments requiring high capacity and continuous display runs.",
-      specs: ["Remote system", "Supermarket grade", "High capacity", "Continuous lineup / multiplex ready"],
+      specs: ["Remote system", "Supermarket grade", "High capacity", "Multiplex capable"],
     },
     {
       index: "03",
@@ -161,7 +161,7 @@ export default function OurProducts() {
     setActiveIdx(null);
   };
 
-  const headWords = ["Our", "Product", "Range"];
+  const headWords = ["Our", "Product", "Range","in","stock"];
 
   return (
     <section
