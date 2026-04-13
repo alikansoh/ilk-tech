@@ -3,6 +3,7 @@ import HeroSection from "@/components/Hero";
 import LogoTicker from "@/components/logos";
 import WhoWeAre from "@/components/WhoWeAre";
 import OurProducts from "@/components/ourProduct";
+import HowItWorks from "@/components/HowItsWork";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
         <LogoTicker />
         <WhoWeAre />
         <OurProducts />
+        <HowItWorks />
 
      
     </div>
