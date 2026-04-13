@@ -2,6 +2,7 @@ import Image from "next/image";
 import HeroSection from "@/components/Hero";
 import LogoTicker from "@/components/logos";
 import WhoWeAre from "@/components/WhoWeAre";
+import OurProducts from "@/components/ourProduct";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <HeroSection />
         <LogoTicker />
         <WhoWeAre />
+        <OurProducts />
 
      
     </div>
