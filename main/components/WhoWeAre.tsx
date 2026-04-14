@@ -169,7 +169,7 @@ export default function WhoWeAre() {
                 As an{" "}
                 <span className="text-[#001845] font-semibold">authorised dealer</span>{" "}
                 for the{" "}
-                <span className="text-red-600 font-semibold">Arneg Group</span>{" "}
+                <span className="text-red-600 font-semibold">Arneg Partners </span>{" "}
                 — including{" "}
                 <span className="text-red-600 font-semibold">Arneg</span>,{" "}
                 <span className="text-[#001845] font-semibold">Oscartielle</span>,{" "}

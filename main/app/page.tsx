@@ -5,7 +5,7 @@ import WhoWeAre from "@/components/WhoWeAre";
 import OurProducts from "@/components/ourProduct";
 import HowItWorks from "@/components/HowItsWork";
 import ArnegProducts from "@/components/ProductDesc";
-// import CaseStudies from "@/components/CaseStudies";
+import CaseStudies from "@/components/CaseStudies";
 
 export default function Home() {
   return (
@@ -16,7 +16,7 @@ export default function Home() {
         <OurProducts />
         <ArnegProducts />
         <HowItWorks />
-        {/* <CaseStudies /> */}
+        <CaseStudies />
 
 
      

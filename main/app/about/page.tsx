@@ -96,7 +96,7 @@ export default function AboutPage() {
                   We also offer a wide variety of products from our trusted
                   partners — Arneg, Oscartielle, Intrac, and Incold. These
                   bespoke products are available for quotation, tailored to your
-                  specific needs. Visit our Arneg Group page for links to
+                  specific needs. Visit our Arneg Partners page for links to
                   standalone websites and explore our full product range.
                 </p>
               </div>
@@ -116,7 +116,7 @@ export default function AboutPage() {
                 href="/arneg-group"
                 className="inline-flex items-center gap-2 mt-8 text-[13px] font-bold tracking-wide text-red-600 hover:text-red-700 transition-colors"
               >
-                Visit Arneg Group Page →
+                Visit Arneg Partners Page →
               </a>
             </div>
           </div>
