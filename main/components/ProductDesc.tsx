@@ -134,7 +134,7 @@ export default function ArnegProducts() {
           <h2 className="ap-header-title flex flex-wrap gap-x-[0.18em] text-[clamp(48px,8vw,100px)] font-black leading-[0.9] tracking-[-0.04em] text-[#001845] uppercase">
             {["We", "Create", "Your", "Space."].map((w, i) => (
               <span key={i} className="inline-block overflow-hidden align-top">
-               
+
               </span>
             ))}
           </h2>
@@ -151,12 +151,16 @@ export default function ArnegProducts() {
           <div className="ap-left w-full lg:w-[280px] flex-shrink-0 lg:pr-12 flex flex-col justify-between gap-10">
 
             <div>
-              {/* Arneg wordmark */}
+              {/* Arneg wordmark replaced with logo1.png */}
               <div className="ap-logo opacity-0">
                 <div className="inline-flex items-center bg-red-600 px-5 py-3 mb-6">
-                  <span className="text-[clamp(30px,4vw,42px)] font-black tracking-[-0.03em] text-white lowercase leading-none">
-                    arneg
-                  </span>
+                  <Image
+                    src="/logo1.png"
+                    alt="Arneg"
+                    width={140}
+                    height={42}
+                    className="object-contain"
+                  />
                 </div>
               </div>
 
@@ -199,19 +203,19 @@ export default function ArnegProducts() {
           </div>
 
           {/* ── RIGHT PRODUCT GRID ── */}
-          <div className="ap-grid flex-1 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10 lg:pl-10 lg:border-l border-[#001845]/[0.07]">
+          <div className="ap-grid flex-1 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-10 lg:pl-10 lg:border-l border-[#001845]/[0.07]">
             {products.map((p) => (
               <div
                 key={p.label}
                 className="ap-img-item opacity-0 flex flex-col gap-4 group cursor-default"
               >
-                <div className="relative w-full aspect-[4/3] overflow-hidden">
+                <div className="relative w-full aspect-[16/9] overflow-hidden">
                   <Image
                     src={p.src}
                     alt={p.label}
                     fill
                     quality={90}
-                    className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                   />
                 </div>
                 <div className="ap-img-label opacity-0 flex items-center gap-2.5">
