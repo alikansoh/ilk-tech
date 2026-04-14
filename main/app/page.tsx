@@ -4,6 +4,7 @@ import LogoTicker from "@/components/logos";
 import WhoWeAre from "@/components/WhoWeAre";
 import OurProducts from "@/components/ourProduct";
 import HowItWorks from "@/components/HowItsWork";
+import ArnegProducts from "@/components/ProductDesc";
 
 export default function Home() {
   return (
@@ -12,7 +13,9 @@ export default function Home() {
         <LogoTicker />
         <WhoWeAre />
         <OurProducts />
+        <ArnegProducts />
         <HowItWorks />
+
 
      
     </div>
