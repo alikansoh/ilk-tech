@@ -11,12 +11,17 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const works = [
-  { src: "/gallery1.jpg", alt: "Store Fitout A", category: "Fitout" },
-  { src: "/gallery2.jpeg", alt: "Supermarket B", category: "Retail" },
-  { src: "/gallery3.jpeg", alt: "Checkout Area C", category: "Checkout" },
-  { src: "/gallery4.jpg", alt: "Coldroom D", category: "Coldroom" },
-  { src: "/gallery5.jpg", alt: "Display Shelves E", category: "Shelving" },
-  { src: "/gallery6.jpg", alt: "Backroom F", category: "Storage" },
+  { src: "/gallery1.jpg", alt: "Store Fitout A", category: "Fitout", location: "Tooting" },
+  { src: "/gallery2.jpeg", alt: "Supermarket B", category: "Retail", location: "South End On Sea" },
+  { src: "/gallery3.jpeg", alt: "Checkout Area C", category: "Checkout", location: "Cotswold" },
+  { src: "/gallery4.jpg", alt: "Coldroom D", category: "Coldroom", location: "Brighton" },
+  { src: "/gallery5.jpg", alt: "Display Shelves E", category: "Shelving", location: "South London" },
+  { src: "/gallery6.jpg", alt: "Backroom F", category: "Storage", location: "Tooting" },
+  { src: "/gallery7.jpeg", alt: "Backroom F", category: "Storage", location: "Chelmsford" },
+  { src: "/gallery8 .jpg", alt: "Backroom F", category: "Storage", location: "South London" },
+
+
+  
 ];
 
 export default function ArnegWorks() {
@@ -425,6 +430,24 @@ export default function ArnegWorks() {
           filter: grayscale(0%) brightness(1) saturate(1.15);
         }
 
+        .aw-location-tag {
+          position: absolute;
+          top: 16px;
+          left: 16px;
+          background: transparent;
+          border: 1px solid #f8f4ef;
+          color: #f8f4ef;
+          padding: 4px 8px;
+          border-radius: 6px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 11px;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          z-index: 3;
+          backdrop-filter: blur(8px);
+        }
+
         .swiper {
           padding-bottom: 48px !important;
         }
@@ -581,7 +604,7 @@ export default function ArnegWorks() {
               </div>
 
               <h2 className="aw-heading">
-                OUR <em>FINEST</em> <mark>WORK</mark>
+                OUR <em>CASE</em> <mark>STUDIES</mark>
               </h2>
 
               <p className="aw-sub">
@@ -636,6 +659,7 @@ export default function ArnegWorks() {
                         className="aw-img"
                         style={{ position: "absolute" }}
                       />
+                      <div className="aw-location-tag">{w.location}</div>
                       <div className="aw-item-overlay" />
                     </button>
                   </SwiperSlide>
