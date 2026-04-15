@@ -18,7 +18,7 @@ const testimonials = [
     initials: "SJ",
   },
   {
-    company: "BT Petrol Station",
+    company: "BP Petrol Station",
     quote:
       "The most reliable partner for all our commercial refrigeration needs. Their preventive maintenance program has significantly reduced our downtime.",
     author: "Michael Chen",

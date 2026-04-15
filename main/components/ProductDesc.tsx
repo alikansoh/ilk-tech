@@ -164,7 +164,6 @@ export default function ArnegProducts() {
           <h2 className="ap-header-title flex flex-wrap gap-x-[0.18em] text-[clamp(48px,8vw,100px)] font-black leading-[0.9] tracking-[-0.04em] text-[#001845] uppercase">
             {["We", "Create", "Your", "Space."].map((w, i) => (
               <span key={i} className="inline-block overflow-hidden align-top">
-                <span className="block translate-y-[110%]">{w}</span>
               </span>
             ))}
           </h2>

@@ -7,6 +7,7 @@ import HowItWorks from "@/components/HowItsWork";
 import ArnegProducts from "@/components/ProductDesc";
 import CaseStudies from "@/components/CaseStudies";
 import Reviews from "@/components/Reviews";
+import Faqs from "@/components/Faqs";
 
 export default function Home() {
   return (
@@ -19,6 +20,8 @@ export default function Home() {
         <HowItWorks />
         <CaseStudies />
         <Reviews />
+        <Faqs />
+        
 
 
      
