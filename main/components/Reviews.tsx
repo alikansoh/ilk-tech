@@ -20,7 +20,7 @@ const testimonials = [
   {
     company: "BP Petrol Station",
     quote:
-      "The most reliable partner for all our commercial refrigeration needs. Their preventive maintenance program has significantly reduced our downtime.",
+      "The most reliable partner for all our commercial refrigeration needs. The Osaka 2 units sprayed in black really enhance the shop's features and presentation.",
     author: "Michael Chen",
     initials: "MC",
   },
@@ -198,7 +198,7 @@ export default function TestimonialsSection() {
           card.addEventListener("mouseleave", handleLeave);
         });
 
-        // ── Ambient background orbs parallax ─────────────────────────
+        // ── Ambient background orbs parallax ──���──────────────────────
         gsap.to(".ts-orb-1", {
           y: -60,
           ease: "none",
