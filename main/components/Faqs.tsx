@@ -30,7 +30,7 @@ export default function FAQSection({
     {
       question: "What warranties do you provide?",
       answer:
-        "Most products include the manufacturer's warranty. We provide installation warranties where applicable and can assist with warranty claims and spare parts sourcing. We do not offer ongoing maintenance contracts or breakdown repair services.",
+        "Most products include the manufacturer's warranty. We provide installation warranties where applicable and can assist with warranty claims and spare parts sourcing.",
     },
     {
       question: "Can you handle large commercial cold rooms and turnkey projects?",
