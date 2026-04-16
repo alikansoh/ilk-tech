@@ -522,6 +522,20 @@ export default function AboutPage() {
                 Seasoned engineers and project managers dedicated to precision, reliability and
                 outstanding client outcomes.
               </p>
+
+              {/* Inserted user-provided text next to the team */}
+              <div style={{ marginTop: 18, fontSize: 14, lineHeight: 1.8, color: "#64748B", maxWidth: 320 }}>
+                <p style={{ margin: "0 0 8px 0", fontWeight: 700 }}>Passionate. Creative. Professional.</p>
+                <p style={{ margin: "0 0 8px 0" }}>
+                  Our team is dedicated to providing the best retail solutions for your supermarket or shop makeover.
+                </p>
+                <p style={{ margin: "0 0 8px 0" }}>
+                  Each team member has received refrigeration training and possesses the experience needed to ensure you select the best products for your needs.
+                </p>
+                <p style={{ margin: 0 }}>
+                  Our offerings consistently blend creative style, elegance, and technology. We are proud to partner with Arneg to bring authentic Italian quality to our product range.
+                </p>
+              </div>
             </div>
 
             <div className="team-item" style={{ position: "relative" }}>
