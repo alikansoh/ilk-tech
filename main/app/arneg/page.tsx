@@ -161,10 +161,25 @@ export default function BrandsPage({
   return (
     <>
       <style>{`
+        /* ─── GLOBAL OVERFLOW FIX ─── */
+        html, body {
+          overflow-x: hidden;
+          width: 100%;
+          max-width: 100%;
+        }
+
         .brands-root {
           background: #fff;
           color: ${NAVY};
           min-height: 100vh;
+          overflow-x: hidden;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        *, *::before, *::after {
+          box-sizing: border-box;
         }
 
         /* ─── HERO ─── */
@@ -173,7 +188,6 @@ export default function BrandsPage({
           width: 100%;
           height: var(--hero-height, 92vh);
           min-height: 520px;
-          /* Increased from 880px to 1080px for large screens */
           max-height: 1080px;
           overflow: hidden;
           background: ${NAVY};
@@ -224,6 +238,7 @@ export default function BrandsPage({
           margin: 0 auto;
           left: 0;
           right: 0;
+          width: 100%;
         }
 
         .hero-eyebrow {
@@ -331,15 +346,15 @@ export default function BrandsPage({
           .hero-meta-label { text-align: left; }
         }
         @media (max-width: 600px) {
-          .hero { height: 72vh; min-height: 320px; max-height: 580px; }
-          .hero-content { padding: 0 20px 36px; }
+          .hero { height: 58vh; min-height: 280px; max-height: 480px; }
+          .hero-content { padding: 0 20px 32px; }
           .hero-meta { display: none; }
-          .hero-scroll-hint { right: 20px; bottom: 20px; }
-          .hero-desc { font-size: 14px; margin-top: 14px; }
+          .hero-scroll-hint { right: 20px; bottom: 16px; }
+          .hero-desc { font-size: 14px; margin-top: 12px; }
         }
         @media (max-width: 420px) {
-          .hero { height: 80vh; }
-          .hero-content { padding: 0 16px 28px; }
+          .hero { height: 55vh; min-height: 260px; max-height: 420px; }
+          .hero-content { padding: 0 16px 24px; }
           .hero-title { font-size: clamp(1.6rem, 8vw, 2.2rem); }
           .hero-desc { font-size: 13px; }
         }
@@ -349,6 +364,9 @@ export default function BrandsPage({
           max-width: 1160px;
           margin: 0 auto;
           padding: 0 40px 100px;
+          /* KEY FIX: prevent inner content from causing horizontal scroll */
+          width: 100%;
+          overflow-x: hidden;
         }
 
         .section-header {
@@ -384,12 +402,15 @@ export default function BrandsPage({
           padding: 36px 0;
           border-bottom: 1px solid ${BORDER};
           position: relative;
+          /* KEY FIX: contain the row, no negative insets */
+          overflow: hidden;
         }
 
+        /* KEY FIX: replaced inset: 0 -40px (which caused overflow) with inset: 0 */
         .brand-row::before {
           content: '';
           position: absolute;
-          inset: 0 -40px;
+          inset: 0;
           background: transparent;
           transition: background 0.2s;
           pointer-events: none;
@@ -432,6 +453,8 @@ export default function BrandsPage({
         .brand-body {
           grid-area: body;
           min-width: 0;
+          /* KEY FIX: prevent text overflow pushing layout */
+          overflow: hidden;
         }
 
         .brand-name {
@@ -458,6 +481,9 @@ export default function BrandsPage({
           line-height: 1.7;
           color: #4B5563;
           max-width: 480px;
+          /* KEY FIX: allow text to wrap properly */
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
 
         .brand-link {
@@ -560,6 +586,8 @@ export default function BrandsPage({
           gap: 48px;
           position: relative;
           overflow: hidden;
+          /* KEY FIX: ensure it doesn't exceed its container */
+          width: 100%;
         }
 
         .visit-callout::before {
@@ -583,6 +611,7 @@ export default function BrandsPage({
         .visit-callout-left {
           position: relative;
           z-index: 1;
+          min-width: 0;
         }
 
         .visit-callout-eyebrow {
@@ -691,6 +720,7 @@ export default function BrandsPage({
           margin-top: 72px;
           padding-top: 52px;
           border-top: 1px solid ${BORDER};
+          width: 100%;
         }
         .video-section-header {
           margin-bottom: 24px;
@@ -730,6 +760,8 @@ export default function BrandsPage({
           overflow: hidden;
           border: 1px solid ${BORDER};
           min-height: 400px;
+          /* KEY FIX: ensure it stays within container */
+          width: 100%;
         }
 
         .cta-left {
@@ -738,6 +770,7 @@ export default function BrandsPage({
           display: flex;
           flex-direction: column;
           border-right: 1px solid ${BORDER};
+          min-width: 0;
         }
         .cta-left-rule {
           width: 28px;
@@ -770,6 +803,7 @@ export default function BrandsPage({
           justify-content: center;
           position: relative;
           overflow: hidden;
+          min-width: 0;
         }
         .cta-right::before {
           content: '';
