@@ -83,11 +83,32 @@ export default function BrandsPage({
 
         const heroTl = gsap.timeline({ delay: 0.3 });
         heroTl
-          .from(".hero-eyebrow", { opacity: 0, x: -24, duration: 0.7, ease: "power3.out" })
-          .from(".hero-title", { opacity: 0, y: 36, duration: 0.95, ease: "power3.out" }, "-=0.4")
-          .from(".hero-desc", { opacity: 0, y: 20, duration: 0.8, ease: "power3.out" }, "-=0.55")
-          .from(".hero-meta", { opacity: 0, scale: 0.88, duration: 0.8, ease: "power3.out" }, "-=0.6")
-          .from(".hero-scroll-hint", { opacity: 0, y: 10, duration: 0.6, ease: "power2.out" }, "-=0.3");
+          .from(".hero-eyebrow", {
+            opacity: 0,
+            x: -24,
+            duration: 0.7,
+            ease: "power3.out",
+          })
+          .from(
+            ".hero-title",
+            { opacity: 0, y: 36, duration: 0.95, ease: "power3.out" },
+            "-=0.4"
+          )
+          .from(
+            ".hero-desc",
+            { opacity: 0, y: 20, duration: 0.8, ease: "power3.out" },
+            "-=0.55"
+          )
+          .from(
+            ".hero-meta",
+            { opacity: 0, scale: 0.88, duration: 0.8, ease: "power3.out" },
+            "-=0.6"
+          )
+          .from(
+            ".hero-scroll-hint",
+            { opacity: 0, y: 10, duration: 0.6, ease: "power2.out" },
+            "-=0.3"
+          );
 
         gsap.to(".hero-image-parallax", {
           yPercent: 18,
@@ -1281,21 +1302,35 @@ export default function BrandsPage({
         @media (max-width: 400px) {
           .enquiry-btn { width: 100%; justify-content: center; padding: 13px 16px; }
         }
+          .hero-img-mobile { display: none; }
+
+@media (max-width: 900px) {
+  .hero-img-desktop { display: none; }
+  .hero-img-mobile  { display: block; }
+}
+          
       `}</style>
 
       <div className="brands-root">
         {/* HERO */}
-        <section
-          ref={heroRef}
-          className="hero"
-          style={{ height: heroHeight }}
-        >
+        <section ref={heroRef} className="hero" style={{ height: heroHeight }}>
           <div className="hero-image-parallax">
+            {/* Desktop image */}
             <Image
               src="/arneg.jpeg"
               alt="Arneg — ILK Technology distribution partner"
               fill
               priority
+              className="hero-img-desktop"
+              style={{ objectFit: "cover", objectPosition: "center 52%" }}
+            />
+            {/* Mobile image */}
+            <Image
+              src="/arneg-mobile.jpeg"
+              alt="Arneg — ILK Technology distribution partner"
+              fill
+              priority
+              className="hero-img-mobile"
               style={{ objectFit: "cover", objectPosition: "center 50%" }}
             />
           </div>
@@ -1306,12 +1341,14 @@ export default function BrandsPage({
             <div className="hero-bottom">
               <div>
                 <h1 className="hero-title">
-                  Your Distribution<br />Partner
+                  Your Distribution
+                  <br />
+                  Partner
                 </h1>
                 <p className="hero-desc">
-                  ILK Technology is the trusted UK distribution partner for the most
-                  respected names in refrigeration and retail equipment — bringing
-                  world-class brands directly to your door.
+                  ILK Technology is the trusted UK distribution partner for the
+                  most respected names in refrigeration and retail equipment —
+                  bringing world-class brands directly to your door.
                 </p>
               </div>
               <div className="hero-meta">
@@ -1346,7 +1383,10 @@ export default function BrandsPage({
                     width={140}
                     height={52}
                     className="brand-logo"
-                    style={{ objectFit: "contain", objectPosition: "left center" }}
+                    style={{
+                      objectFit: "contain",
+                      objectPosition: "left center",
+                    }}
                   />
                 </div>
 
@@ -1376,23 +1416,33 @@ export default function BrandsPage({
               <div className="arneg-showcase-left">
                 <p className="arneg-showcase-eyebrow">Arneg Product Range</p>
                 <h2 className="arneg-showcase-title">
-                  ILK is the Trusted UK<br />Partner for Arneg
+                  ILK is the Trusted UK
+                  <br />
+                  Partner for Arneg
                 </h2>
                 <p className="arneg-showcase-desc">
-                  From open refrigerated multideck cabinets and plug-in display units to full
-                  supermarket fit-outs — Arneg&apos;s comprehensive product range covers everything
-                  your retail or food service operation demands. As the official UK distributor,
-                  ILK Technology gives you direct access to the full catalogue.
+                  From open refrigerated multideck cabinets and plug-in display
+                  units to full supermarket fit-outs — Arneg&apos;s
+                  comprehensive product range covers everything your retail or
+                  food service operation demands. As the official UK
+                  distributor, ILK Technology gives you direct access to the
+                  full catalogue.
                 </p>
               </div>
 
               <div className="arneg-factory-callout">
                 <p className="arneg-factory-callout-text">
-                  At the Arneg factory, new products are developed daily thanks to their remarkable flexibility.{" "}
-                  <strong>We turn your custom ideas into finished products in just 8 to 14 weeks,</strong>{" "}
+                  At the Arneg factory, new products are developed daily thanks
+                  to their remarkable flexibility.{" "}
+                  <strong>
+                    We turn your custom ideas into finished products in just 8
+                    to 14 weeks,
+                  </strong>{" "}
                   delivered directly to your doorstep.
                 </p>
-                <span className="arneg-factory-callout-weeks">8–14 Week Turnaround</span>
+                <span className="arneg-factory-callout-weeks">
+                  8–14 Week Turnaround
+                </span>
               </div>
             </div>
 
@@ -1402,12 +1452,24 @@ export default function BrandsPage({
                 { src: "/arneg1.png", alt: "Arneg shelving unit" },
                 { src: "/arneg2.png", alt: "Arneg checkout system" },
                 { src: "/arneg3.png", alt: "Arneg refrigerated multideck" },
-                { src: "/arneg4.png", alt: "Arneg supermarket refrigeration aisle" },
+                {
+                  src: "/arneg4.png",
+                  alt: "Arneg supermarket refrigeration aisle",
+                },
                 { src: "/arneg5.png", alt: "Arneg compressor rack unit" },
-                { src: "/arneg6.png", alt: "Arneg outdoor refrigerated cabinet" },
+                {
+                  src: "/arneg6.png",
+                  alt: "Arneg outdoor refrigerated cabinet",
+                },
                 { src: "/arneg7.png", alt: "Arneg open-front display cabinet" },
-                { src: "/arneg8.png", alt: "Arneg 60 years anniversary display" },
-                { src: "/arneg9.png", alt: "Arneg glass door refrigeration wall" },
+                {
+                  src: "/arneg8.png",
+                  alt: "Arneg 60 years anniversary display",
+                },
+                {
+                  src: "/arneg9.png",
+                  alt: "Arneg glass door refrigeration wall",
+                },
               ].map((img, i) => (
                 <div className="arneg-product-item" key={i}>
                   <Image
@@ -1430,9 +1492,10 @@ export default function BrandsPage({
                 Visit Our Brand Websites to See the Full Product Range
               </h2>
               <p className="visit-callout-sub">
-                Each of our partners offers an extensive catalogue of products beyond what we list here.
-                Head directly to their websites to explore the complete range, technical specs, and the
-                latest innovations.
+                Each of our partners offers an extensive catalogue of products
+                beyond what we list here. Head directly to their websites to
+                explore the complete range, technical specs, and the latest
+                innovations.
               </p>
             </div>
 
@@ -1473,12 +1536,15 @@ export default function BrandsPage({
               <div className="floor-plan-left">
                 <p className="floor-plan-eyebrow">Bespoke Design Service</p>
                 <h2 className="floor-plan-title">
-                  Send Us Your<br />Floor Plan
+                  Send Us Your
+                  <br />
+                  Floor Plan
                 </h2>
                 <p className="floor-plan-desc">
-                  Working on a new store, refurbishment, or bespoke installation? Send us your floor
-                  plan and our team will guide you through the perfect product selection and layout
-                  — tailored precisely to your space and requirements.
+                  Working on a new store, refurbishment, or bespoke
+                  installation? Send us your floor plan and our team will guide
+                  you through the perfect product selection and layout —
+                  tailored precisely to your space and requirements.
                 </p>
                 <Link className="floor-plan-cta" href="/contact">
                   Get Bespoke Advice <span className="arrow">→</span>
@@ -1493,7 +1559,9 @@ export default function BrandsPage({
                     fill
                     style={{ objectFit: "cover" }}
                   />
-                  <span className="floor-plan-img-label">Floor Plan Example</span>
+                  <span className="floor-plan-img-label">
+                    Floor Plan Example
+                  </span>
                 </div>
                 <div className="floor-plan-img-wrap">
                   <Image
@@ -1513,12 +1581,14 @@ export default function BrandsPage({
             <div className="cta-left">
               <div className="cta-left-rule" />
               <h3 className="cta-left-title">
-                Your UK<br />Distribution Partner
+                Your UK
+                <br />
+                Distribution Partner
               </h3>
               <p className="cta-left-text">
-                ILK Technology is the <strong>official UK distributor</strong> for each
-                of these brands — giving you direct access to the right products,
-                the right support, and the right expertise.
+                ILK Technology is the <strong>official UK distributor</strong>{" "}
+                for each of these brands — giving you direct access to the right
+                products, the right support, and the right expertise.
               </p>
               <p className="cta-left-text">
                 We handle sourcing, supply, and logistics so you can focus on
@@ -1530,12 +1600,14 @@ export default function BrandsPage({
               <div className="cta-right-inner">
                 <div className="cta-right-rule" />
                 <h3 className="cta-right-title">
-                  Ready to Work<br />Together?
+                  Ready to Work
+                  <br />
+                  Together?
                 </h3>
                 <p className="cta-right-text">
-                  Looking for a bespoke solution or tailored partnership? Our team is on
-                  hand to discuss your exact requirements and connect you with the right
-                  brand for your project.
+                  Looking for a bespoke solution or tailored partnership? Our
+                  team is on hand to discuss your exact requirements and connect
+                  you with the right brand for your project.
                 </p>
                 <Link className="enquiry-btn" href="/contact">
                   Make an Enquiry <span className="arrow">→</span>
