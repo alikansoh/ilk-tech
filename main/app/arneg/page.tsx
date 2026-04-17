@@ -152,6 +152,23 @@ export default function BrandsPage({
           delay: 0.2,
           scrollTrigger: { trigger: ctaRef.current, start: "top 78%" },
         });
+
+        gsap.from(".arneg-product-item", {
+          opacity: 0,
+          y: 24,
+          stagger: 0.08,
+          duration: 0.7,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".arneg-products-grid", start: "top 82%" },
+        });
+
+        gsap.from(".floor-plan-section", {
+          opacity: 0,
+          y: 32,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".floor-plan-section", start: "top 82%" },
+        });
       });
     };
     animate();
@@ -192,7 +209,7 @@ export default function BrandsPage({
           overflow: hidden;
           background: ${NAVY};
           display: flex;
-          align-items: flex-end;
+          align-items: center;
         }
 
         .hero-image-parallax {
@@ -226,14 +243,18 @@ export default function BrandsPage({
           z-index: 3;
         }
 
+        /* ── Hero content sits in the upper-centre of the frame ── */
         .hero-content {
           position: absolute;
           inset: 0;
           z-index: 2;
           display: flex;
           flex-direction: column;
-          justify-content: flex-end;
-          padding: 0 64px 80px;
+          justify-content: center;
+          padding: 0 64px;
+          padding-top: 0;
+          /* nudge the block upward so it clears the meta number */
+          transform: translateY(-8%);
           max-width: 1160px;
           margin: 0 auto;
           left: 0;
@@ -279,7 +300,7 @@ export default function BrandsPage({
 
         .hero-desc {
           font-size: 15px;
-          color: rgba(255,255,255,0.6);
+          color: white;
           line-height: 1.75;
           max-width: 480px;
           margin-top: 20px;
@@ -337,7 +358,7 @@ export default function BrandsPage({
           .hero { height: 80vh; min-height: 370px; max-height: 760px; }
         }
         @media (max-width: 820px) {
-          .hero-content { padding: 0 28px 52px; }
+          .hero-content { padding: 0 28px; }
           .hero-scroll-hint { right: 28px; }
         }
         @media (max-width: 800px) {
@@ -347,14 +368,14 @@ export default function BrandsPage({
         }
         @media (max-width: 600px) {
           .hero { height: 58vh; min-height: 280px; max-height: 480px; }
-          .hero-content { padding: 0 20px 32px; }
+          .hero-content { padding: 0 20px; transform: translateY(-6%); }
           .hero-meta { display: none; }
           .hero-scroll-hint { right: 20px; bottom: 16px; }
           .hero-desc { font-size: 14px; margin-top: 12px; }
         }
         @media (max-width: 420px) {
           .hero { height: 55vh; min-height: 260px; max-height: 420px; }
-          .hero-content { padding: 0 16px 24px; }
+          .hero-content { padding: 0 16px; }
           .hero-title { font-size: clamp(1.6rem, 8vw, 2.2rem); }
           .hero-desc { font-size: 13px; }
         }
@@ -364,7 +385,6 @@ export default function BrandsPage({
           max-width: 1160px;
           margin: 0 auto;
           padding: 0 40px 100px;
-          /* KEY FIX: prevent inner content from causing horizontal scroll */
           width: 100%;
           overflow-x: hidden;
         }
@@ -402,11 +422,9 @@ export default function BrandsPage({
           padding: 36px 0;
           border-bottom: 1px solid ${BORDER};
           position: relative;
-          /* KEY FIX: contain the row, no negative insets */
           overflow: hidden;
         }
 
-        /* KEY FIX: replaced inset: 0 -40px (which caused overflow) with inset: 0 */
         .brand-row::before {
           content: '';
           position: absolute;
@@ -453,7 +471,6 @@ export default function BrandsPage({
         .brand-body {
           grid-area: body;
           min-width: 0;
-          /* KEY FIX: prevent text overflow pushing layout */
           overflow: hidden;
         }
 
@@ -481,7 +498,6 @@ export default function BrandsPage({
           line-height: 1.7;
           color: #4B5563;
           max-width: 480px;
-          /* KEY FIX: allow text to wrap properly */
           word-wrap: break-word;
           overflow-wrap: break-word;
         }
@@ -574,6 +590,175 @@ export default function BrandsPage({
           .brand-link { width: 100%; justify-content: center; }
         }
 
+        /* ─── ARNEG PRODUCT SHOWCASE SECTION ─── */
+        .arneg-showcase-section {
+          margin-top: 80px;
+          padding-top: 52px;
+          border-top: 1px solid ${BORDER};
+          width: 100%;
+        }
+
+        .arneg-showcase-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 40px;
+          margin-bottom: 48px;
+        }
+
+        .arneg-showcase-left {
+          max-width: 560px;
+        }
+
+        .arneg-showcase-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: ${RED};
+          margin-bottom: 16px;
+        }
+        .arneg-showcase-eyebrow::before {
+          content: '';
+          display: block;
+          width: 24px;
+          height: 1.5px;
+          background: ${RED};
+          flex-shrink: 0;
+        }
+
+        .arneg-showcase-title {
+          font-size: clamp(1.6rem, 2.8vw, 2.6rem);
+          font-weight: 800;
+          letter-spacing: -0.035em;
+          line-height: 1.08;
+          color: ${NAVY};
+          margin-bottom: 20px;
+        }
+
+        /* ── CHANGED: white, clean body copy under the showcase title ── */
+        .arneg-showcase-desc {
+          font-size: 15px;
+          line-height: 1.78;
+          color: ${NAVY};
+          font-weight: 400;
+        }
+
+        .arneg-factory-callout {
+          background: ${NAVY};
+          border-radius: 6px;
+          padding: 28px 32px;
+          position: relative;
+          overflow: hidden;
+          flex-shrink: 0;
+          max-width: 340px;
+          width: 100%;
+          align-self: flex-start;
+        }
+        .arneg-factory-callout::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 3px;
+          background: ${RED};
+        }
+        .arneg-factory-callout-text {
+          font-size: 14px;
+          line-height: 1.75;
+          color: rgba(255,255,255,0.75);
+          position: relative;
+          z-index: 1;
+        }
+        .arneg-factory-callout-text strong {
+          color: #fff;
+          font-weight: 700;
+        }
+        .arneg-factory-callout-weeks {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 18px;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: ${RED};
+        }
+        .arneg-factory-callout-weeks::before {
+          content: '';
+          display: block;
+          width: 18px;
+          height: 1.5px;
+          background: ${RED};
+        }
+
+        @media (max-width: 900px) {
+          .arneg-showcase-header {
+            flex-direction: column;
+            gap: 28px;
+          }
+          .arneg-factory-callout {
+            max-width: 100%;
+          }
+        }
+
+        /* ─── PRODUCT GRID ─── */
+        .arneg-products-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 3px;
+          border-radius: 6px;
+          overflow: hidden;
+          border: 1px solid ${BORDER};
+        }
+
+        .arneg-product-item {
+          position: relative;
+          aspect-ratio: 1 / 1;
+          background: #f8f9fb;
+          overflow: hidden;
+          cursor: pointer;
+        }
+
+        .arneg-product-item img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.4s ease;
+        }
+
+        .arneg-product-item:hover img {
+          transform: scale(1.05);
+        }
+
+        .arneg-product-overlay {
+          position: absolute;
+          inset: 0;
+          background: rgba(11,37,64,0);
+          transition: background 0.3s ease;
+          display: flex;
+          align-items: flex-end;
+          padding: 16px;
+        }
+
+        .arneg-product-item:hover .arneg-product-overlay {
+          background: rgba(11,37,64,0.55);
+        }
+
+        @media (max-width: 680px) {
+          .arneg-products-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 400px) {
+          .arneg-products-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
         /* ─── VISIT BRANDS CALLOUT ─── */
         .visit-callout {
           margin-top: 64px;
@@ -586,7 +771,6 @@ export default function BrandsPage({
           gap: 48px;
           position: relative;
           overflow: hidden;
-          /* KEY FIX: ensure it doesn't exceed its container */
           width: 100%;
         }
 
@@ -751,6 +935,189 @@ export default function BrandsPage({
           .brand-video { max-height: 240px; }
         }
 
+        /* ─── FLOOR PLAN SECTION ─── */
+        .floor-plan-section {
+          margin-top: 80px;
+          width: 100%;
+          border-radius: 6px;
+          overflow: hidden;
+          border: 1px solid ${BORDER};
+        }
+
+        .floor-plan-top {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          min-height: 360px;
+        }
+
+        .floor-plan-left {
+          background: ${NAVY};
+          padding: 52px 48px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .floor-plan-left::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 4px;
+          background: ${RED};
+        }
+        .floor-plan-left::after {
+          content: '';
+          position: absolute;
+          width: 300px; height: 300px;
+          border-radius: 50%;
+          border: 1px solid rgba(200,16,46,0.1);
+          bottom: -100px; right: -80px;
+          pointer-events: none;
+        }
+
+        .floor-plan-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: ${RED};
+          margin-bottom: 20px;
+          position: relative;
+          z-index: 1;
+        }
+        .floor-plan-eyebrow::before {
+          content: '';
+          display: block;
+          width: 22px;
+          height: 1.5px;
+          background: ${RED};
+          flex-shrink: 0;
+        }
+
+        .floor-plan-title {
+          font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+          font-weight: 800;
+          letter-spacing: -0.035em;
+          line-height: 1.1;
+          color: #fff;
+          margin-bottom: 18px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .floor-plan-desc {
+          font-size: 14px;
+          line-height: 1.8;
+          color: rgba(255,255,255,0.6);
+          margin-bottom: 32px;
+          position: relative;
+          z-index: 1;
+          max-width: 400px;
+        }
+
+        .floor-plan-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          text-decoration: none;
+          color: #fff;
+          background: ${RED};
+          padding: 14px 26px;
+          border-radius: 3px;
+          transition: background 0.18s, transform 0.18s;
+          align-self: flex-start;
+          position: relative;
+          z-index: 1;
+        }
+        .floor-plan-cta:hover { background: #a50d24; transform: translateX(3px); }
+        .floor-plan-cta .arrow { display: inline-block; transition: transform 0.18s; }
+        .floor-plan-cta:hover .arrow { transform: translateX(4px); }
+
+        .floor-plan-right {
+          display: grid;
+          grid-template-rows: 1fr 1fr;
+          background: #f8f9fb;
+        }
+
+        .floor-plan-img-wrap {
+          position: relative;
+          overflow: hidden;
+          border-left: 1px solid ${BORDER};
+          border-bottom: 1px solid ${BORDER};
+        }
+        .floor-plan-img-wrap:last-child {
+          border-bottom: none;
+        }
+        .floor-plan-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.4s ease;
+        }
+        .floor-plan-img-wrap:hover img {
+          transform: scale(1.04);
+        }
+
+        .floor-plan-img-label {
+          position: absolute;
+          bottom: 12px;
+          left: 16px;
+          font-size: 9px;
+          font-weight: 600;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.7);
+          background: rgba(11,37,64,0.6);
+          padding: 4px 10px;
+          border-radius: 2px;
+          backdrop-filter: blur(4px);
+        }
+
+        @media (max-width: 860px) {
+          .floor-plan-top {
+            grid-template-columns: 1fr;
+          }
+          .floor-plan-left {
+            padding: 40px 32px;
+          }
+          .floor-plan-right {
+            grid-template-rows: unset;
+            grid-template-columns: 1fr 1fr;
+            min-height: 260px;
+          }
+          .floor-plan-img-wrap {
+            border-left: none;
+            border-top: 1px solid ${BORDER};
+            border-right: 1px solid ${BORDER};
+          }
+          .floor-plan-img-wrap:last-child {
+            border-right: none;
+          }
+        }
+        @media (max-width: 560px) {
+          .floor-plan-section { margin-top: 52px; }
+          .floor-plan-left { padding: 32px 20px; }
+          .floor-plan-right {
+            grid-template-columns: 1fr;
+            min-height: 320px;
+          }
+          .floor-plan-img-wrap {
+            min-height: 160px;
+            border-right: none;
+          }
+          .floor-plan-img-wrap:first-child {
+            border-bottom: 1px solid ${BORDER};
+          }
+        }
+
         /* ─── CTA ─── */
         .bottom-section {
           margin-top: 80px;
@@ -760,7 +1127,6 @@ export default function BrandsPage({
           overflow: hidden;
           border: 1px solid ${BORDER};
           min-height: 400px;
-          /* KEY FIX: ensure it stays within container */
           width: 100%;
         }
 
@@ -930,7 +1296,7 @@ export default function BrandsPage({
               alt="Arneg — ILK Technology distribution partner"
               fill
               priority
-              style={{ objectFit: "cover", objectPosition: "center 65%" }}
+              style={{ objectFit: "cover", objectPosition: "center 50%" }}
             />
           </div>
           <div className="hero-overlay" />
@@ -1004,6 +1370,58 @@ export default function BrandsPage({
             ))}
           </div>
 
+          {/* ─── ARNEG PRODUCT SHOWCASE ─── */}
+          <div className="arneg-showcase-section">
+            <div className="arneg-showcase-header">
+              <div className="arneg-showcase-left">
+                <p className="arneg-showcase-eyebrow">Arneg Product Range</p>
+                <h2 className="arneg-showcase-title">
+                  ILK is the Trusted UK<br />Partner for Arneg
+                </h2>
+                <p className="arneg-showcase-desc">
+                  From open refrigerated multideck cabinets and plug-in display units to full
+                  supermarket fit-outs — Arneg&apos;s comprehensive product range covers everything
+                  your retail or food service operation demands. As the official UK distributor,
+                  ILK Technology gives you direct access to the full catalogue.
+                </p>
+              </div>
+
+              <div className="arneg-factory-callout">
+                <p className="arneg-factory-callout-text">
+                  At the Arneg factory, new products are developed daily thanks to their remarkable flexibility.{" "}
+                  <strong>We turn your custom ideas into finished products in just 8 to 14 weeks,</strong>{" "}
+                  delivered directly to your doorstep.
+                </p>
+                <span className="arneg-factory-callout-weeks">8–14 Week Turnaround</span>
+              </div>
+            </div>
+
+            {/* 3×3 Product Image Grid */}
+            <div className="arneg-products-grid">
+              {[
+                { src: "/arneg1.png", alt: "Arneg shelving unit" },
+                { src: "/arneg2.png", alt: "Arneg checkout system" },
+                { src: "/arneg3.png", alt: "Arneg refrigerated multideck" },
+                { src: "/arneg4.png", alt: "Arneg supermarket refrigeration aisle" },
+                { src: "/arneg5.png", alt: "Arneg compressor rack unit" },
+                { src: "/arneg6.png", alt: "Arneg outdoor refrigerated cabinet" },
+                { src: "/arneg7.png", alt: "Arneg open-front display cabinet" },
+                { src: "/arneg8.png", alt: "Arneg 60 years anniversary display" },
+                { src: "/arneg9.png", alt: "Arneg glass door refrigeration wall" },
+              ].map((img, i) => (
+                <div className="arneg-product-item" key={i}>
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                  <div className="arneg-product-overlay" />
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* VISIT BRANDS CALLOUT */}
           <div className="visit-callout">
             <div className="visit-callout-left">
@@ -1046,6 +1464,47 @@ export default function BrandsPage({
                 playsInline
                 className="brand-video"
               />
+            </div>
+          </div>
+
+          {/* ─── FLOOR PLAN SECTION ─── */}
+          <div className="floor-plan-section">
+            <div className="floor-plan-top">
+              <div className="floor-plan-left">
+                <p className="floor-plan-eyebrow">Bespoke Design Service</p>
+                <h2 className="floor-plan-title">
+                  Send Us Your<br />Floor Plan
+                </h2>
+                <p className="floor-plan-desc">
+                  Working on a new store, refurbishment, or bespoke installation? Send us your floor
+                  plan and our team will guide you through the perfect product selection and layout
+                  — tailored precisely to your space and requirements.
+                </p>
+                <Link className="floor-plan-cta" href="/contact">
+                  Get Bespoke Advice <span className="arrow">→</span>
+                </Link>
+              </div>
+
+              <div className="floor-plan-right">
+                <div className="floor-plan-img-wrap">
+                  <Image
+                    src="/floor1.jpeg"
+                    alt="Floor plan example one"
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                  <span className="floor-plan-img-label">Floor Plan Example</span>
+                </div>
+                <div className="floor-plan-img-wrap">
+                  <Image
+                    src="/floor2.jpeg"
+                    alt="Floor plan example two"
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                  <span className="floor-plan-img-label">Store Layout</span>
+                </div>
+              </div>
             </div>
           </div>
 

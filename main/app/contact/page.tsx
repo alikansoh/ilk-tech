@@ -747,7 +747,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
-                  Thank you — your enquiry has been sent. We'll be in touch shortly.
+                  Thank you — your enquiry has been sent. We&apos;ll be in touch shortly.
                 </div>
               ) : (
                 <form className="form" onSubmit={handleSubmit}>
