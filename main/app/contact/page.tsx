@@ -8,22 +8,23 @@ const RED = "#C8102E";
 const BORDER = "rgba(11,37,64,0.1)";
 const MUTED = "#6B7280";
 
-// TODO: Replace these with your real details
+// Updated contact details
 const CONTACT_INFO = {
-  address: ["[Unit / Building Name]", "[Street], [Town]", "[County], [Postcode]", "England, United Kingdom"],
-  phone: "+44 (0) 000 000 0000",
-  phoneHref: "tel:+44000000000",
-  email: "info@ilktechnology.co.uk",
-  sales: "sales@ilktechnology.co.uk",
-  support: "support@ilktechnology.co.uk",
-  partnerships: "partnerships@ilktechnology.co.uk",
-  // TODO: Paste your Google Maps embed src URL here
-  mapSrc: "",
+  address: ["Poplar View", "East Lane Business Park", "Wembley", "HA9 7RD", "England, United Kingdom"],
+  phone: "0203 051 0367",
+  phoneHref: "tel:+442030510367",
+  email: "info@ilktechnology.com",
+  sales: "sales@ilktechnology.com",
+  support: "technical@ilktechnology.com",
+  // Newsletter email (placeholder) — replace with your real newsletter inbox if/when you have one
+  newsletter: "newsletter@ilktechnology.com",
+  // Google Maps embed for the address (uses query + output=embed)
+  mapSrc: "https://www.google.com/maps?q=Poplar+View+East+Lane+Business+Park+Wembley+HA9+7RD&output=embed",
 };
 
 const HOURS = [
   { day: "Monday – Friday", hours: "8:30am – 5:30pm", closed: false },
-  { day: "Saturday", hours: "Closed", closed: true },
+  { day: "Saturday", hours: "9:00am – 2:00pm", closed: false },
   { day: "Sunday", hours: "Closed", closed: true },
 ];
 
@@ -31,7 +32,7 @@ const ENQUIRY_TYPES = [
   "Product / Equipment Enquiry",
   "Request a Quote",
   "Technical Support",
-  "Distribution & Partnership",
+  "Newsletter Signup",
   "General Enquiry",
 ];
 
@@ -61,15 +62,13 @@ const BOTTOM_CARDS = [
     ),
   },
   {
-    label: "Partnerships",
-    email: CONTACT_INFO.partnerships,
-    desc: "Interested in becoming a reseller or regional partner? Let's talk about what's possible.",
+    label: "Newsletter",
+    email: CONTACT_INFO.newsletter,
+    desc: "Sign up to receive product news, offers and company updates.",
     icon: (
       <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 00-3-3.87" />
-        <path d="M16 3.13a4 4 0 010 7.75" />
+        <path d="M4 4h16v12H4z" />
+        <path d="M22 6l-10 7L2 6" />
       </svg>
     ),
   },
@@ -297,7 +296,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
           color: ${MUTED};
         }
 
-        /* ─── TWO-COL GRID ─── */
+        /* ──�� TWO-COL GRID ─── */
         .contact-grid {
           display: grid;
           grid-template-columns: 1fr 1.1fr;
@@ -612,7 +611,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
             <h1 className="hero-title">Contact<br />ILK Technology</h1>
             <p className="hero-desc">
               We&apos;re here to help. Whether you have a product enquiry, need a quote,
-              or want to explore a partnership — our team is ready to assist.
+              or want to sign up for our newsletter — our team is ready to assist.
             </p>
           </div>
         </section>
@@ -647,7 +646,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                   <div>
                     <p className="info-label">Address</p>
-                    {/* TODO: Replace with real address */}
                     <p className="info-value">
                       {CONTACT_INFO.address.map((line, i) => (
                         <span key={i}>{line}{i < CONTACT_INFO.address.length - 1 && <br />}</span>
@@ -665,7 +663,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                   <div>
                     <p className="info-label">Phone</p>
-                    {/* TODO: Replace with real phone */}
                     <p className="info-value">
                       <a href={CONTACT_INFO.phoneHref}>{CONTACT_INFO.phone}</a>
                     </p>
@@ -682,7 +679,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                   <div>
                     <p className="info-label">Email</p>
-                    {/* TODO: Replace with real email */}
                     <p className="info-value">
                       <a href={`mailto:${CONTACT_INFO.email}`}>{CONTACT_INFO.email}</a>
                     </p>
@@ -713,7 +709,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
               {/* MAP */}
               <div className="map-wrap">
                 {CONTACT_INFO.mapSrc ? (
-                  // TODO: Paste your Google Maps embed iframe src into CONTACT_INFO.mapSrc above
                   <iframe
                     src={CONTACT_INFO.mapSrc}
                     allowFullScreen
