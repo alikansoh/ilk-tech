@@ -119,6 +119,21 @@ export default function ArnegProducts() {
           }
         );
 
+        // CTA animation
+        gsap.fromTo(
+          ".ap-cta",
+          { y: 18, opacity: 0, scale: 0.98 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            delay: 0.7,
+            scrollTrigger: { trigger: ".ap-left", start: "top 80%" },
+          }
+        );
+
         gsap.fromTo(
           ".ap-img-item",
           { y: 50, opacity: 0, scale: 0.94 },
@@ -275,6 +290,56 @@ export default function ArnegProducts() {
         .ap-img-item:focus-within .ap-tile-footer-label {
           text-decoration: underline;
         }
+
+        /* CTA button */
+        .ap-cta {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 12px 18px;
+          background: linear-gradient(180deg, #C8102E, #A10A22);
+          color: #fff;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          font-size: 13px;
+          border: 0;
+          border-radius: 6px;
+          box-shadow: 0 8px 24px rgba(200,16,46,0.18);
+          text-decoration: none;
+          transition: transform 0.18s cubic-bezier(.2,.9,.2,1), box-shadow 0.18s, background 0.18s;
+          cursor: pointer;
+          width: 100%;
+          max-width: 240px;
+        }
+
+        .ap-cta:hover,
+        .ap-cta:focus {
+          transform: translateY(-4px) scale(1.01);
+          box-shadow: 0 18px 46px rgba(200,16,46,0.22);
+          outline: none;
+        }
+
+        .ap-cta:focus-visible {
+          outline: 3px solid rgba(200,16,46,0.28);
+          outline-offset: 3px;
+        }
+
+        /* Secondary small note under CTA */
+        .ap-cta-note {
+          font-size: 12px;
+          color: #001845;
+          opacity: 0.55;
+          margin-top: 8px;
+        }
+
+        /* Make CTA stack nicely in small screens */
+        .ap-left-cta-wrap {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          align-items: flex-start;
+        }
       `}</style>
 
       <section
@@ -350,11 +415,26 @@ export default function ArnegProducts() {
                   />
                 </div>
                 
-                  <a href="mailto:sales@ilktechnology.com"
+                <a
+                  href="mailto:sales@ilktechnology.com"
                   className="ap-email opacity-0 text-[13px] font-bold text-[#001845]/35 tracking-wide hover:text-red-600 transition-colors duration-300"
                 >
                   sales@ilktechnology.com
                 </a>
+
+                {/* CTA: Request a Quote */}
+                <div className="ap-left-cta-wrap">
+                  <a
+                    href="mailto:sales@ilktechnology.com?subject=Request%20a%20Quote"
+                    className="ap-cta"
+                    aria-label="Request a quote via email"
+                  >
+                    Request a Quote
+                  </a>
+                  <div className="ap-cta-note">
+                    Or call us to discuss your project — we’ll respond within one business day.
+                  </div>
+                </div>
               </div>
             </div>
 
