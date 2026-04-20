@@ -58,7 +58,6 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="text-lg font-black tracking-wide uppercase text-red-600">Arneg Distribution Partner</div>
-              {/* subtle red accent */}
               <span className="inline-block h-1 w-8 rounded bg-red-600" aria-hidden />
             </div>
 
@@ -114,9 +113,10 @@ export default function Footer() {
           <div>
             <h3 className="mb-3 text-xs font-bold tracking-widest text-red-600 uppercase">Contact</h3>
             <address className="not-italic text-sm text-white/70">
-              <a href="tel:+15551234567" className="hover:text-red-500 transition block">+1 (555) 123-4567</a>
+              <a href="tel:02030510367" className="hover:text-red-500 transition block">0203 051 0367</a>
               <Link href="/contact" className="text-white/70 hover:text-red-500 transition block mt-1">Contact page</Link>
-              <a href="mailto:info@example.com" className="text-white/70 hover:text-red-500 transition block mt-1">info@example.com</a>
+              <a href="mailto:sales@ilktechnology.com" className="text-white/70 hover:text-red-500 transition block mt-1">sales@ilktechnology.com</a>
+              <a href="mailto:info@ilktechnology.com" className="text-white/70 hover:text-red-500 transition block mt-1">info@ilktechnology.com</a>
             </address>
           </div>
         </div>
