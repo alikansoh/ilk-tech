@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import NewsletterModal from "@/components/NewsLatterModal"; // adjust path if your components folder differs
 
 const NAVY = "#0B2540";
 const RED = "#C8102E";
 const BORDER = "rgba(11,37,64,0.1)";
 const MUTED = "#6B7280";
+
+// WhatsApp config (no leading + in the number for wa.me)
+const WHATSAPP_NUMBER = "447721776002";
+const WHATSAPP_DEFAULT_MSG = "Hi, I would like to enquire about ILK Technology services.";
+const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MSG)}`;
 
 // Updated contact details
 const CONTACT_INFO = {
@@ -16,9 +22,7 @@ const CONTACT_INFO = {
   email: "info@ilktechnology.com",
   sales: "sales@ilktechnology.com",
   support: "technical@ilktechnology.com",
-  // Newsletter email (placeholder) — replace with your real newsletter inbox if/when you have one
   newsletter: "newsletter@ilktechnology.com",
-  // Google Maps embed for the address (uses query + output=embed)
   mapSrc: "https://www.google.com/maps?q=Poplar+View+East+Lane+Business+Park+Wembley+HA9+7RD&output=embed",
 };
 
@@ -79,6 +83,8 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
   const formRef = useRef<HTMLDivElement>(null);
 
   const [submitted, setSubmitted] = useState(false);
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -97,8 +103,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Replace with your real form submission logic
-    // e.g. await fetch("/api/contact", { method: "POST", body: JSON.stringify(form) })
-    // or integrate Formspree: action="https://formspree.io/f/YOUR_ID"
     setSubmitted(true);
   };
 
@@ -110,14 +114,12 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
-        // Hero entrance
         const heroTl = gsap.timeline({ delay: 0.2 });
         heroTl
           .from(".hero-eyebrow", { opacity: 0, x: -24, duration: 0.7, ease: "power3.out" })
           .from(".hero-title", { opacity: 0, y: 36, duration: 0.95, ease: "power3.out" }, "-=0.4")
           .from(".hero-desc", { opacity: 0, y: 20, duration: 0.8, ease: "power3.out" }, "-=0.55");
 
-        // Info blocks stagger
         gsap.from(".info-block", {
           opacity: 0,
           y: 24,
@@ -127,7 +129,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
           scrollTrigger: { trigger: ".contact-info", start: "top 82%" },
         });
 
-        // Map
         gsap.from(".map-wrap", {
           opacity: 0,
           y: 20,
@@ -136,7 +137,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
           scrollTrigger: { trigger: ".map-wrap", start: "top 85%" },
         });
 
-        // Form
         gsap.from(".contact-form-wrap", {
           opacity: 0,
           x: 30,
@@ -145,7 +145,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
           scrollTrigger: { trigger: formRef.current, start: "top 82%" },
         });
 
-        // Bottom cards
         gsap.from(".callout-item", {
           opacity: 0,
           y: 28,
@@ -296,7 +295,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
           color: ${MUTED};
         }
 
-        /* ──�� TWO-COL GRID ─── */
+        /* ─── TWO-COL GRID ─── */
         .contact-grid {
           display: grid;
           grid-template-columns: 1fr 1.1fr;
@@ -582,6 +581,63 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
         }
         .callout-desc { font-size: 12.5px; color: ${MUTED}; line-height: 1.6; }
 
+        /* ─── WHATSAPP INLINE (phone row) ─── */
+        .whatsapp-inline {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: transparent;
+          color: ${NAVY};
+          border: 1px solid rgba(11,37,64,0.06);
+          padding: 6px 8px;
+          border-radius: 4px;
+          text-decoration: none;
+          font-weight: 700;
+          margin-left: 10px;
+        }
+
+        /* ─── WHATSAPP FLOATING BUTTON ─── */
+        .whatsapp-float {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          z-index: 1300;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          background: #25D366;
+          color: #fff;
+          padding: 12px 20px;
+          border-radius: 999px;
+          box-shadow: 0 8px 20px rgba(37,211,102,0.35);
+          text-decoration: none;
+          font-weight: 700;
+          font-size: 14px;
+          transition: box-shadow 0.2s, transform 0.2s;
+          white-space: nowrap;
+        }
+        .whatsapp-float:hover {
+          box-shadow: 0 12px 28px rgba(37,211,102,0.45);
+          transform: translateY(-2px);
+        }
+
+        /* Label hidden on small screens — icon only */
+        .whatsapp-float-label {
+          display: inline;
+        }
+
+        @media (max-width: 540px) {
+          .whatsapp-float {
+            bottom: 16px;
+            right: 16px;
+            padding: 12px;        /* equal padding → perfect circle */
+            gap: 0;
+          }
+          .whatsapp-float-label {
+            display: none;        /* hide text, keep icon */
+          }
+        }
+
         /* ─── RESPONSIVE ─── */
         @media (max-width: 960px) {
           .body-inner { padding: 0 32px 80px; }
@@ -654,7 +710,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                 </div>
 
-                {/* Phone */}
+                {/* Phone with WhatsApp inline */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -663,8 +719,22 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                   <div>
                     <p className="info-label">Phone</p>
-                    <p className="info-value">
+                    <p className="info-value" style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <a href={CONTACT_INFO.phoneHref}>{CONTACT_INFO.phone}</a>
+
+                      <a
+                        className="whatsapp-inline"
+                        href={WHATSAPP_HREF}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Chat with us on WhatsApp"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 .12 5.27.12 11.8a11.6 11.6 0 001.58 5.68L0 24l6.6-1.95A11.93 11.93 0 0012 24c6.63 0 11.88-5.27 11.88-11.8 0-3.16-1.21-6.1-3.36-8.72z" fill="#25D366"/>
+                          <path d="M17.1 14.7c-.28-.2-1.62-.9-1.85-1-.28-.12-.47-.18-.68.24-.2.41-.78 1.05-1 1.27-.24.22-.44.24-.73.07-.3-.18-1.15-.42-2.19-1.37-.81-.76-1.34-1.7-1.5-2-.16-.3.02-.46.14-.58.14-.12.3-.3.45-.45.15-.15.2-.25.3-.42.1-.17.05-.31-.02-.43-.07-.12-.68-1.66-.94-2.28-.25-.6-.5-.52-.69-.53-.18-.01-.38-.01-.58-.01s-.43.06-.65.3c-.22.24-.86.83-.86 2.03 0 1.2.88 2.36 1 2.53.12.17 1.86 2.86 4.5 3.9 2.6 1.04 3.9.9 4.26.84.36-.07 1.16-.47 1.33-.92.18-.45.18-.83.12-.92-.06-.1-.26-.15-.54-.27z" fill="#fff"/>
+                        </svg>
+                        WhatsApp
+                      </a>
                     </p>
                   </div>
                 </div>
@@ -816,22 +886,67 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
 
           {/* ── BOTTOM 3-COL ── */}
           <div className="bottom-callout">
-            {BOTTOM_CARDS.map(({ label, email, desc, icon }) => (
-              <div className="callout-item" key={label}>
-                <div className="callout-icon">{icon}</div>
-                <p className="callout-label">{label}</p>
-                <p className="callout-value">
-                  <Link href={`mailto:${email}`} style={{ color: NAVY, textDecoration: "none" }}>
-                    {email}
-                  </Link>
-                </p>
-                <p className="callout-desc">{desc}</p>
-              </div>
-            ))}
+            {BOTTOM_CARDS.map(({ label, email, desc, icon }) => {
+              if (label === "Newsletter") {
+                return (
+                  <div className="callout-item" key={label}>
+                    <div className="callout-icon">{icon}</div>
+                    <p className="callout-label">{label}</p>
+                    <p className="callout-desc">{desc}</p>
+                    <div style={{ marginTop: 8 }}>
+                      <button
+                        onClick={() => setNewsletterOpen(true)}
+                        style={{
+                          background: RED,
+                          color: "#fff",
+                          border: "none",
+                          padding: "10px 14px",
+                          borderRadius: 3,
+                          cursor: "pointer",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Subscribe
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div className="callout-item" key={label}>
+                  <div className="callout-icon">{icon}</div>
+                  <p className="callout-label">{label}</p>
+                  <p className="callout-value">
+                    <Link href={`mailto:${email}`} style={{ color: NAVY, textDecoration: "none" }}>
+                      {email}
+                    </Link>
+                  </p>
+                  <p className="callout-desc">{desc}</p>
+                </div>
+              );
+            })}
           </div>
 
         </div>
       </div>
+
+      {/* Newsletter modal */}
+      <NewsletterModal open={newsletterOpen} onClose={() => setNewsletterOpen(false)} />
+
+      {/* Floating WhatsApp button */}
+      <a
+        href={WHATSAPP_HREF}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="whatsapp-float"
+        aria-label="Chat with ILK Technology on WhatsApp"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 .12 5.27.12 11.8a11.6 11.6 0 001.58 5.68L0 24l6.6-1.95A11.93 11.93 0 0012 24c6.63 0 11.88-5.27 11.88-11.8 0-3.16-1.21-6.1-3.36-8.72z" fill="#fff"/>
+          <path d="M17.1 14.7c-.28-.2-1.62-.9-1.85-1-.28-.12-.47-.18-.68.24-.2.41-.78 1.05-1 1.27-.24.22-.44.24-.73.07-.3-.18-1.15-.42-2.19-1.37-.81-.76-1.34-1.7-1.5-2-.16-.3.02-.46.14-.58.14-.12.3-.3.45-.45.15-.15.2-.25.3-.42.1-.17.05-.31-.02-.43-.07-.12-.68-1.66-.94-2.28-.25-.6-.5-.52-.69-.53-.18-.01-.38-.01-.58-.01s-.43.06-.65.3c-.22.24-.86.83-.86 2.03 0 1.2.88 2.36 1 2.53.12.17 1.86 2.86 4.5 3.9 2.6 1.04 3.9.9 4.26.84.36-.07 1.16-.47 1.33-.92.18-.45.18-.83.12-.92-.06-.1-.26-.15-.54-.27z" fill="#fff"/>
+        </svg>
+        <span className="whatsapp-float-label">Chat on WhatsApp</span>
+      </a>
     </>
   );
 }
