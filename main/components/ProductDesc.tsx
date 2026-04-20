@@ -22,6 +22,14 @@ const stageList = [
   "Final Delivery",
 ];
 
+const ralColours = [
+  { ral: "9010", name: "Arneg White", hex: "#F5F4F2", dark: false },
+  { ral: "7024", name: "Graphite Grey", hex: "#474A51", dark: true },
+  { ral: "E31331", name: "Signal Red", hex: "#C8102E", dark: true },
+  { ral: "9004", name: "Signal Black", hex: "#2B2B2C", dark: true },
+  { ral: "7016", name: "Anthracite Grey", hex: "#383E42", dark: true },
+];
+
 export default function ArnegProducts() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -95,6 +103,33 @@ export default function ArnegProducts() {
             scrollTrigger: { trigger: ".ap-left", start: "top 80%" },
           }
         );
+
+        // RAL swatches animation
+        gsap.fromTo(
+          ".ap-ral-swatch",
+          { scale: 0.7, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            stagger: 0.07,
+            duration: 0.55,
+            ease: "back.out(1.6)",
+            delay: 0.35,
+            scrollTrigger: { trigger: ".ap-ral-section", start: "top 85%" },
+          }
+        );
+        gsap.fromTo(
+          ".ap-ral-heading",
+          { y: 10, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: "power3.out",
+            scrollTrigger: { trigger: ".ap-ral-section", start: "top 85%" },
+          }
+        );
+
         gsap.fromTo(
           ".ap-ilk-logo",
           { scale: 0.88, opacity: 0 },
@@ -120,7 +155,6 @@ export default function ArnegProducts() {
           }
         );
 
-        // CTA animation
         gsap.fromTo(
           ".ap-cta",
           { y: 18, opacity: 0, scale: 0.98 },
@@ -175,7 +209,6 @@ export default function ArnegProducts() {
           background: ${RAL9010};
         }
 
-        /* Tile card — red border, no radius for sharp industrial look */
         .ap-tile {
           background: #fff;
           border: 2px solid #C8102E;
@@ -198,7 +231,6 @@ export default function ArnegProducts() {
           outline-offset: 2px;
         }
 
-        /* Stage number badge */
         .ap-stage-badge {
           position: absolute;
           top: 12px;
@@ -215,7 +247,6 @@ export default function ArnegProducts() {
           box-shadow: 0 4px 10px rgba(0,0,0,0.12);
         }
 
-        /* Image wrapper — tall aspect ratio for bigger visual presence */
         .ap-tile-img-wrap {
           position: relative;
           width: 100%;
@@ -238,7 +269,6 @@ export default function ArnegProducts() {
           transform: scale(1.08);
         }
 
-        /* Name label below image — solid, not overlay */
         .ap-tile-footer {
           display: flex;
           align-items: center;
@@ -267,7 +297,6 @@ export default function ArnegProducts() {
           line-height: 1.2;
         }
 
-        /* Numbered stage list */
         .ap-stage-num {
           display: inline-flex;
           align-items: center;
@@ -283,7 +312,6 @@ export default function ArnegProducts() {
           line-height: 1;
         }
 
-        /* Grid */
         .ap-grid {
           gap: 16px;
         }
@@ -292,7 +320,6 @@ export default function ArnegProducts() {
           text-decoration: underline;
         }
 
-        /* CTA button */
         .ap-cta {
           display: inline-flex;
           align-items: center;
@@ -326,7 +353,6 @@ export default function ArnegProducts() {
           outline-offset: 3px;
         }
 
-        /* Secondary small note under CTA */
         .ap-cta-note {
           font-size: 12px;
           color: #001845;
@@ -334,12 +360,101 @@ export default function ArnegProducts() {
           margin-top: 8px;
         }
 
-        /* Make CTA stack nicely in small screens */
         .ap-left-cta-wrap {
           display: flex;
           flex-direction: column;
           gap: 6px;
           align-items: flex-start;
+        }
+
+        /* ── RAL Colour Chart ── */
+        .ap-ral-section {
+          border-top: 1px solid rgba(0,24,69,0.10);
+          padding-top: 16px;
+          margin-top: 4px;
+        }
+
+        .ap-ral-heading {
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: #001845;
+          opacity: 0.4;
+          margin-bottom: 10px;
+        }
+
+        .ap-ral-swatches {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .ap-ral-swatch {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+          cursor: default;
+        }
+
+        .ap-ral-circle {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          position: relative;
+          box-shadow:
+            0 2px 6px rgba(0,0,0,0.18),
+            inset 0 1px 0 rgba(255,255,255,0.18);
+          transition: transform 0.22s cubic-bezier(.2,.9,.2,1), box-shadow 0.22s;
+          flex-shrink: 0;
+        }
+
+        /* Subtle gloss highlight on circle */
+        .ap-ral-circle::after {
+          content: '';
+          position: absolute;
+          top: 5px;
+          left: 8px;
+          width: 12px;
+          height: 7px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.22);
+          pointer-events: none;
+        }
+
+        .ap-ral-swatch:hover .ap-ral-circle {
+          transform: translateY(-3px) scale(1.06);
+          box-shadow:
+            0 8px 18px rgba(0,0,0,0.22),
+            inset 0 1px 0 rgba(255,255,255,0.18);
+        }
+
+        /* White swatch needs a border so it's visible on the off-white bg */
+        .ap-ral-circle--bordered {
+          border: 1.5px solid rgba(0,24,69,0.14);
+        }
+
+        .ap-ral-code {
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: 0.05em;
+          color: #001845;
+          opacity: 0.55;
+          text-align: center;
+          line-height: 1.2;
+          white-space: nowrap;
+        }
+
+        .ap-ral-name {
+          font-size: 8px;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+          color: #001845;
+          opacity: 0.38;
+          text-align: center;
+          line-height: 1.2;
+          white-space: nowrap;
         }
       `}</style>
 
@@ -372,7 +487,7 @@ export default function ArnegProducts() {
         {/* MAIN LAYOUT */}
         <div className="max-w-[1200px] mx-auto px-6 sm:px-10 lg:px-16 pt-0 pb-28 sm:pb-36">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-0">
-            {/* LEFT PANEL — unchanged */}
+            {/* LEFT PANEL */}
             <div className="ap-left w-full lg:w-[280px] flex-shrink-0 lg:pr-12 flex flex-col justify-between gap-10">
               <div>
                 <div className="ap-logo opacity-0">
@@ -391,7 +506,7 @@ export default function ArnegProducts() {
                   We create your space with a bespoke retail design project.
                 </p>
 
-                {/* Stage list with numbered badges */}
+                {/* Stage list */}
                 <ul className="flex flex-col gap-3 mb-10">
                   {stageList.map((item, idx) => (
                     <li
@@ -405,6 +520,24 @@ export default function ArnegProducts() {
                     </li>
                   ))}
                 </ul>
+
+                {/* ── RAL COLOUR CHART ── */}
+                <div className="ap-ral-section ap-ral-heading-wrap">
+                  <p className="ap-ral-heading">Available RAL Colours</p>
+                  <div className="ap-ral-swatches">
+                    {ralColours.map((c) => (
+                      <div key={c.ral} className="ap-ral-swatch ap-ral-swatch">
+                        <div
+                          className={`ap-ral-circle${c.ral === "9010" ? " ap-ral-circle--bordered" : ""}`}
+                          style={{ background: c.hex }}
+                          title={`RAL ${c.ral} — ${c.name}`}
+                        />
+                        <span className="ap-ral-code">RAL {c.ral}</span>
+                        <span className="ap-ral-name">{c.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="flex flex-col gap-5">
@@ -418,24 +551,23 @@ export default function ArnegProducts() {
                   />
                 </div>
 
-                <a
-                  href="mailto:sales@ilktechnology.com"
+                
+                  <a href="mailto:sales@ilktechnology.com"
                   className="ap-email opacity-0 text-[13px] font-bold text-[#001845]/35 tracking-wide hover:text-red-600 transition-colors duration-300"
                 >
                   sales@ilktechnology.com
                 </a>
 
-                {/* CTA: Request a Quote */}
                 <div className="ap-left-cta-wrap">
-                  <a
-                    href="mailto:sales@ilktechnology.com?subject=Request%20a%20Quote"
+                  
+                    <a href="mailto:sales@ilktechnology.com?subject=Request%20a%20Quote"
                     className="ap-cta"
                     aria-label="Request a quote via email"
                   >
-                    Book A Consultation{" "}
+                    Book A Consultation
                   </a>
                   <div className="ap-cta-note">
-                    Or call us to discuss your project — we’ll respond within
+                    Or call us to discuss your project — we&apos;ll respond within
                     one business day.
                   </div>
                 </div>
@@ -452,7 +584,6 @@ export default function ArnegProducts() {
                   role="group"
                   aria-label={p.label}
                 >
-                  {/* Image area */}
                   <div className="ap-tile-img-wrap">
                     <span className="ap-stage-badge">0{idx + 1}</span>
                     <Image
@@ -465,7 +596,6 @@ export default function ArnegProducts() {
                     />
                   </div>
 
-                  {/* Name label — solid strip below image */}
                   <div className="ap-img-label ap-tile-footer">
                     <div className="ap-tile-footer-line" />
                     <span className="ap-tile-footer-label">{p.label}</span>
