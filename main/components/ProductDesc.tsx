@@ -11,6 +11,7 @@ const products = [
   { src: "/pic6.png", label: "Plug in Freezer" },
   { src: "/pic4.png", label: "Shelving" },
   { src: "/pic1.png", label: "Checkouts" },
+  { src: "/pic5.png", label: "Wine Cooler" },
 ];
 
 const stageList = [
@@ -357,7 +358,10 @@ export default function ArnegProducts() {
           <div style={{ perspective: "1200px" }}>
             <h2 className="ap-header-title flex flex-wrap gap-x-[0.18em] text-[clamp(48px,8vw,100px)] font-black leading-[0.9] tracking-[-0.04em] text-[#001845] uppercase">
               {["We", "Create", "Your", "Space."].map((w, i) => (
-                <span key={i} className="inline-block overflow-hidden align-top">
+                <span
+                  key={i}
+                  className="inline-block overflow-hidden align-top"
+                >
                   <span className="inline-block">{w}</span>
                 </span>
               ))}
@@ -368,7 +372,6 @@ export default function ArnegProducts() {
         {/* MAIN LAYOUT */}
         <div className="max-w-[1200px] mx-auto px-6 sm:px-10 lg:px-16 pt-0 pb-28 sm:pb-36">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-0">
-
             {/* LEFT PANEL — unchanged */}
             <div className="ap-left w-full lg:w-[280px] flex-shrink-0 lg:pr-12 flex flex-col justify-between gap-10">
               <div>
@@ -414,7 +417,7 @@ export default function ArnegProducts() {
                     className="object-contain"
                   />
                 </div>
-                
+
                 <a
                   href="mailto:sales@ilktechnology.com"
                   className="ap-email opacity-0 text-[13px] font-bold text-[#001845]/35 tracking-wide hover:text-red-600 transition-colors duration-300"
@@ -429,10 +432,11 @@ export default function ArnegProducts() {
                     className="ap-cta"
                     aria-label="Request a quote via email"
                   >
-                    Request a Quote
+                    Book A Consultation{" "}
                   </a>
                   <div className="ap-cta-note">
-                    Or call us to discuss your project — we’ll respond within one business day.
+                    Or call us to discuss your project — we’ll respond within
+                    one business day.
                   </div>
                 </div>
               </div>
@@ -469,7 +473,6 @@ export default function ArnegProducts() {
                 </div>
               ))}
             </div>
-
           </div>
         </div>
 
