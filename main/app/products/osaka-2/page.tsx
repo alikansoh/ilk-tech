@@ -80,7 +80,7 @@ const TICKER_ITEMS = [
 ];
 
 /* ─────────────────────────────────────────────
-   STYLES  — Osaka 3 layout, light colours
+   STYLES  — Osaka 2 layout, light colours
 ───────────────────────────────────────────── */
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&display=swap');
@@ -95,7 +95,6 @@ const css = `
     overflow-x: hidden;
   }
 
-  /* Subtle paper texture */
   .o2::before {
     content: "";
     position: fixed;
@@ -107,7 +106,6 @@ const css = `
     background-size: 180px 180px;
   }
 
-  /* ── HERO ── */
   .o2-hero {
     position: relative;
     z-index: 1;
@@ -116,14 +114,13 @@ const css = `
     min-height: 100vh;
   }
 
-  /* ── IMAGE PANEL ── */
   .o2-hero-img {
     position: relative;
     overflow: hidden;
     background: ${T.gray100};
+    perspective: 1200px;
   }
 
-  /* Red top accent */
   .o2-hero-img::before {
     content: "";
     position: absolute;
@@ -133,7 +130,6 @@ const css = `
     z-index: 20;
   }
 
-  /* Right-side fade into bg */
   .o2-hero-img::after {
     content: "";
     position: absolute;
@@ -147,6 +143,7 @@ const css = `
     position: absolute;
     inset: 0;
     z-index: 1;
+    will-change: transform, opacity;
   }
   .o2-hero-img-inner img {
     width: 100%;
@@ -154,63 +151,43 @@ const css = `
     object-fit: cover;
     object-position: center top;
     display: block;
+    backface-visibility: hidden;
   }
 
-  /* ═══════════════════════════════════════════
-     MANUAL BLIND — single solid white panel
-     Starts fully covering the image.
-     GSAP slides it upward (scaleY 1→0, origin: bottom)
-     like pulling a real manual roller blind up.
-  ═══════════════════════════════════════════ */
-  .o2-blind {
+  /* ── Sliding DOORS — no center seam, translateX animation ── */
+  .o2-doors {
     position: absolute;
     inset: 0;
     z-index: 10;
     pointer-events: none;
-    /* White blind face */
-    background: ${T.white};
-    transform-origin: bottom center;
-    /* Horizontal slat lines printed on the blind surface */
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 30px,
-      ${T.gray100} 30px,
-      ${T.gray100} 31px
-    );
-    /* Red bottom bar — the "pull rail" of the blind */
-    border-bottom: 4px solid ${T.red};
   }
 
-  /* Cord dots on the pull rail */
-  .o2-blind-dot {
+  .o2-door {
     position: absolute;
-    bottom: -10px;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: ${T.red};
-    z-index: 11;
-    pointer-events: none;
-    box-shadow: 0 2px 6px rgba(200,16,46,0.4);
-  }
-  .o2-blind-dot-left  { left: 20%; }
-  .o2-blind-dot-right { right: 20%; }
-
-  /* Pull cord lines */
-  .o2-blind-cord {
-    position: absolute;
+    top: 0;
     bottom: 0;
-    width: 1px;
-    background: rgba(200,16,46,0.3);
-    z-index: 9;
-    pointer-events: none;
-    transform-origin: bottom;
-    height: 0; /* animated by GSAP briefly */
+    width: 50%;
+    background: ${T.white};
+    /* no borders so no seam appears */
+    box-shadow: 0 6px 30px rgba(17,24,39,0.06);
+    will-change: transform;
   }
-  .o2-blind-cord-left  { left: calc(20% + 4px); }
-  .o2-blind-cord-right { right: calc(20% + 4px); }
+  .o2-door-left { left: 0; }
+  .o2-door-right { right: 0; }
 
-  /* Colour badge */
+  .o2-door-handle {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 8px;
+    height: 28px;
+    background: ${T.gray200};
+    border-radius: 3px;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 6px rgba(17,24,39,0.06);
+    opacity: 0.9;
+  }
+
   .o2-colour-badge {
     position: absolute;
     bottom: 40px;
@@ -243,471 +220,80 @@ const css = `
     color: ${T.gray900};
   }
 
-  /* ── TEXT PANEL ── */
-  .o2-hero-txt {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 80px 72px 80px 64px;
-    position: relative;
-    z-index: 1;
-  }
+  /* rest of styles unchanged (text, sizes, specs, etc.) */
+  .o2-hero-txt { display:flex; flex-direction:column; justify-content:center; padding:80px 72px 80px 64px; position:relative; z-index:1; }
+  .o2-eyebrow { font-size:10px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:${T.red}; margin-bottom:24px; display:flex; align-items:center; gap:12px; opacity:0; }
+  .o2-eyebrow::before { content:""; width:28px; height:1.5px; background:${T.red}; flex-shrink:0; }
+  .o2-h1 { font-family:'Bebas Neue', sans-serif; font-size:clamp(110px,13vw,170px); line-height:0.85; color:${T.gray900}; letter-spacing:0.01em; margin-bottom:0; opacity:0; }
+  .o2-h1-accent { font-family:'Bebas Neue', sans-serif; font-size:clamp(110px,13vw,170px); line-height:0.85; color:transparent; -webkit-text-stroke:1.5px ${T.red}; margin-bottom:40px; opacity:0; }
+  .o2-rule { width:48px; height:1px; background:${T.gray200}; margin-bottom:36px; opacity:0; }
+  .o2-tagline { font-size:clamp(15px,1.8vw,18px); font-weight:300; color:${T.gray600}; line-height:1.65; max-width:500px; margin-bottom:52px; opacity:0; }
+  .o2-dims { display:flex; gap:0; margin-bottom:52px; border:1px solid ${T.borderMd}; border-radius:8px; overflow:hidden; max-width:280px; opacity:0; }
+  .o2-dim { flex:1; padding:18px 24px; border-right:1px solid ${T.border}; background:${T.surface}; } .o2-dim:last-child{ border-right:none; }
+  .o2-dim-k{ font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:${T.red}; margin-bottom:6px; }
+  .o2-dim-v{ font-size:26px; font-weight:600; color:${T.gray900}; line-height:1; letter-spacing:-0.01em; }
+  .o2-hero-actions{ display:flex; align-items:center; gap:20px; opacity:0; }
+  .o2-btn-primary{ padding:15px 30px; background:${T.red}; color:#fff; font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; border-radius:3px; border:none; display:inline-flex; gap:10px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:background .22s, transform .18s; }
+  .o2-btn-primary:hover{ background:${T.red2}; transform:translateY(-1px); }
+  .o2-btn-ghost{ padding:14px 28px; background:transparent; color:${T.gray600}; font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; border-radius:3px; border:1px solid ${T.borderMd}; display:inline-flex; gap:10px; cursor:pointer; transition:all .22s; }
+  .o2-btn-ghost:hover{ background:${T.gray50}; color:${T.gray900}; border-color:${T.gray200}; }
 
-  .o2-eyebrow {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: ${T.red};
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-  }
-  .o2-eyebrow::before {
-    content: "";
-    width: 28px; height: 1.5px;
-    background: ${T.red};
-    flex-shrink: 0;
-  }
+  .o2-ticker-wrap{ position:relative; z-index:1; overflow:hidden; border-top:1px solid ${T.border}; border-bottom:1px solid ${T.border}; background:${T.red}; padding:12px 0; }
+  .o2-ticker-track{ display:flex; width:max-content; animation:o2-ticker 22s linear infinite; will-change:transform; }
+  .o2-ticker-item{ font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.2em; color:rgba(255,255,255,0.9); padding:0 32px; white-space:nowrap; display:flex; align-items:center; gap:32px; }
+  .o2-ticker-dot{ width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,0.5); flex-shrink:0; }
+  @keyframes o2-ticker{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
 
-  .o2-h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(110px, 13vw, 170px);
-    line-height: 0.85;
-    color: ${T.gray900};
-    letter-spacing: 0.01em;
-    margin-bottom: 0;
-    opacity: 0;
-  }
-  .o2-h1-accent {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(110px, 13vw, 170px);
-    line-height: 0.85;
-    color: transparent;
-    -webkit-text-stroke: 1.5px ${T.red};
-    letter-spacing: 0.01em;
-    margin-bottom: 40px;
-    opacity: 0;
-  }
+  .o2-body{ position:relative; z-index:1; }
+  .o2-body-inner{ max-width:1360px; margin:0 auto; padding:110px 64px 130px; display:grid; grid-template-columns:1fr 1.45fr; gap:100px; align-items:start; }
 
-  .o2-rule {
-    width: 48px; height: 1px;
-    background: ${T.gray200};
-    margin-bottom: 36px;
-    opacity: 0;
-  }
+  .o2-section-label{ font-size:9px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:${T.red}; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+  .o2-section-label::before{ content:""; width:18px; height:1.5px; background:${T.red}; flex-shrink:0; }
 
-  .o2-tagline {
-    font-size: clamp(15px, 1.8vw, 18px);
-    font-weight: 300;
-    color: ${T.gray600};
-    line-height: 1.65;
-    max-width: 500px;
-    margin-bottom: 52px;
-    opacity: 0;
-  }
+  .o2-sizes{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:52px; }
+  .o2-size-btn{ padding:16px; font-size:13px; font-weight:500; letter-spacing:0.06em; color:${T.gray600}; background:${T.surface}; border:1px solid ${T.border}; border-radius:5px; text-align:center; transition:all .2s; cursor:default; font-family:'DM Sans',sans-serif; }
+  .o2-size-btn:hover{ background:${T.gray50}; border-color:${T.borderMd}; color:${T.gray900}; }
 
-  .o2-dims {
-    display: flex;
-    gap: 0;
-    margin-bottom: 52px;
-    border: 1px solid ${T.borderMd};
-    border-radius: 8px;
-    overflow: hidden;
-    max-width: 280px;
-    opacity: 0;
-  }
-  .o2-dim {
-    flex: 1;
-    padding: 18px 24px;
-    border-right: 1px solid ${T.border};
-    background: ${T.surface};
-  }
-  .o2-dim:last-child { border-right: none; }
-  .o2-dim-k {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: ${T.red};
-    margin-bottom: 6px;
-  }
-  .o2-dim-v {
-    font-size: 26px;
-    font-weight: 600;
-    color: ${T.gray900};
-    line-height: 1;
-    letter-spacing: -0.01em;
-  }
+  .o2-specs-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .o2-specs-count{ font-size:10px; font-weight:700; color:${T.red}; background:rgba(200,16,46,0.08); border:1px solid rgba(200,16,46,0.14); border-radius:20px; padding:4px 12px; letter-spacing:0.08em; }
+  .o2-specs-grid{ display:flex; flex-direction:column; gap:5px; }
+  .o2-spec-card{ display:flex; align-items:center; gap:14px; background:${T.surface}; border:1px solid ${T.border}; border-radius:8px; padding:13px 16px; transition:background .2s, border-color .2s, transform .2s; position:relative; overflow:hidden; cursor:default; }
+  .o2-spec-card::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:${T.red}; opacity:0; transition:opacity .2s; }
+  .o2-spec-card:hover{ background:${T.gray50}; border-color:${T.borderMd}; transform:translateX(3px); }
+  .o2-spec-card:hover::before{ opacity:1; }
+  .o2-spec-icon{ width:38px; height:38px; border-radius:8px; background:rgba(200,16,46,0.06); border:1px solid rgba(200,16,46,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .o2-spec-body{ flex:1; min-width:0; }
+  .o2-spec-label{ font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:${T.gray400}; margin-bottom:3px; }
+  .o2-spec-value{ font-size:13px; font-weight:600; color:${T.gray900}; letter-spacing:-0.01em; }
+  .o2-spec-note{ font-size:10px; font-weight:500; color:${T.gray400}; letter-spacing:0.06em; text-align:right; flex-shrink:0; white-space:nowrap; }
 
-  .o2-hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    opacity: 0;
-  }
-  .o2-btn-primary {
-    padding: 15px 30px;
-    background: ${T.red};
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-radius: 3px;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: background 0.22s, transform 0.18s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .o2-btn-primary:hover { background: ${T.red2}; transform: translateY(-1px); }
-  .o2-btn-ghost {
-    padding: 14px 28px;
-    background: transparent;
-    color: ${T.gray600};
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-radius: 3px;
-    border: 1px solid ${T.borderMd};
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: all 0.22s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .o2-btn-ghost:hover {
-    background: ${T.gray50};
-    color: ${T.gray900};
-    border-color: ${T.gray200};
-  }
+  .o2-h2{ font-family:'Bebas Neue',sans-serif; font-size:clamp(58px,6.5vw,88px); line-height:0.88; color:${T.gray900}; margin-bottom:32px; letter-spacing:0.01em; }
+  .o2-h2 span{ color:transparent; -webkit-text-stroke:1.5px ${T.red}; }
+  .o2-right-sub{ font-size:clamp(15px,1.7vw,17px); font-weight:300; color:${T.gray600}; line-height:1.7; max-width:580px; margin-bottom:60px; }
 
-  /* ── TICKER ── */
-  .o2-ticker-wrap {
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-    border-top: 1px solid ${T.border};
-    border-bottom: 1px solid ${T.border};
-    background: ${T.red};
-    padding: 12px 0;
-  }
-  .o2-ticker-track {
-    display: flex;
-    width: max-content;
-    animation: o2-ticker 22s linear infinite;
-    will-change: transform;
-  }
-  .o2-ticker-item {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.2em;
-    color: rgba(255,255,255,0.9);
-    padding: 0 32px;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 32px;
-  }
-  .o2-ticker-dot {
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    flex-shrink: 0;
-  }
-  @keyframes o2-ticker {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+  .o2-feats{ margin-bottom:68px; }
+  .o2-feat{ display:grid; grid-template-columns:44px 1fr; gap:24px; padding:28px 0; border-bottom:1px solid ${T.border}; align-items:start; position:relative; overflow:hidden; cursor:default; }
+  .o2-feat:first-child{ border-top:1px solid ${T.border}; }
+  .o2-feat::before{ content:""; position:absolute; top:0; left:-100%; width:100%; height:100%; background:rgba(200,16,46,0.03); transition:left .4s ease; pointer-events:none; }
+  .o2-feat:hover::before{ left:0; }
+  .o2-feat-num{ font-family:'Bebas Neue',sans-serif; font-size:28px; color:${T.red}; line-height:1; padding-top:2px; opacity:0.6; }
+  .o2-feat-title{ font-size:14px; font-weight:700; color:${T.gray900}; margin-bottom:7px; letter-spacing:-0.01em; }
+  .o2-feat-desc{ font-size:13px; font-weight:300; color:${T.gray600}; line-height:1.65; }
 
-  /* ── BODY ── */
-  .o2-body { position: relative; z-index: 1; }
-  .o2-body-inner {
-    max-width: 1360px;
-    margin: 0 auto;
-    padding: 110px 64px 130px;
-    display: grid;
-    grid-template-columns: 1fr 1.45fr;
-    gap: 100px;
-    align-items: start;
-  }
+  .o2-cta{ border:1px solid ${T.borderMd}; border-radius:8px; padding:44px; background:${T.surface}; position:relative; overflow:hidden; }
+  .o2-cta::before{ content:""; position:absolute; top:0; left:0; bottom:0; width:3px; background:${T.red}; }
+  .o2-cta-overline{ font-size:9px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:${T.red}; margin-bottom:16px; }
+  .o2-cta-heading{ font-family:'Bebas Neue',sans-serif; font-size:38px; color:${T.gray900}; line-height:1.1; margin-bottom:12px; letter-spacing:0.03em; }
+  .o2-cta-sub{ font-size:13px; font-weight:300; color:${T.gray600}; line-height:1.7; margin-bottom:30px; max-width:380px; }
+  .o2-cta-actions{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .o2-cta-link{ font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:${T.gray400}; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:color .2s; border-bottom:1px solid transparent; }
+  .o2-cta-link:hover{ color:${T.gray900}; border-color:${T.gray200}; }
 
-  .o2-section-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: ${T.red};
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .o2-section-label::before {
-    content: "";
-    width: 18px; height: 1.5px;
-    background: ${T.red};
-    flex-shrink: 0;
-  }
-
-  /* Sizes */
-  .o2-sizes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 52px;
-  }
-  .o2-size-btn {
-    padding: 16px;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: ${T.gray600};
-    background: ${T.surface};
-    border: 1px solid ${T.border};
-    border-radius: 5px;
-    text-align: center;
-    transition: all 0.2s;
-    cursor: default;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .o2-size-btn:hover {
-    background: ${T.gray50};
-    border-color: ${T.borderMd};
-    color: ${T.gray900};
-  }
-
-  /* Spec cards */
-  .o2-specs-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .o2-specs-count {
-    font-size: 10px;
-    font-weight: 700;
-    color: ${T.red};
-    background: rgba(200,16,46,0.08);
-    border: 1px solid rgba(200,16,46,0.14);
-    border-radius: 20px;
-    padding: 4px 12px;
-    letter-spacing: 0.08em;
-  }
-  .o2-specs-grid { display: flex; flex-direction: column; gap: 5px; }
-  .o2-spec-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: ${T.surface};
-    border: 1px solid ${T.border};
-    border-radius: 8px;
-    padding: 13px 16px;
-    transition: background 0.2s, border-color 0.2s, transform 0.2s;
-    position: relative;
-    overflow: hidden;
-    cursor: default;
-  }
-  .o2-spec-card::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: ${T.red};
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .o2-spec-card:hover {
-    background: ${T.gray50};
-    border-color: ${T.borderMd};
-    transform: translateX(3px);
-  }
-  .o2-spec-card:hover::before { opacity: 1; }
-  .o2-spec-icon {
-    width: 38px; height: 38px;
-    border-radius: 8px;
-    background: rgba(200,16,46,0.06);
-    border: 1px solid rgba(200,16,46,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .o2-spec-body { flex: 1; min-width: 0; }
-  .o2-spec-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: ${T.gray400};
-    margin-bottom: 3px;
-  }
-  .o2-spec-value {
-    font-size: 13px;
-    font-weight: 600;
-    color: ${T.gray900};
-    letter-spacing: -0.01em;
-  }
-  .o2-spec-note {
-    font-size: 10px;
-    font-weight: 500;
-    color: ${T.gray400};
-    letter-spacing: 0.06em;
-    text-align: right;
-    flex-shrink: 0;
-    white-space: nowrap;
-  }
-
-  /* Right column */
-  .o2-h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(58px, 6.5vw, 88px);
-    line-height: 0.88;
-    color: ${T.gray900};
-    margin-bottom: 32px;
-    letter-spacing: 0.01em;
-  }
-  .o2-h2 span {
-    color: transparent;
-    -webkit-text-stroke: 1.5px ${T.red};
-  }
-  .o2-right-sub {
-    font-size: clamp(15px, 1.7vw, 17px);
-    font-weight: 300;
-    color: ${T.gray600};
-    line-height: 1.7;
-    max-width: 580px;
-    margin-bottom: 60px;
-  }
-
-  .o2-feats { margin-bottom: 68px; }
-  .o2-feat {
-    display: grid;
-    grid-template-columns: 44px 1fr;
-    gap: 24px;
-    padding: 28px 0;
-    border-bottom: 1px solid ${T.border};
-    align-items: start;
-    position: relative;
-    overflow: hidden;
-    cursor: default;
-  }
-  .o2-feat:first-child { border-top: 1px solid ${T.border}; }
-  .o2-feat::before {
-    content: "";
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: rgba(200,16,46,0.03);
-    transition: left 0.4s ease;
-    pointer-events: none;
-  }
-  .o2-feat:hover::before { left: 0; }
-  .o2-feat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    color: ${T.red};
-    line-height: 1;
-    padding-top: 2px;
-    opacity: 0.6;
-  }
-  .o2-feat-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: ${T.gray900};
-    margin-bottom: 7px;
-    letter-spacing: -0.01em;
-  }
-  .o2-feat-desc {
-    font-size: 13px;
-    font-weight: 300;
-    color: ${T.gray600};
-    line-height: 1.65;
-  }
-
-  /* CTA */
-  .o2-cta {
-    border: 1px solid ${T.borderMd};
-    border-radius: 8px;
-    padding: 44px;
-    background: ${T.surface};
-    position: relative;
-    overflow: hidden;
-  }
-  .o2-cta::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 3px;
-    background: ${T.red};
-  }
-  .o2-cta-overline {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: ${T.red};
-    margin-bottom: 16px;
-  }
-  .o2-cta-heading {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 38px;
-    color: ${T.gray900};
-    line-height: 1.1;
-    margin-bottom: 12px;
-    letter-spacing: 0.03em;
-  }
-  .o2-cta-sub {
-    font-size: 13px;
-    font-weight: 300;
-    color: ${T.gray600};
-    line-height: 1.7;
-    margin-bottom: 30px;
-    max-width: 380px;
-  }
-  .o2-cta-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .o2-cta-link {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: ${T.gray400};
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.2s;
-    border-bottom: 1px solid transparent;
-  }
-  .o2-cta-link:hover {
-    color: ${T.gray900};
-    border-color: ${T.gray200};
-  }
-
-  /* ── RESPONSIVE ── */
   @media (max-width: 1000px) {
     .o2-hero { grid-template-columns: 1fr; }
     .o2-hero-img { height: 55vw; min-height: 320px; }
     .o2-hero-txt { padding: 52px 32px; }
-    .o2-body-inner {
-      grid-template-columns: 1fr;
-      gap: 60px;
-      padding: 72px 28px 80px;
-    }
+    .o2-body-inner { grid-template-columns: 1fr; gap: 60px; padding: 72px 28px 80px; }
     .o2-h1, .o2-h1-accent { font-size: clamp(80px, 18vw, 130px); }
   }
 `;
@@ -733,12 +319,11 @@ const ICONS: Record<string, React.ReactNode> = {
    COMPONENT
 ───────────────────────────────────────────── */
 export default function Osaka2Page() {
-  const blindRef   = useRef<HTMLDivElement>(null);
-  const cordLRef   = useRef<HTMLDivElement>(null);
-  const cordRRef   = useRef<HTMLDivElement>(null);
-  const badgeRef   = useRef<HTMLDivElement>(null);
-  const heroRef    = useRef<HTMLDivElement>(null);
-  const gsapLoaded = useRef(false);
+  const leftDoorRef  = useRef<HTMLDivElement>(null);
+  const rightDoorRef = useRef<HTMLDivElement>(null);
+  const badgeRef     = useRef<HTMLDivElement>(null);
+  const heroRef      = useRef<HTMLDivElement>(null);
+  const gsapLoaded   = useRef(false);
 
   useEffect(() => {
     if (gsapLoaded.current) return;
@@ -749,12 +334,11 @@ export default function Osaka2Page() {
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
 
-      const hero  = heroRef.current;
-      const blind = blindRef.current;
-      const cordL = cordLRef.current;
-      const cordR = cordRRef.current;
-      const badge = badgeRef.current;
-      if (!hero || !blind) return;
+      const hero    = heroRef.current;
+      const left    = leftDoorRef.current;
+      const right   = rightDoorRef.current;
+      const badge   = badgeRef.current;
+      if (!hero || !left || !right) return;
 
       const eyebrow  = hero.querySelector(".o2-eyebrow");
       const h1       = hero.querySelector(".o2-h1");
@@ -767,50 +351,32 @@ export default function Osaka2Page() {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      /* 0. Image fades in beneath the blind */
-      tl.fromTo(imgInner,
-        { scale: 1.04, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.5 },
+      /* 0. Warm-up image while doors are closed */
+      tl.fromTo(
+        imgInner,
+        { scale: 1.06, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.55 },
         0
       );
 
-      /* 1. Cord lines drop briefly — signals blind is about to move */
-      tl.to([cordL, cordR], {
-        height: 44,
-        duration: 0.3,
-        ease: "power1.out",
-      }, 0.25);
+      /* 1. Sliding doors open simultaneously (no seam, pure translate) */
+      // left slides left (-100% of its own width), right slides right (+100%)
+      tl.to(left, { xPercent: -100, duration: 0.8, ease: "power2.inOut" }, 0.28);
+      tl.to(right, { xPercent: 100, duration: 0.8, ease: "power2.inOut" }, 0.28);
 
-      /* 2. ─── BLIND SLIDES UP — bottom to top ───
-             scaleY from 1→0, transform-origin: bottom center
-             The blind "rolls up" like a real manual blind being pulled */
-      tl.to(blind, {
-        scaleY: 0,
-        duration: 1.05,
-        ease: "power2.inOut",
-        transformOrigin: "bottom center",
-      }, 0.5);
-
-      /* 3. Cords retract as blind rises */
-      tl.to([cordL, cordR], {
-        height: 0,
-        duration: 0.5,
-        ease: "power2.in",
-      }, 0.6);
-
-      /* 4. Elegant White badge */
+      /* 2. Badge slides in after doors moving */
       tl.fromTo(badge,
         { y: 14, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.55 },
-        1.25
+        { y: 0, opacity: 1, duration: 0.45 },
+        0.95
       );
 
-      /* 5. Text cascade */
+      /* 3. Text cascade */
       tl.fromTo(
         [eyebrow, h1, h1acc, rule, tagline, dims, actions],
         { y: 32, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, stagger: 0.08 },
-        0.68
+        0.8
       );
 
       /* ── SCROLL ANIMATIONS ── */
@@ -864,16 +430,15 @@ export default function Osaka2Page() {
             />
           </div>
 
-          {/* ── THE BLIND ── */}
-          <div className="o2-blind" ref={blindRef} />
-
-          {/* Pull cord dots */}
-          <div className="o2-blind-dot o2-blind-dot-left" />
-          <div className="o2-blind-dot o2-blind-dot-right" />
-
-          {/* Cord lines */}
-          <div className="o2-blind-cord o2-blind-cord-left"  ref={cordLRef} />
-          <div className="o2-blind-cord o2-blind-cord-right" ref={cordRRef} />
+          {/* ── Sliding DOORS (no seam) ── */}
+          <div className="o2-doors" aria-hidden>
+            <div className="o2-door o2-door-left" ref={leftDoorRef}>
+              <div className="o2-door-handle" style={{ left: "75%", transform: "translateX(-50%)" }} />
+            </div>
+            <div className="o2-door o2-door-right" ref={rightDoorRef}>
+              <div className="o2-door-handle" style={{ left: "25%", transform: "translateX(-50%)" }} />
+            </div>
+          </div>
 
           {/* Elegant White badge */}
           <div className="o2-colour-badge" ref={badgeRef}>
