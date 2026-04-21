@@ -39,10 +39,10 @@ const product = {
     { label: "Cooling",        value: "Remote",                     note: "External condenser" },
     { label: "Lighting",       value: "LED canopy",                 note: "Low energy" },
     { label: "Doors",          value: "Hinged dual-glass",          note: "Double-glazed" },
-    { label: "Controller",     value: "Electronic + EPOS",          note: "Smart control" },
+    { label: "Controller",     value: "Electronic ",          note: "Smart control" },
     { label: "Pipework",       value: "Top entry",                  note: "Clean install" },
-    { label: "Shelving",       value: "Base + 5 × 450 mm",          note: "Adjustable levels" },
-    { label: "Solenoid Valve", value: "Not required",               note: "Simplified system" },
+    { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS",          note: "Adjustable levels" },
+    { label: "Solenoid Valve", value: "Not included",               note: "Simplified system" },
   ],
   features: [
     { num: "01", title: "Precision Temperature", desc: "Maintains +1 to +4 °C with uniform consistency across every shelf level, regardless of ambient conditions." },
@@ -640,7 +640,7 @@ export default function Osaka2Page() {
           <span className="p2-label">{product.range}</span>
 
           <div className="p2-h1">Osaka</div>
-          <div className="p2-h1-sub">Two.</div>
+          <div className="p2-h1-sub">2.</div>
 
           <div className="p2-rule" />
 
@@ -663,13 +663,6 @@ export default function Osaka2Page() {
               Request a Quote
             </a>
             
-              <a href={product.cataloguePdf}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p2-btn-text"
-            >
-              Download Catalogue →
-            </a>
           </div>
         </div>
       </section>
