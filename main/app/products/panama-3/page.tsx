@@ -42,7 +42,7 @@ const product = {
   name:     "Panama 3",
   range:    "Remote Multideck",
   colour:   "Anthracite Grey",
-  image:    "/pro3.png",
+  image:    "/pro1.png",
   cataloguePdf: "/catalogues/panama3.pdf",
   sizes:    ["1250mm", "1875mm", "2500mm", "3750mm"],
   dimensions: { Height: "203 cm", Depth: "75 cm" },
@@ -69,7 +69,7 @@ const product = {
 };
 
 /* ─────────────────────────────────────────────
-   BLIND SLAT COUNT
+   BLIND SLAT COUNT (kept for compatibility but slats replaced by overlay)
 ───────────────────────────────────────────── */
 const SLAT_COUNT = 14;
 
@@ -165,45 +165,20 @@ const css = `
     pointer-events: none;
   }
 
-  /* ─── BLIND SLATS OVERLAY ─── */
+  /* ─── BLIND (single overlay) ─── */
   .p3-blind {
     position: absolute;
     inset: 0;
     z-index: 10;
-    display: flex;
-    flex-direction: column;
     pointer-events: none;
+    overflow: hidden;
   }
-  .p3-slat {
-    flex: 1;
-    background: ${T.anthracite};
-    transform-origin: top center;
-    transform: scaleY(1);
-    /* Each slat will be animated via GSAP */
-  }
-  /* Slat separator lines — gives venetian blind feel */
-  .p3-slat::after {
-    content: "";
+  .p3-blind-overlay {
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 1px;
-    background: rgba(0,0,0,0.3);
+    inset: 0;
+    background: ${T.anthracite}; /* solid cover identical to background */
+    will-change: transform;
   }
-  .p3-slat { position: relative; }
-
-  /* Blind cord decorative lines */
-  .p3-blind-cord {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, rgba(200,16,46,0.6), rgba(200,16,46,0.1));
-    z-index: 11;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s;
-  }
-  .p3-blind-cord-left  { left: 15%; }
-  .p3-blind-cord-right { right: 15%; }
 
   /* ─── TEXT PANEL ─── */
   .p3-hero-txt {
@@ -801,8 +776,7 @@ export default function Panama3Page() {
       const hero = heroRef.current;
       if (!hero) return;
 
-      const slats   = blindRef.current?.querySelectorAll(".p3-slat");
-      const cords   = hero.querySelectorAll(".p3-blind-cord");
+      const blindEl = blindRef.current; // whole blind container (single overlay inside)
       const badge   = badgeRef.current;
       const eyebrow = hero.querySelector(".p3-eyebrow");
       const h1      = hero.querySelector(".p3-h1");
@@ -815,54 +789,47 @@ export default function Panama3Page() {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      /* 1. Image zooms in subtly */
-      tl.fromTo(imgEl, { scale: 1.06, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6 }, 0);
+      // 1) Image slides up subtly while fading/zooming in
+      tl.fromTo(
+        imgEl,
+        { y: 40, scale: 1.06, opacity: 0 },
+        { y: 0, scale: 1, opacity: 1, duration: 0.65 },
+        0
+      );
 
-      /* 2. Cords flash in briefly (venetian blind cue) */
-      tl.to(cords, { opacity: 1, duration: 0.25 }, 0.3);
-
-      /* 3. BLIND OPENS: slats collapse upward like venetian blinds
-            Each slat scaleY goes from 1 → 0 (folding up),
-            staggered from top to bottom */
-      if (slats && slats.length) {
-        tl.to(slats,
-          {
-            scaleY: 0,
-            duration: 0.55,
-            stagger: {
-              each: 0.048,
-              from: "start",
-            },
-            ease: "power2.inOut",
-            transformOrigin: "top center",
-          },
-          0.5
+      // 2) Move the whole blind container up as a single piece to reveal the image
+      if (blindEl) {
+        tl.fromTo(
+          blindEl,
+          { y: "0%" },
+          { y: "-100%", duration: 0.75, ease: "power2.inOut" },
+          0.35
         );
       }
 
-      /* 4. Cords fade out after blind opens */
-      tl.to(cords, { opacity: 0, duration: 0.3 }, 1.3);
-
-      /* 5. Badge slides up */
-      tl.fromTo(badge,
+      // 3) Badge slides up
+      tl.fromTo(
+        badge,
         { y: 14, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.55 },
-        1.2
+        { y: 0, opacity: 1, duration: 0.45 },
+        1.1
       );
 
-      /* 6. Text stagger */
+      // 4) Text stagger reveal
       tl.fromTo(
         [eyebrow, h1, h1acc, rule, tagline, dims, actions],
         { y: 36, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, stagger: 0.085 },
-        0.65
+        0.85
       );
 
-      /* ── Spec cards: scroll reveal ── */
-      gsap.fromTo(".p3-spec-card",
+      /* Scroll-triggered reveals */
+      gsap.fromTo(
+        ".p3-spec-card",
         { x: -24, opacity: 0 },
         {
-          x: 0, opacity: 1,
+          x: 0,
+          opacity: 1,
           duration: 0.55,
           stagger: 0.055,
           ease: "power2.out",
@@ -870,11 +837,12 @@ export default function Panama3Page() {
         }
       );
 
-      /* ── Size buttons ── */
-      gsap.fromTo(".p3-size-btn",
+      gsap.fromTo(
+        ".p3-size-btn",
         { scaleY: 0, opacity: 0, transformOrigin: "top" },
         {
-          scaleY: 1, opacity: 1,
+          scaleY: 1,
+          opacity: 1,
           duration: 0.4,
           stagger: 0.08,
           ease: "power2.out",
@@ -882,11 +850,12 @@ export default function Panama3Page() {
         }
       );
 
-      /* ── Feature rows ── */
-      gsap.fromTo(".p3-feat",
+      gsap.fromTo(
+        ".p3-feat",
         { x: 30, opacity: 0 },
         {
-          x: 0, opacity: 1,
+          x: 0,
+          opacity: 1,
           duration: 0.6,
           stagger: 0.1,
           ease: "power2.out",
@@ -894,22 +863,25 @@ export default function Panama3Page() {
         }
       );
 
-      /* ── h2 reveal ── */
-      gsap.fromTo(".p3-h2",
+      gsap.fromTo(
+        ".p3-h2",
         { y: 40, opacity: 0 },
         {
-          y: 0, opacity: 1,
+          y: 0,
+          opacity: 1,
           duration: 0.8,
           ease: "power3.out",
           scrollTrigger: { trigger: ".p3-h2", start: "top 85%" },
         }
       );
 
-      /* ── CTA card ── */
-      gsap.fromTo(".p3-cta",
+      gsap.fromTo(
+        ".p3-cta",
         { y: 30, opacity: 0, scale: 0.97 },
         {
-          y: 0, opacity: 1, scale: 1,
+          y: 0,
+          opacity: 1,
+          scale: 1,
           duration: 0.75,
           ease: "power3.out",
           scrollTrigger: { trigger: ".p3-cta", start: "top 85%" },
@@ -931,7 +903,7 @@ export default function Panama3Page() {
         <div className="p3-hero-img">
           <div className="p3-hero-img-topline" />
 
-          {/* Actual image beneath blind */}
+          {/* Actual image beneath overlay */}
           <div className="p3-hero-img-actual">
             <Image
               src={product.image}
@@ -946,16 +918,10 @@ export default function Panama3Page() {
           {/* Right-edge fade */}
           <div className="p3-hero-img-fade" />
 
-          {/* Venetian blind slats */}
+          {/* Single solid overlay (replaces slats) */}
           <div className="p3-blind" ref={blindRef}>
-            {Array.from({ length: SLAT_COUNT }).map((_, i) => (
-              <div key={i} className="p3-slat" />
-            ))}
+            <div className="p3-blind-overlay" />
           </div>
-
-          {/* Decorative cord lines */}
-          <div className="p3-blind-cord p3-blind-cord-left" />
-          <div className="p3-blind-cord p3-blind-cord-right" />
 
           {/* Badge */}
           <div className="p3-blind-badge" ref={badgeRef}>
