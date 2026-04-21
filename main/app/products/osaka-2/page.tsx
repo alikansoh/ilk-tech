@@ -1,54 +1,721 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 import {
-  Thermometer, Snowflake, Lightbulb, DoorOpen,
-  MonitorDot, ArrowDownToLine, LayoutList, Gauge,
+  Thermometer,
+  Snowflake,
+  Lightbulb,
+  DoorOpen,
+  MonitorDot,
+  ArrowDownToLine,
+  LayoutList,
+  Gauge,
+  Wind,
+  Layers,
 } from "lucide-react";
 
+/* ─────────────────────────────────────────────
+   TOKENS — light palette (Osaka 2 colours)
+───────────────────────────────────────────── */
 const T = {
-  white:    "#FFFFFF",
-  bg:       "#F7F8FA",
-  surface:  "#FFFFFF",
-  gray50:   "#F0F2F5",
-  gray100:  "#E4E7EC",
-  gray200:  "#C9CDD6",
-  gray400:  "#8A93A3",
-  gray600:  "#4B5262",
-  gray900:  "#111827",
-  red:      "#C8102E",
-  red2:     "#A10A22",
-  border:   "rgba(17,24,39,0.08)",
-  borderMd: "rgba(17,24,39,0.13)",
+  bg:          "#F7F8FA",
+  surface:     "#FFFFFF",
+  gray50:      "#F0F2F5",
+  gray100:     "#E4E7EC",
+  gray200:     "#C9CDD6",
+  gray400:     "#8A93A3",
+  gray600:     "#4B5262",
+  gray900:     "#111827",
+  red:         "#C8102E",
+  red2:        "#A10A22",
+  white:       "#FFFFFF",
+  border:      "rgba(17,24,39,0.08)",
+  borderMd:    "rgba(17,24,39,0.13)",
 };
 
+/* ─────────────────────────────────────────────
+   DATA
+───────────────────────────────────────────── */
 const product = {
-  name:    "Osaka 2",
-  range:   "Remote Multideck",
-  colour:  "Elegant White",
-  image:   "/pro2.png",
+  name:     "Osaka 2",
+  range:    "Remote Multideck",
+  colour:   "Elegant White",
+  image:    "/pro2.png",
   cataloguePdf: "/catalogues/osaka2.pdf",
-  subtitle: "Consistent chilled performance in an elegant white finish — built for modern retail environments that demand both reliability and style.",
-  sizes: ["1250", "1875", "2500", "3750"],
+  sizes:    ["1250mm", "1875mm", "2500mm", "3750mm"],
+  dimensions: { Height: "203 cm", Depth: "75 cm" },
+  subtitle: "The Osaka 2 in Elegant White brings refined clarity to the chilled aisle — EC fan efficiency, dual-glass doors, and precision temperature control in one clean, authoritative package.",
   specs: [
-    { label: "Temperature",    value: "+1 to +4 °C",              note: "Chilled",        icon: "temp",  idx: "01" },
-    { label: "Cooling",        value: "Remote",                    note: "External cond.", icon: "cool",  idx: "02" },
-    { label: "Lighting",       value: "LED Canopy",                note: "Low energy",     icon: "light", idx: "03" },
-    { label: "Doors",          value: "Hinged dual-glass",         note: "Double-glazed",  icon: "door",  idx: "04" },
-    { label: "Controller",     value: "Electronic",                note: "Smart ctrl",     icon: "ctrl",  idx: "05" },
-    { label: "Pipework",       value: "Top entry",                 note: "Clean install",  icon: "pipe",  idx: "06" },
-    { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS", note: "Adj. levels",    icon: "shelf", idx: "07" },
-    { label: "Solenoid Valve", value: "Not included",              note: "Simplified",     icon: "valve", idx: "08" },
+    { label: "Temperature",    value: "+1 to +4 °C",              note: "Chilled range",      icon: "temp"  },
+    { label: "Cooling",        value: "Remote",                   note: "External condenser", icon: "cool"  },
+    { label: "Lighting",       value: "LED canopy",               note: "Low energy",         icon: "light" },
+    { label: "Doors",          value: "Hinged dual-glass",        note: "Double-glazed",      icon: "door"  },
+    { label: "Controller",     value: "Electronic",               note: "Smart control",      icon: "ctrl"  },
+    { label: "Pipework",       value: "Top entry",                note: "Clean install",      icon: "pipe"  },
+    { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS",note: "Adj. levels",        icon: "shelf" },
+    { label: "EC Fans",        value: "Low-energy",               note: "Optimised airflow",  icon: "fan"   },
+    { label: "End Walls",      value: "Solid or Mirrored",        note: "Your choice",        icon: "end"   },
+    { label: "Solenoid Valve", value: "Not included",             note: "Simplified system",  icon: "valve" },
   ],
   features: [
-    { title: "Precision Temperature", desc: "Maintains +1 to +4 °C with uniform consistency across every shelf level." },
-    { title: "Dual-Glass Doors",      desc: "Hinged double-glazed doors reduce energy loss while keeping product fully visible." },
-    { title: "LED Canopy Lighting",   desc: "Engineered LEDs cast even, flattering light across shelves at minimal running cost." },
-    { title: "Flexible Shelving",     desc: "Five adjustable 450 mm shelf levels on a robust base for any product range." },
+    { num: "01", title: "Elegant White Finish",   desc: "The crisp white powder coat brings a clean, premium feel to any retail environment — bright, approachable, designed to let your products take centre stage." },
+    { num: "02", title: "EC Fan Technology",      desc: "Low-energy electronically commutated fans deliver optimised airflow with substantially reduced running costs — a measurable upgrade over standard AC motors." },
+    { num: "03", title: "Dual-Glass Doors",       desc: "Hinged double-glazed doors minimise energy loss while keeping every product fully visible, uncompromised from every angle." },
+    { num: "04", title: "Flexible Configuration", desc: "Choice of solid or mirrored end walls, five adjustable 450 mm shelves, and EPOS rail — configure precisely for your range and space." },
   ],
 };
 
-const ICON_P = { size: 15, strokeWidth: 1.6, color: T.red } as const;
+const TICKER_ITEMS = [
+  "Elegant White",
+  "Remote Cooling",
+  "EC Fan Technology",
+  "Dual Glass Doors",
+  "+1 to +4 °C",
+  "Fast UK Delivery",
+  "Professional Installation",
+  "5 Shelf Levels",
+  "LED Canopy",
+  "Mirrored End Walls",
+];
+
+/* ─────────────────────────────────────────────
+   STYLES  — Osaka 3 layout, light colours
+───────────────────────────────────────────── */
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&display=swap');
+
+  .o2 *, .o2 *::before, .o2 *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .o2 {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: ${T.bg};
+    color: ${T.gray900};
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper texture */
+  .o2::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.018;
+    background-size: 180px 180px;
+  }
+
+  /* ── HERO ── */
+  .o2-hero {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+
+  /* ── IMAGE PANEL ── */
+  .o2-hero-img {
+    position: relative;
+    overflow: hidden;
+    background: ${T.gray100};
+  }
+
+  /* Red top accent */
+  .o2-hero-img::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: ${T.red};
+    z-index: 20;
+  }
+
+  /* Right-side fade into bg */
+  .o2-hero-img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 55%, ${T.bg} 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .o2-hero-img-inner {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .o2-hero-img-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* ═══════════════════════════════════════════
+     MANUAL BLIND — single solid white panel
+     Starts fully covering the image.
+     GSAP slides it upward (scaleY 1→0, origin: bottom)
+     like pulling a real manual roller blind up.
+  ═══════════════════════════════════════════ */
+  .o2-blind {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    /* White blind face */
+    background: ${T.white};
+    transform-origin: bottom center;
+    /* Horizontal slat lines printed on the blind surface */
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 30px,
+      ${T.gray100} 30px,
+      ${T.gray100} 31px
+    );
+    /* Red bottom bar — the "pull rail" of the blind */
+    border-bottom: 4px solid ${T.red};
+  }
+
+  /* Cord dots on the pull rail */
+  .o2-blind-dot {
+    position: absolute;
+    bottom: -10px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: ${T.red};
+    z-index: 11;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(200,16,46,0.4);
+  }
+  .o2-blind-dot-left  { left: 20%; }
+  .o2-blind-dot-right { right: 20%; }
+
+  /* Pull cord lines */
+  .o2-blind-cord {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    background: rgba(200,16,46,0.3);
+    z-index: 9;
+    pointer-events: none;
+    transform-origin: bottom;
+    height: 0; /* animated by GSAP briefly */
+  }
+  .o2-blind-cord-left  { left: calc(20% + 4px); }
+  .o2-blind-cord-right { right: calc(20% + 4px); }
+
+  /* Colour badge */
+  .o2-colour-badge {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    border: 1px solid ${T.borderMd};
+    border-radius: 40px;
+    padding: 10px 20px 10px 12px;
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .o2-colour-swatch {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: ${T.white};
+    border: 1.5px solid ${T.gray200};
+    box-shadow: inset 0 0 0 5px ${T.gray50};
+    flex-shrink: 0;
+  }
+  .o2-colour-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: ${T.gray900};
+  }
+
+  /* ── TEXT PANEL ── */
+  .o2-hero-txt {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 72px 80px 64px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .o2-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: ${T.red};
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+  }
+  .o2-eyebrow::before {
+    content: "";
+    width: 28px; height: 1.5px;
+    background: ${T.red};
+    flex-shrink: 0;
+  }
+
+  .o2-h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(110px, 13vw, 170px);
+    line-height: 0.85;
+    color: ${T.gray900};
+    letter-spacing: 0.01em;
+    margin-bottom: 0;
+    opacity: 0;
+  }
+  .o2-h1-accent {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(110px, 13vw, 170px);
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1.5px ${T.red};
+    letter-spacing: 0.01em;
+    margin-bottom: 40px;
+    opacity: 0;
+  }
+
+  .o2-rule {
+    width: 48px; height: 1px;
+    background: ${T.gray200};
+    margin-bottom: 36px;
+    opacity: 0;
+  }
+
+  .o2-tagline {
+    font-size: clamp(15px, 1.8vw, 18px);
+    font-weight: 300;
+    color: ${T.gray600};
+    line-height: 1.65;
+    max-width: 500px;
+    margin-bottom: 52px;
+    opacity: 0;
+  }
+
+  .o2-dims {
+    display: flex;
+    gap: 0;
+    margin-bottom: 52px;
+    border: 1px solid ${T.borderMd};
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 280px;
+    opacity: 0;
+  }
+  .o2-dim {
+    flex: 1;
+    padding: 18px 24px;
+    border-right: 1px solid ${T.border};
+    background: ${T.surface};
+  }
+  .o2-dim:last-child { border-right: none; }
+  .o2-dim-k {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: ${T.red};
+    margin-bottom: 6px;
+  }
+  .o2-dim-v {
+    font-size: 26px;
+    font-weight: 600;
+    color: ${T.gray900};
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .o2-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+  }
+  .o2-btn-primary {
+    padding: 15px 30px;
+    background: ${T.red};
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 3px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.22s, transform 0.18s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .o2-btn-primary:hover { background: ${T.red2}; transform: translateY(-1px); }
+  .o2-btn-ghost {
+    padding: 14px 28px;
+    background: transparent;
+    color: ${T.gray600};
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 3px;
+    border: 1px solid ${T.borderMd};
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.22s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .o2-btn-ghost:hover {
+    background: ${T.gray50};
+    color: ${T.gray900};
+    border-color: ${T.gray200};
+  }
+
+  /* ── TICKER ── */
+  .o2-ticker-wrap {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    border-top: 1px solid ${T.border};
+    border-bottom: 1px solid ${T.border};
+    background: ${T.red};
+    padding: 12px 0;
+  }
+  .o2-ticker-track {
+    display: flex;
+    width: max-content;
+    animation: o2-ticker 22s linear infinite;
+    will-change: transform;
+  }
+  .o2-ticker-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.9);
+    padding: 0 32px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .o2-ticker-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    flex-shrink: 0;
+  }
+  @keyframes o2-ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── BODY ── */
+  .o2-body { position: relative; z-index: 1; }
+  .o2-body-inner {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 110px 64px 130px;
+    display: grid;
+    grid-template-columns: 1fr 1.45fr;
+    gap: 100px;
+    align-items: start;
+  }
+
+  .o2-section-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: ${T.red};
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .o2-section-label::before {
+    content: "";
+    width: 18px; height: 1.5px;
+    background: ${T.red};
+    flex-shrink: 0;
+  }
+
+  /* Sizes */
+  .o2-sizes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 52px;
+  }
+  .o2-size-btn {
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: ${T.gray600};
+    background: ${T.surface};
+    border: 1px solid ${T.border};
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: default;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .o2-size-btn:hover {
+    background: ${T.gray50};
+    border-color: ${T.borderMd};
+    color: ${T.gray900};
+  }
+
+  /* Spec cards */
+  .o2-specs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .o2-specs-count {
+    font-size: 10px;
+    font-weight: 700;
+    color: ${T.red};
+    background: rgba(200,16,46,0.08);
+    border: 1px solid rgba(200,16,46,0.14);
+    border-radius: 20px;
+    padding: 4px 12px;
+    letter-spacing: 0.08em;
+  }
+  .o2-specs-grid { display: flex; flex-direction: column; gap: 5px; }
+  .o2-spec-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: ${T.surface};
+    border: 1px solid ${T.border};
+    border-radius: 8px;
+    padding: 13px 16px;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .o2-spec-card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: ${T.red};
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .o2-spec-card:hover {
+    background: ${T.gray50};
+    border-color: ${T.borderMd};
+    transform: translateX(3px);
+  }
+  .o2-spec-card:hover::before { opacity: 1; }
+  .o2-spec-icon {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: rgba(200,16,46,0.06);
+    border: 1px solid rgba(200,16,46,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .o2-spec-body { flex: 1; min-width: 0; }
+  .o2-spec-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: ${T.gray400};
+    margin-bottom: 3px;
+  }
+  .o2-spec-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: ${T.gray900};
+    letter-spacing: -0.01em;
+  }
+  .o2-spec-note {
+    font-size: 10px;
+    font-weight: 500;
+    color: ${T.gray400};
+    letter-spacing: 0.06em;
+    text-align: right;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Right column */
+  .o2-h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(58px, 6.5vw, 88px);
+    line-height: 0.88;
+    color: ${T.gray900};
+    margin-bottom: 32px;
+    letter-spacing: 0.01em;
+  }
+  .o2-h2 span {
+    color: transparent;
+    -webkit-text-stroke: 1.5px ${T.red};
+  }
+  .o2-right-sub {
+    font-size: clamp(15px, 1.7vw, 17px);
+    font-weight: 300;
+    color: ${T.gray600};
+    line-height: 1.7;
+    max-width: 580px;
+    margin-bottom: 60px;
+  }
+
+  .o2-feats { margin-bottom: 68px; }
+  .o2-feat {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid ${T.border};
+    align-items: start;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .o2-feat:first-child { border-top: 1px solid ${T.border}; }
+  .o2-feat::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: rgba(200,16,46,0.03);
+    transition: left 0.4s ease;
+    pointer-events: none;
+  }
+  .o2-feat:hover::before { left: 0; }
+  .o2-feat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: ${T.red};
+    line-height: 1;
+    padding-top: 2px;
+    opacity: 0.6;
+  }
+  .o2-feat-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: ${T.gray900};
+    margin-bottom: 7px;
+    letter-spacing: -0.01em;
+  }
+  .o2-feat-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: ${T.gray600};
+    line-height: 1.65;
+  }
+
+  /* CTA */
+  .o2-cta {
+    border: 1px solid ${T.borderMd};
+    border-radius: 8px;
+    padding: 44px;
+    background: ${T.surface};
+    position: relative;
+    overflow: hidden;
+  }
+  .o2-cta::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
+    background: ${T.red};
+  }
+  .o2-cta-overline {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: ${T.red};
+    margin-bottom: 16px;
+  }
+  .o2-cta-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    color: ${T.gray900};
+    line-height: 1.1;
+    margin-bottom: 12px;
+    letter-spacing: 0.03em;
+  }
+  .o2-cta-sub {
+    font-size: 13px;
+    font-weight: 300;
+    color: ${T.gray600};
+    line-height: 1.7;
+    margin-bottom: 30px;
+    max-width: 380px;
+  }
+  .o2-cta-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .o2-cta-link {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: ${T.gray400};
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+    border-bottom: 1px solid transparent;
+  }
+  .o2-cta-link:hover {
+    color: ${T.gray900};
+    border-color: ${T.gray200};
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1000px) {
+    .o2-hero { grid-template-columns: 1fr; }
+    .o2-hero-img { height: 55vw; min-height: 320px; }
+    .o2-hero-txt { padding: 52px 32px; }
+    .o2-body-inner {
+      grid-template-columns: 1fr;
+      gap: 60px;
+      padding: 72px 28px 80px;
+    }
+    .o2-h1, .o2-h1-accent { font-size: clamp(80px, 18vw, 130px); }
+  }
+`;
+
+/* ─────────────────────────────────────────────
+   ICONS
+───────────────────────────────────────────── */
+const ICON_P = { size: 17, strokeWidth: 1.5, color: T.red, "aria-hidden": true } as const;
 const ICONS: Record<string, React.ReactNode> = {
   temp:  <Thermometer     {...ICON_P} />,
   cool:  <Snowflake       {...ICON_P} />,
@@ -57,941 +724,187 @@ const ICONS: Record<string, React.ReactNode> = {
   ctrl:  <MonitorDot      {...ICON_P} />,
   pipe:  <ArrowDownToLine {...ICON_P} />,
   shelf: <LayoutList      {...ICON_P} />,
+  fan:   <Wind            {...ICON_P} />,
+  end:   <Layers          {...ICON_P} />,
   valve: <Gauge           {...ICON_P} />,
 };
 
-const css = `
-  .p *, .p *::before, .p *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  .p {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: ${T.bg};
-    color: ${T.gray900};
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ══════════════════════════════════════════
-     SECTION 1 — CINEMATIC COVER
-  ══════════════════════════════════════════ */
-  .cover {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    min-height: 600px;
-    overflow: hidden;
-    background: ${T.gray900};
-  }
-
-  .cover-img {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-  .cover-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 65% top;
-    display: block;
-    opacity: 0;
-    transform: scale(1.06);
-    transition: opacity 1.4s ease, transform 1.6s ease;
-  }
-  .cover-img img.loaded {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .cover-veil {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background:
-      linear-gradient(100deg, rgba(17,24,39,0.88) 0%, rgba(17,24,39,0.5) 55%, transparent 80%),
-      linear-gradient(0deg, rgba(17,24,39,0.7) 0%, transparent 45%);
-    pointer-events: none;
-  }
-
-  .cover::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: ${T.red};
-    z-index: 10;
-  }
-
-  .cover-vert {
-    position: absolute;
-    left: 48px;
-    top: 50%;
-    transform: translateY(-50%) rotate(-90deg);
-    transform-origin: center center;
-    z-index: 5;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    white-space: nowrap;
-    opacity: 0;
-  }
-
-  /* Main text block */
-  .cover-content {
-    position: absolute;
-    bottom: 72px;
-    left: 72px;
-    z-index: 5;
-    max-width: 640px;
-  }
-
-  .cover-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: ${T.red};
-    margin-bottom: 20px;
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  .cover-eyebrow-line {
-    width: 32px; height: 1.5px;
-    background: ${T.red};
-    flex-shrink: 0;
-  }
-
-  /* Title row: OSAKA + 2 inline */
-  .cover-title-row {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-    line-height: 0.82;
-    margin-bottom: 24px;
-  }
-  .cover-name {
-    font-size: clamp(64px, 12vw, 180px);
-    font-weight: 700;
-    line-height: 0.82;
-    color: ${T.white};
-    letter-spacing: -0.04em;
-    opacity: 0;
-    transform: translateY(40px);
-    white-space: nowrap;
-  }
-  .cover-name-sub {
-    font-size: clamp(64px, 12vw, 180px);
-    font-weight: 300;
-    font-style: italic;
-    line-height: 0.82;
-    color: ${T.red};
-    letter-spacing: -0.04em;
-    opacity: 0;
-    transform: translateY(40px);
-    white-space: nowrap;
-    margin-left: 0.12em;
-  }
-
-  .cover-tagline {
-    font-size: clamp(13px, 1.6vw, 17px);
-    font-weight: 300;
-    color: rgba(255,255,255,0.85);
-    line-height: 1.7;
-    max-width: 420px;
-    margin-bottom: 44px;
-    opacity: 0;
-    transform: translateY(24px);
-  }
-
-  .cover-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  .btn-red {
-    padding: 14px 28px;
-    background: ${T.red};
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-radius: 2px;
-    transition: background 0.22s, transform 0.18s;
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: inherit;
-    border: none; cursor: pointer;
-    white-space: nowrap;
-  }
-  .btn-red:hover { background: ${T.red2}; transform: translateY(-1px); }
-  .btn-outline-white {
-    padding: 13px 26px;
-    background: transparent;
-    color: rgba(255,255,255,0.7);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-radius: 2px;
-    border: 1px solid rgba(255,255,255,0.2);
-    transition: all 0.2s;
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: inherit; cursor: pointer;
-    white-space: nowrap;
-  }
-  .btn-outline-white:hover {
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    border-color: rgba(255,255,255,0.38);
-  }
-
-  /* Right-side vertical stats strip */
-  .cover-stats {
-    position: absolute;
-    right: 52px;
-    top: 50%;
-    transform: translateY(calc(-50% + 20px));
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 4px;
-    overflow: hidden;
-    backdrop-filter: blur(12px);
-    background: rgba(17,24,39,0.4);
-    opacity: 0;
-  }
-  .cover-stat {
-    padding: 20px 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    min-width: 140px;
-    position: relative;
-  }
-  .cover-stat::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 20%; bottom: 20%;
-    width: 2px;
-    background: ${T.red};
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .cover-stat:hover::before { opacity: 1; }
-  .cover-stat:last-child { border-bottom: none; }
-  .cover-stat-val {
-    font-size: 20px;
-    font-weight: 700;
-    color: ${T.white};
-    letter-spacing: -0.02em;
-    line-height: 1;
-    margin-bottom: 5px;
-  }
-  .cover-stat-lbl {
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-  }
-
-  /* Scroll indicator */
-  .cover-scroll {
-    position: absolute;
-    bottom: 40px;
-    right: 52px;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-  }
-  .cover-scroll-line {
-    width: 1px;
-    height: 48px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.4; transform: scaleY(1); }
-    50%       { opacity: 1;   transform: scaleY(0.7) translateY(8px); }
-  }
-
-  /* ══════════════════════════════════════════
-     SECTION 2 — SIZES BAND
-  ══════════════════════════════════════════ */
-  .sizes-band {
-    background: ${T.surface};
-    border-top: 1px solid ${T.border};
-    border-bottom: 1px solid ${T.border};
-    padding: 0;
-    overflow: hidden;
-    position: relative;
-  }
-  .sizes-band-inner {
-    display: flex;
-    align-items: stretch;
-  }
-  .sizes-label {
-    flex-shrink: 0;
-    padding: 0 32px;
-    background: ${T.red};
-    display: flex;
-    align-items: center;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.9);
-    white-space: nowrap;
-    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%);
-    padding-right: 48px;
-  }
-  .sizes-pills {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    flex: 1;
-    overflow: hidden;
-  }
-  .size-pill {
-    flex: 1;
-    padding: 24px 12px;
-    text-align: center;
-    border-right: 1px solid ${T.border};
-    position: relative;
-    cursor: default;
-    overflow: hidden;
-    transition: background 0.2s;
-    min-width: 0;
-  }
-  .size-pill:last-child { border-right: none; }
-  .size-pill::before {
-    content: "";
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2.5px;
-    background: ${T.red};
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
-  .size-pill:hover { background: ${T.gray50}; }
-  .size-pill:hover::before { transform: scaleX(1); }
-  .size-pill-val {
-    font-size: clamp(16px, 3vw, 22px);
-    font-weight: 700;
-    color: ${T.gray900};
-    letter-spacing: -0.02em;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .size-pill-unit {
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: ${T.gray400};
-  }
-
-  /* ══════════════════════════════════════════
-     SECTION 3 — SPECS MANIFEST
-  ══════════════════════════════════════════ */
-  .manifest {
-    padding: 110px 72px;
-    background: ${T.bg};
-    position: relative;
-    overflow: hidden;
-  }
-  .manifest-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 340px 1fr;
-    gap: 96px;
-    align-items: start;
-  }
-  .manifest-head {
-    position: sticky;
-    top: 40px;
-  }
-  .manifest-eyebrow {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: ${T.red};
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  .manifest-eyebrow::before {
-    content: "";
-    width: 20px; height: 1.5px;
-    background: ${T.red};
-    flex-shrink: 0;
-  }
-  .manifest-title {
-    font-size: clamp(36px, 5vw, 64px);
-    font-weight: 700;
-    line-height: 0.92;
-    letter-spacing: -0.035em;
-    color: ${T.gray900};
-    margin-bottom: 28px;
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  .manifest-title em {
-    font-style: italic;
-    font-weight: 300;
-    color: ${T.red};
-  }
-  .manifest-rule {
-    width: 36px; height: 2px;
-    background: ${T.red};
-    margin-bottom: 28px;
-    opacity: 0;
-  }
-  .manifest-sub {
-    font-size: 14px;
-    font-weight: 400;
-    color: ${T.gray600};
-    line-height: 1.75;
-    margin-bottom: 44px;
-    opacity: 0;
-    transform: translateX(-16px);
-  }
-  .manifest-cta-inline {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: ${T.gray900};
-    text-decoration: none;
-    border-bottom: 1.5px solid ${T.gray900};
-    padding-bottom: 2px;
-    transition: color 0.2s, border-color 0.2s;
-    opacity: 0;
-  }
-  .manifest-cta-inline:hover {
-    color: ${T.red};
-    border-color: ${T.red};
-  }
-  .manifest-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .manifest-row {
-    display: grid;
-    grid-template-columns: 44px 1fr auto;
-    gap: 16px;
-    align-items: center;
-    padding: 22px 0;
-    border-bottom: 1px solid ${T.border};
-    position: relative;
-    cursor: default;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  .manifest-row:first-child { border-top: 1px solid ${T.border}; }
-  .manifest-row::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: ${T.surface};
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.35s ease;
-    z-index: -1;
-  }
-  .manifest-row:hover::before { transform: scaleX(1); }
-  .manifest-row-idx {
-    font-size: 11px;
-    font-weight: 700;
-    color: ${T.gray200};
-    letter-spacing: 0.06em;
-    font-variant-numeric: tabular-nums;
-    transition: color 0.2s;
-  }
-  .manifest-row:hover .manifest-row-idx { color: ${T.red}; }
-  .manifest-row-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: ${T.gray400};
-    margin-bottom: 3px;
-  }
-  .manifest-row-value {
-    font-size: 15px;
-    font-weight: 600;
-    color: ${T.gray900};
-    letter-spacing: -0.01em;
-  }
-  .manifest-row-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .manifest-row-icon {
-    width: 34px; height: 34px;
-    border-radius: 6px;
-    background: rgba(200,16,46,0.06);
-    border: 1px solid rgba(200,16,46,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.2s;
-  }
-  .manifest-row:hover .manifest-row-icon {
-    background: rgba(200,16,46,0.1);
-  }
-  .manifest-row-note {
-    font-size: 10px;
-    font-weight: 500;
-    color: ${T.gray400};
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-    min-width: 80px;
-    text-align: right;
-  }
-
-  /* ══════════════════════════════════════════
-     SECTION 4 — FEATURES EDITORIAL
-  ══════════════════════════════════════════ */
-  .editorial {
-    background: ${T.surface};
-    border-top: 1px solid ${T.border};
-    padding: 0 72px;
-  }
-  .editorial-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-  .editorial-header {
-    padding: 80px 0 60px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    border-bottom: 1px solid ${T.border};
-    gap: 40px;
-  }
-  .editorial-header-title {
-    font-size: clamp(32px, 5vw, 62px);
-    font-weight: 700;
-    line-height: 0.9;
-    letter-spacing: -0.035em;
-    color: ${T.gray900};
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  .editorial-header-title em {
-    font-style: italic;
-    font-weight: 300;
-    color: transparent;
-    -webkit-text-stroke: 1.5px ${T.red};
-  }
-  .editorial-header-meta {
-    text-align: right;
-    flex-shrink: 0;
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  .editorial-header-count {
-    font-size: 52px;
-    font-weight: 700;
-    color: ${T.red};
-    letter-spacing: -0.04em;
-    line-height: 1;
-  }
-  .editorial-header-count-lbl {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: ${T.gray400};
-  }
-  .editorial-feat {
-    display: grid;
-    grid-template-columns: 80px 1fr 1fr;
-    gap: 48px;
-    padding: 52px 0;
-    border-bottom: 1px solid ${T.border};
-    align-items: start;
-    cursor: default;
-    opacity: 0;
-    transform: translateY(28px);
-    position: relative;
-  }
-  .editorial-feat::after {
-    content: "";
-    position: absolute;
-    bottom: -1px; left: 0; right: 0;
-    height: 1px;
-    background: ${T.red};
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s ease;
-  }
-  .editorial-feat:hover::after { transform: scaleX(1); }
-  .editorial-feat-num {
-    font-size: 52px;
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 0.85;
-    color: ${T.gray100};
-    transition: color 0.25s;
-    padding-top: 4px;
-  }
-  .editorial-feat:hover .editorial-feat-num { color: ${T.red}; }
-  .editorial-feat-title {
-    font-size: clamp(18px, 2.4vw, 28px);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-    color: ${T.gray900};
-    padding-top: 8px;
-  }
-  .editorial-feat-desc {
-    font-size: 14px;
-    font-weight: 400;
-    color: ${T.gray600};
-    line-height: 1.75;
-    padding-top: 10px;
-  }
-
-  /* ══════════════════════════════════════════
-     SECTION 5 — DARK CTA PANEL
-  ══════════════════════════════════════════ */
-  .cta-panel {
-    background: ${T.gray900};
-    padding: 120px 72px;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(32px);
-  }
-  .cta-panel::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 28px,
-        rgba(255,255,255,0.018) 28px,
-        rgba(255,255,255,0.018) 29px
-      );
-    pointer-events: none;
-  }
-  .cta-panel-ghost {
-    position: absolute;
-    bottom: -30px;
-    right: -20px;
-    font-size: clamp(120px, 18vw, 220px);
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.05);
-    pointer-events: none;
-    user-select: none;
-  }
-  .cta-panel-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-  .cta-panel-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: ${T.red};
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .cta-panel-label::before {
-    content: "";
-    width: 28px; height: 1.5px;
-    background: ${T.red};
-    flex-shrink: 0;
-  }
-  .cta-panel-title {
-    font-size: clamp(36px, 5.5vw, 68px);
-    font-weight: 700;
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    color: ${T.white};
-    margin-bottom: 8px;
-  }
-  .cta-panel-title-ghost {
-    font-size: clamp(36px, 5.5vw, 68px);
-    font-weight: 300;
-    font-style: italic;
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.25);
-    margin-bottom: 44px;
-  }
-  .cta-panel-sub {
-    font-size: 16px;
-    font-weight: 300;
-    color: rgba(255,255,255,0.5);
-    line-height: 1.75;
-    margin-bottom: 48px;
-  }
-  .cta-panel-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    align-items: flex-start;
-    width: 100%;
-  }
-  .cta-link-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    text-decoration: none;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    background: none; border-top: none; border-left: none; border-right: none;
-    font-family: inherit;
-  }
-  .cta-link-row:last-child { border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .cta-link-row:hover { opacity: 0.75; }
-  .cta-link-row-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .cta-link-row-icon {
-    width: 40px; height: 40px;
-    border-radius: 4px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .cta-link-row-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: ${T.white};
-    letter-spacing: -0.01em;
-    margin-bottom: 2px;
-  }
-  .cta-link-row-sub {
-    font-size: 11px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 0.04em;
-  }
-  .cta-link-row-arrow {
-    font-size: 18px;
-    color: rgba(255,255,255,0.2);
-    flex-shrink: 0;
-  }
-
-  /* ══════════════════════════════════════════
-     RESPONSIVE — TABLET (≤960px)
-  ══════════════════════════════════════════ */
-  @media (max-width: 960px) {
-    /* Cover */
-    .cover { height: 100svh; min-height: 580px; }
-    .cover-content { left: 32px; right: 32px; bottom: 48px; max-width: none; }
-    .cover-vert { display: none; }
-    .cover-stats { display: none; }
-    .cover-scroll { right: 32px; }
-
-    /* Sizes band */
-    .sizes-label { display: none; }
-    .size-pill { padding: 20px 8px; }
-
-    /* Manifest */
-    .manifest { padding: 72px 32px; }
-    .manifest-inner { grid-template-columns: 1fr; gap: 48px; }
-    .manifest-head { position: static; }
-    .manifest-row { grid-template-columns: 40px 1fr auto; gap: 12px; }
-    .manifest-row-note { display: none; }
-
-    /* Editorial */
-    .editorial { padding: 0 32px; }
-    .editorial-header { flex-direction: column; align-items: flex-start; gap: 20px; padding: 60px 0 40px; }
-    .editorial-feat { grid-template-columns: 60px 1fr; gap: 20px 24px; padding: 36px 0; }
-    .editorial-feat-desc { grid-column: 2; }
-
-    /* CTA */
-    .cta-panel { padding: 80px 32px; }
-    .cta-panel-inner { grid-template-columns: 1fr; gap: 48px; }
-  }
-
-  /* ══════════════════════════════════════════
-     RESPONSIVE — MOBILE (≤600px)
-  ══════════════════════════════════════════ */
-  @media (max-width: 600px) {
-    /* Cover */
-    .cover-content { left: 20px; right: 20px; bottom: 36px; }
-    .cover-eyebrow { margin-bottom: 12px; font-size: 9px; }
-    .cover-tagline { font-size: 13px; margin-bottom: 28px; max-width: 100%; }
-    .cover-actions { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .btn-red, .btn-outline-white { width: 100%; justify-content: center; padding: 14px 20px; }
-
-    /* Sizes */
-    .sizes-band-inner { flex-direction: column; }
-    .sizes-pills { flex-wrap: wrap; }
-    .size-pill { flex: 1 1 50%; border-bottom: 1px solid ${T.border}; }
-
-    /* Manifest */
-    .manifest { padding: 56px 20px; }
-    .manifest-row { grid-template-columns: 36px 1fr 34px; gap: 10px; }
-    .manifest-row-note { display: none; }
-
-    /* Editorial */
-    .editorial { padding: 0 20px; }
-    .editorial-header { padding: 48px 0 32px; }
-    .editorial-feat { grid-template-columns: 48px 1fr; gap: 16px 16px; padding: 28px 0; }
-    .editorial-feat-num { font-size: 36px; }
-    .editorial-feat-desc { grid-column: 1 / -1; padding-top: 4px; }
-
-    /* CTA */
-    .cta-panel { padding: 60px 20px; }
-    .cta-panel-title-ghost { margin-bottom: 32px; }
-    .cta-panel-sub { font-size: 14px; margin-bottom: 32px; }
-    .cta-link-row-sub { display: none; }
-  }
-`;
-
+/* ─────────────────────────────────────────────
+   COMPONENT
+───────────────────────────────────────────── */
 export default function Osaka2Page() {
-  const imgRef = useRef<HTMLImageElement>(null);
+  const blindRef   = useRef<HTMLDivElement>(null);
+  const cordLRef   = useRef<HTMLDivElement>(null);
+  const cordRRef   = useRef<HTMLDivElement>(null);
+  const badgeRef   = useRef<HTMLDivElement>(null);
+  const heroRef    = useRef<HTMLDivElement>(null);
+  const gsapLoaded = useRef(false);
 
   useEffect(() => {
-    const img = imgRef.current;
-    if (img) {
-      if (img.complete) img.classList.add("loaded");
-      else img.onload = () => img.classList.add("loaded");
-    }
+    if (gsapLoaded.current) return;
+    gsapLoaded.current = true;
 
     const load = async () => {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
 
-      // Cover entrance
-      const tl = gsap.timeline({ delay: 0.1 });
-      tl.to(".cover-vert",     { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.3)
-        .to(".cover-eyebrow",  { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 0.4)
-        .to(".cover-name",     { opacity: 1, y: 0, duration: 0.75, ease: "power3.out" }, 0.5)
-        .to(".cover-name-sub", { opacity: 1, y: 0, duration: 0.75, ease: "power3.out" }, 0.58)
-        .to(".cover-tagline",  { opacity: 1, y: 0, duration: 0.65, ease: "power2.out" }, 0.72)
-        .to(".cover-actions",  { opacity: 1, y: 0, duration: 0.6,  ease: "power2.out" }, 0.84)
-        .to(".cover-stats",    { opacity: 1, duration: 0.7, ease: "power3.out" }, 0.5)
-        .to(".cover-scroll",   { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.2);
+      const hero  = heroRef.current;
+      const blind = blindRef.current;
+      const cordL = cordLRef.current;
+      const cordR = cordRRef.current;
+      const badge = badgeRef.current;
+      if (!hero || !blind) return;
 
-      // Manifest
-      gsap.to([".manifest-eyebrow", ".manifest-title", ".manifest-sub", ".manifest-cta-inline"], {
-        opacity: 1, x: 0,
-        duration: 0.65, stagger: 0.1, ease: "power2.out",
-        scrollTrigger: { trigger: ".manifest", start: "top 75%" }
-      });
-      gsap.to(".manifest-rule", {
-        opacity: 1, duration: 0.5, ease: "power2.out",
-        scrollTrigger: { trigger: ".manifest-rule", start: "top 85%" }
-      });
-      gsap.to(".manifest-row", {
-        opacity: 1, x: 0,
-        duration: 0.5, stagger: 0.06, ease: "power2.out",
-        scrollTrigger: { trigger: ".manifest-rows", start: "top 80%" }
-      });
+      const eyebrow  = hero.querySelector(".o2-eyebrow");
+      const h1       = hero.querySelector(".o2-h1");
+      const h1acc    = hero.querySelector(".o2-h1-accent");
+      const rule     = hero.querySelector(".o2-rule");
+      const tagline  = hero.querySelector(".o2-tagline");
+      const dims     = hero.querySelector(".o2-dims");
+      const actions  = hero.querySelector(".o2-hero-actions");
+      const imgInner = hero.querySelector(".o2-hero-img-inner");
 
-      // Editorial
-      gsap.to(".editorial-header-title", {
-        opacity: 1, y: 0, duration: 0.75, ease: "power3.out",
-        scrollTrigger: { trigger: ".editorial-header", start: "top 82%" }
-      });
-      gsap.to(".editorial-header-meta", {
-        opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.12,
-        scrollTrigger: { trigger: ".editorial-header", start: "top 82%" }
-      });
-      gsap.to(".editorial-feat", {
-        opacity: 1, y: 0,
-        duration: 0.65, stagger: 0.12, ease: "power2.out",
-        scrollTrigger: { trigger: ".editorial-feat", start: "top 82%" }
-      });
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // CTA
-      gsap.to(".cta-panel", {
-        opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
-        scrollTrigger: { trigger: ".cta-panel", start: "top 80%" }
-      });
+      /* 0. Image fades in beneath the blind */
+      tl.fromTo(imgInner,
+        { scale: 1.04, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5 },
+        0
+      );
+
+      /* 1. Cord lines drop briefly — signals blind is about to move */
+      tl.to([cordL, cordR], {
+        height: 44,
+        duration: 0.3,
+        ease: "power1.out",
+      }, 0.25);
+
+      /* 2. ─── BLIND SLIDES UP — bottom to top ───
+             scaleY from 1→0, transform-origin: bottom center
+             The blind "rolls up" like a real manual blind being pulled */
+      tl.to(blind, {
+        scaleY: 0,
+        duration: 1.05,
+        ease: "power2.inOut",
+        transformOrigin: "bottom center",
+      }, 0.5);
+
+      /* 3. Cords retract as blind rises */
+      tl.to([cordL, cordR], {
+        height: 0,
+        duration: 0.5,
+        ease: "power2.in",
+      }, 0.6);
+
+      /* 4. Elegant White badge */
+      tl.fromTo(badge,
+        { y: 14, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55 },
+        1.25
+      );
+
+      /* 5. Text cascade */
+      tl.fromTo(
+        [eyebrow, h1, h1acc, rule, tagline, dims, actions],
+        { y: 32, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, stagger: 0.08 },
+        0.68
+      );
+
+      /* ── SCROLL ANIMATIONS ── */
+      gsap.fromTo(".o2-spec-card",
+        { x: -24, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.55, stagger: 0.055, ease: "power2.out",
+          scrollTrigger: { trigger: ".o2-specs-grid", start: "top 82%" } }
+      );
+      gsap.fromTo(".o2-size-btn",
+        { scale: 0.88, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.45, stagger: 0.07, ease: "back.out(1.4)",
+          scrollTrigger: { trigger: ".o2-sizes", start: "top 85%" } }
+      );
+      gsap.fromTo(".o2-feat",
+        { x: 30, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out",
+          scrollTrigger: { trigger: ".o2-feats", start: "top 80%" } }
+      );
+      gsap.fromTo(".o2-h2",
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out",
+          scrollTrigger: { trigger: ".o2-h2", start: "top 85%" } }
+      );
+      gsap.fromTo(".o2-cta",
+        { y: 30, opacity: 0, scale: 0.97 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out",
+          scrollTrigger: { trigger: ".o2-cta", start: "top 85%" } }
+      );
     };
 
     load();
   }, []);
 
   return (
-    <div className="p">
+    <div className="o2">
       <style>{css}</style>
 
-      {/* ══ SECTION 1: COVER ══ */}
-      <section className="cover">
-        <div className="cover-img">
-          <img ref={imgRef} src={product.image} alt={product.name} />
+      {/* HERO */}
+      <section className="o2-hero" ref={heroRef}>
+
+        <div className="o2-hero-img">
+          {/* Product photo */}
+          <div className="o2-hero-img-inner">
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              quality={95}
+              style={{ objectFit: "cover", objectPosition: "center top" }}
+              sizes="50vw"
+            />
+          </div>
+
+          {/* ── THE BLIND ── */}
+          <div className="o2-blind" ref={blindRef} />
+
+          {/* Pull cord dots */}
+          <div className="o2-blind-dot o2-blind-dot-left" />
+          <div className="o2-blind-dot o2-blind-dot-right" />
+
+          {/* Cord lines */}
+          <div className="o2-blind-cord o2-blind-cord-left"  ref={cordLRef} />
+          <div className="o2-blind-cord o2-blind-cord-right" ref={cordRRef} />
+
+          {/* Elegant White badge */}
+          <div className="o2-colour-badge" ref={badgeRef}>
+            <div className="o2-colour-swatch" />
+            <span className="o2-colour-label">{product.colour}</span>
+          </div>
         </div>
-        <div className="cover-veil" />
 
-        <div className="cover-content">
-          <div className="cover-eyebrow">
-            <div className="cover-eyebrow-line" />
-            {product.range}
+        {/* Text panel */}
+        <div className="o2-hero-txt">
+          <span className="o2-eyebrow">{product.range}</span>
+
+          <div className="o2-h1">OSAKA</div>
+          <span className="o2-h1-accent">2.</span>
+
+          <div className="o2-rule" />
+          <p className="o2-tagline">{product.subtitle}</p>
+
+          <div className="o2-dims">
+            {Object.entries(product.dimensions).map(([k, v]) => (
+              <div key={k} className="o2-dim">
+                <div className="o2-dim-k">{k}</div>
+                <div className="o2-dim-v">{v}</div>
+              </div>
+            ))}
           </div>
 
-          {/* OSAKA 2 inline */}
-          <div className="cover-title-row">
-            <div className="cover-name">OSAKA</div>
-            <span className="cover-name-sub">2.</span>
-          </div>
-
-          <p className="cover-tagline">{product.subtitle}</p>
-          <div className="cover-actions">
+          <div className="o2-hero-actions">
             <a
-              href={`mailto:sales@ilktechnology.com?subject=Quote — ${product.name}`}
-              className="btn-red"
+              href={`mailto:sales@ilktechnology.com?subject=Quote%20—%20${encodeURIComponent(product.name)}`}
+              className="o2-btn-primary"
             >
               Request a Quote
             </a>
@@ -999,176 +912,107 @@ export default function Osaka2Page() {
               href={product.cataloguePdf}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-white"
+              className="o2-btn-ghost"
             >
               Download Catalogue
             </a>
           </div>
         </div>
-
-        {/* Stats strip — hidden on mobile/tablet */}
-        <div className="cover-stats">
-          {[
-            { val: "+1–4°C", lbl: "Temp. range" },
-            { val: "203 cm", lbl: "Height"       },
-            { val: "75 cm",  lbl: "Depth"        },
-            { val: "5",      lbl: "Shelf levels" },
-            { val: "4",      lbl: "Widths"       },
-            { val: "LED",    lbl: "Lighting"     },
-          ].map(s => (
-            <div key={s.lbl} className="cover-stat">
-              <div className="cover-stat-val">{s.val}</div>
-              <div className="cover-stat-lbl">{s.lbl}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="cover-scroll">
-          <div className="cover-scroll-line" />
-        </div>
       </section>
 
-      {/* ══ SECTION 2: SIZES BAND ══ */}
-      <div className="sizes-band">
-        <div className="sizes-band-inner">
-          <div className="sizes-label">Available widths</div>
-          <div className="sizes-pills">
-            {product.sizes.map(s => (
-              <div key={s} className="size-pill">
-                <div className="size-pill-val">{s}</div>
-                <div className="size-pill-unit">mm</div>
-              </div>
-            ))}
-          </div>
+      {/* TICKER */}
+      <div className="o2-ticker-wrap" aria-hidden>
+        <div className="o2-ticker-track">
+          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+            <span key={i} className="o2-ticker-item">
+              {item}
+              <span className="o2-ticker-dot" />
+            </span>
+          ))}
         </div>
       </div>
 
-      {/* ══ SECTION 3: SPECS MANIFEST ══ */}
-      <section className="manifest">
-        <div className="manifest-inner">
-          <div className="manifest-head">
-            <div className="manifest-eyebrow">Specifications</div>
-            <div className="manifest-title">
-              Every<br />
-              detail.<br />
-              <em>Specified.</em>
-            </div>
-            <div className="manifest-rule" />
-            <p className="manifest-sub">
-              Eight technical points — each one chosen to ensure the Osaka 2 performs flawlessly in your retail environment.
-            </p>
-            <a
-              href={product.cataloguePdf}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="manifest-cta-inline"
-            >
-              Full catalogue →
-            </a>
-          </div>
+      {/* BODY */}
+      <section className="o2-body">
+        <div className="o2-body-inner">
 
-          <div className="manifest-rows">
-            {product.specs.map(s => (
-              <div key={s.label} className="manifest-row">
-                <div className="manifest-row-idx">{s.idx}</div>
-                <div>
-                  <div className="manifest-row-label">{s.label}</div>
-                  <div className="manifest-row-value">{s.value}</div>
-                </div>
-                <div className="manifest-row-right">
-                  <div className="manifest-row-note">{s.note}</div>
-                  <div className="manifest-row-icon">
-                    {ICONS[s.icon] ?? <Gauge {...ICON_P} />}
-                  </div>
-                </div>
+          {/* LEFT */}
+          <div>
+            <p className="o2-section-label">Available Widths</p>
+            <div className="o2-sizes">
+              {product.sizes.map(s => (
+                <div key={s} className="o2-size-btn">{s}</div>
+              ))}
+            </div>
+
+            <div>
+              <div className="o2-specs-header">
+                <span className="o2-section-label" style={{ margin: 0 }}>Specifications</span>
+                <span className="o2-specs-count">{product.specs.length} points</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ SECTION 4: EDITORIAL FEATURES ══ */}
-      <section className="editorial">
-        <div className="editorial-inner">
-          <div className="editorial-header">
-            <div className="editorial-header-title">
-              Built for<br /><em>retail</em><br />performance.
-            </div>
-            <div className="editorial-header-meta">
-              <div className="editorial-header-count">04</div>
-              <div className="editorial-header-count-lbl">Key features</div>
-            </div>
-          </div>
-
-          {product.features.map((f, i) => (
-            <div key={i} className="editorial-feat">
-              <div className="editorial-feat-num">0{i + 1}</div>
-              <div className="editorial-feat-title">{f.title}</div>
-              <div className="editorial-feat-desc">{f.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══ SECTION 5: DARK CTA PANEL ══ */}
-      <section className="cta-panel">
-        <div className="cta-panel-ghost">O2</div>
-        <div className="cta-panel-inner">
-          <div className="cta-panel-left">
-            <div className="cta-panel-label">Ready to order</div>
-            <div className="cta-panel-title">Order.<br />Install.</div>
-            <div className="cta-panel-title-ghost">Perform.</div>
-          </div>
-
-          <div className="cta-panel-right">
-            <p className="cta-panel-sub">
-              In stock and ready to deliver across the UK. Professional installation available. We respond within one business day with a tailored proposal for your store layout.
-            </p>
-            <div className="cta-panel-actions">
-              <a
-                href={`mailto:sales@ilktechnology.com?subject=Quote Request — ${product.name}`}
-                className="cta-link-row"
-                style={{ textDecoration: "none" }}
-              >
-                <div className="cta-link-row-left">
-                  <div className="cta-link-row-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.red} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                      <polyline points="22,6 12,13 2,6"/>
-                    </svg>
+              <div className="o2-specs-grid">
+                {product.specs.map(s => (
+                  <div key={s.label} className="o2-spec-card">
+                    <div className="o2-spec-icon">{ICONS[s.icon] ?? <Gauge {...ICON_P} />}</div>
+                    <div className="o2-spec-body">
+                      <div className="o2-spec-label">{s.label}</div>
+                      <div className="o2-spec-value">{s.value}</div>
+                    </div>
+                    <div className="o2-spec-note">{s.note}</div>
                   </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT */}
+          <div>
+            <h2 className="o2-h2">
+              BUILT FOR<br />
+              <span>RETAIL</span><br />
+              PERFORMANCE.
+            </h2>
+            <p className="o2-right-sub">{product.subtitle}</p>
+
+            <div className="o2-feats">
+              {product.features.map((f, i) => (
+                <div key={i} className="o2-feat">
+                  <div className="o2-feat-num">{f.num}</div>
                   <div>
-                    <div className="cta-link-row-label">Request a Quote</div>
-                    <div className="cta-link-row-sub">sales@ilktechnology.com</div>
+                    <div className="o2-feat-title">{f.title}</div>
+                    <div className="o2-feat-desc">{f.desc}</div>
                   </div>
                 </div>
-                <div className="cta-link-row-arrow">→</div>
-              </a>
+              ))}
+            </div>
 
-              <a
-                href={product.cataloguePdf}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cta-link-row"
-                style={{ textDecoration: "none" }}
-              >
-                <div className="cta-link-row-left">
-                  <div className="cta-link-row-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.red} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                      <polyline points="7,10 12,15 17,10"/>
-                      <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="cta-link-row-label">Download Catalogue</div>
-                    <div className="cta-link-row-sub">osaka2.pdf — Full spec sheet</div>
-                  </div>
-                </div>
-                <div className="cta-link-row-arrow">→</div>
-              </a>
+            <div className="o2-cta">
+              <div className="o2-cta-overline">Ready to order</div>
+              <div className="o2-cta-heading">
+                Professional installation available.
+              </div>
+              <p className="o2-cta-sub">
+                In stock and ready to deliver across the UK. We respond within one business day with a tailored proposal for your store layout.
+              </p>
+              <div className="o2-cta-actions">
+                <a
+                  href={`mailto:sales@ilktechnology.com?subject=Quote%20Request%20—%20${encodeURIComponent(product.name)}`}
+                  className="o2-btn-primary"
+                >
+                  Request a Quote
+                </a>
+                <a
+                  href={product.cataloguePdf}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="o2-cta-link"
+                >
+                  Download Catalogue →
+                </a>
+              </div>
             </div>
           </div>
+
         </div>
       </section>
     </div>
