@@ -95,7 +95,6 @@ const css = `
 
   /* ── TOPBAR ── */
   .o3-topbar {
-    position: relative;
     z-index: 100;
     height: 60px;
     padding: 0 48px;
@@ -897,10 +896,10 @@ export default function Osaka3Page() {
               sizes="50vw"
             />
           </div>
-          <div className="o3-colour-badge">
+          {/* <div className="o3-colour-badge">
             <div className="o3-colour-swatch" />
             <span className="o3-colour-label">{product.colour}</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Text */}
@@ -908,7 +907,7 @@ export default function Osaka3Page() {
           <span className="o3-eyebrow">{product.range}</span>
 
           <div className="o3-h1">OSAKA</div>
-          <div className="o3-h1-accent">3.</div>
+          <span className="o3-h1-accent">3.</span>
 
           <div className="o3-rule" />
           <p className="o3-tagline">{product.subtitle}</p>
