@@ -51,7 +51,7 @@ const product = {
     { label: "Temperature",    value: "+1 to +4 °C",             note: "Chilled range",       icon: "temp"   },
     { label: "Cooling",        value: "Remote",                  note: "External condenser",  icon: "cool"   },
     { label: "Lighting",       value: "LED canopy",              note: "Low energy",          icon: "light"  },
-    { label: "Doors",          value: "Dual glass",              note: "Double-glazed",       icon: "door"   },
+    { label: "Doors",          value: "Open Chiller",              note: "Double-glazed",       icon: "door"   },
     { label: "Controller",     value: "Electronic",              note: "Smart control",       icon: "ctrl"   },
     { label: "Pipework",       value: "Top entry",               note: "Clean install",       icon: "pipe"   },
     { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS",note: "Adj. levels",         icon: "shelf"  },
@@ -150,9 +150,9 @@ const css = `
   }
   .p3-hero-img-actual img {
     width: 100%;
-    height: 100%;
+    height: 50%;
     object-fit: cover;
-    object-position: center top;
+    object-position: center; ;
     display: block;
   }
 
@@ -910,8 +910,10 @@ export default function Panama3Page() {
               alt={product.name}
               fill
               quality={95}
-              style={{ objectFit: "cover", objectPosition: "center top" }}
-              sizes="50vw"
+              style={{ 
+              
+               }}
+              sizes="70vw"
             />
           </div>
 

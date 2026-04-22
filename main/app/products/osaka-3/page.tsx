@@ -11,8 +11,8 @@ import {
   ArrowDownToLine,
   LayoutList,
   Gauge,
-  Wind,
   Layers,
+  GitMerge,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────
@@ -44,21 +44,21 @@ const product = {
   cataloguePdf: "/catalogues/osaka3.pdf",
   sizes:    ["1250mm", "1875mm", "2500mm", "3750mm"],
   dimensions: { Height: "203 cm", Depth: "75 cm" },
-  subtitle: "The Osaka 3 in Anthracite Grey brings industrial confidence to the chilled aisle — EC fan efficiency, mirrored end walls, and precision temperature control in one authoritative package.",
+  subtitle: "The Osaka 3 in Anthracite Grey brings industrial confidence to the chilled aisle — multiplexed system compatibility, mirrored end walls, and precision temperature control in one authoritative package.",
   specs: [
-    { label: "Temperature",    value: "+1 to +4 °C",        note: "Chilled range",      icon: "temp"     },
-    { label: "Cooling",        value: "Remote",              note: "External condenser", icon: "cool"     },
-    { label: "Lighting",       value: "LED canopy",          note: "Low energy",         icon: "light"    },
-    { label: "Doors",          value: "Hinged dual-glass",   note: "Double-glazed",      icon: "door"     },
-    { label: "Controller",     value: "Electronic",          note: "Smart control",      icon: "ctrl"     },
-    { label: "Pipework",       value: "Top entry",           note: "Clean install",      icon: "pipe"     },
-    { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS", note: "Adj. levels",  icon: "shelf"    },
-    { label: "EC Fans",        value: "Low-energy",          note: "Optimised airflow",  icon: "fan"      },
-    { label: "End Walls",      value: "Solid or Mirrored",   note: "Your choice",        icon: "end"      },
-    { label: "Solenoid Valve", value: "Not included",        note: "Simplified system",  icon: "valve"    },
+    { label: "Temperature",    value: "+1 to +4 °C",              note: "Chilled range",      icon: "temp"  },
+    { label: "Cooling",        value: "Remote",                   note: "External condenser", icon: "cool"  },
+    { label: "Lighting",       value: "LED canopy",               note: "Low energy",         icon: "light" },
+    { label: "Doors",          value: "Hinged dual-glass",        note: "Double-glazed",      icon: "door"  },
+    { label: "Controller",     value: "Electronic",               note: "Smart control",      icon: "ctrl"  },
+    { label: "Pipework",       value: "Top entry",                note: "Clean install",      icon: "pipe"  },
+    { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS",note: "Adj. levels",        icon: "shelf" },
+    { label: "Multiplexed",    value: "Compatible",               note: "Shared system",      icon: "mplex" },
+    { label: "End Walls",      value: "Solid or Mirrored",        note: "Your choice",        icon: "end"   },
+    { label: "Solenoid Valve", value: "Not included",             note: "Simplified system",  icon: "valve" },
   ],
   features: [
-    { num: "01", title: "EC Fan Technology",       desc: "Low-energy electronically commutated fans deliver optimised airflow with substantially reduced running costs — an upgrade over standard AC motors." },
+    { num: "01", title: "Multiplexed Compatible",  desc: "Designed to run on a shared refrigeration system, the Osaka 3 integrates seamlessly into multiplexed store setups — reducing plant room complexity and overall running costs." },
     { num: "02", title: "Anthracite Grey Finish",  desc: "The deep anthracite powder coat commands attention on the shop floor. Paired with mirrored end walls, it creates a premium retail environment." },
     { num: "03", title: "Dual-Glass Doors",        desc: "Hinged double-glazed doors minimise energy loss while keeping every product fully visible, uncompromised from every angle." },
     { num: "04", title: "Flexible Configuration",  desc: "Choice of solid or mirrored end walls, five adjustable 450 mm shelves, and EPOS rail — configure precisely for your range and space." },
@@ -142,14 +142,7 @@ const css = `
     overflow: hidden;
     background: ${T.anthracite3};
   }
-  .o3-hero-img::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg, transparent 55%, ${T.anthracite2} 100%);
-    z-index: 2;
-    pointer-events: none;
-  }
+  /* NOTE: ::after removed — it was causing a gradient fade over the image */
   /* Red top accent line */
   .o3-hero-img::before {
     content: "";
@@ -231,7 +224,6 @@ const css = `
     flex-shrink: 0;
   }
 
-  /* Giant headline using Bebas */
   .o3-h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(110px, 13vw, 170px);
@@ -408,7 +400,6 @@ const css = `
     align-items: start;
   }
 
-  /* ── SIZES ── */
   .o3-section-label {
     font-size: 9px;
     font-weight: 700;
@@ -452,7 +443,6 @@ const css = `
     color: ${T.white};
   }
 
-  /* ── SPEC CARDS ── */
   .o3-specs-header {
     display: flex;
     align-items: center;
@@ -538,7 +528,6 @@ const css = `
     white-space: nowrap;
   }
 
-  /* ── RIGHT COLUMN ── */
   .o3-h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(58px, 6.5vw, 88px);
@@ -561,7 +550,6 @@ const css = `
     margin-bottom: 60px;
   }
 
-  /* Features */
   .o3-feats { margin-bottom: 68px; }
   .o3-feat {
     display: grid;
@@ -608,7 +596,6 @@ const css = `
     line-height: 1.65;
   }
 
-  /* CTA card */
   .o3-cta {
     border: 1px solid ${T.borderLight};
     border-radius: 8px;
@@ -697,9 +684,9 @@ const ICONS: Record<string, React.ReactNode> = {
   light: <Lightbulb       {...ICON_P} />,
   door:  <DoorOpen        {...ICON_P} />,
   ctrl:  <MonitorDot      {...ICON_P} />,
-  pipe:  <ArrowDownToLine  {...ICON_P} />,
+  pipe:  <ArrowDownToLine {...ICON_P} />,
   shelf: <LayoutList      {...ICON_P} />,
-  fan:   <Wind            {...ICON_P} />,
+  mplex: <GitMerge        {...ICON_P} />,
   end:   <Layers          {...ICON_P} />,
   valve: <Gauge           {...ICON_P} />,
 };
@@ -710,7 +697,7 @@ const ICONS: Record<string, React.ReactNode> = {
 const TICKER_ITEMS = [
   "Anthracite Grey",
   "Remote Cooling",
-  "EC Fan Technology",
+  "Multiplexed Compatible",
   "Dual Glass Doors",
   "+1 to +4 °C",
   "Fast UK Delivery",
@@ -724,8 +711,8 @@ const TICKER_ITEMS = [
    COMPONENT
 ───────────────────────────────────────────── */
 export default function Osaka3Page() {
-  const heroRef   = useRef<HTMLDivElement>(null);
-  const bodyRef   = useRef<HTMLElement>(null);
+  const heroRef    = useRef<HTMLDivElement>(null);
+  const bodyRef    = useRef<HTMLElement>(null);
   const gsapLoaded = useRef(false);
 
   useEffect(() => {
@@ -737,7 +724,6 @@ export default function Osaka3Page() {
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
 
-      // ── Hero stagger entrance ──
       const hero = heroRef.current;
       if (!hero) return;
 
@@ -751,121 +737,55 @@ export default function Osaka3Page() {
       const imgInner  = hero.querySelector(".o3-hero-img-inner");
       const badge     = hero.querySelector(".o3-colour-badge");
 
-      // Image: zoom in from slightly large
       gsap.fromTo(imgInner,
         { scale: 1.08, opacity: 0 },
         { scale: 1, opacity: 1, duration: 1.4, ease: "power3.out" }
       );
 
-      // Badge slide up
       gsap.fromTo(badge,
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, ease: "power3.out", delay: 1.1 }
       );
 
-      // Text stagger
       gsap.fromTo(
         [eyebrow, h1, h1accent, rule, tagline, dims, actions],
         { y: 36, opacity: 0 },
-        {
-          y: 0, opacity: 1,
-          duration: 0.75,
-          stagger: 0.09,
-          ease: "power3.out",
-          delay: 0.3,
-        }
+        { y: 0, opacity: 1, duration: 0.75, stagger: 0.09, ease: "power3.out", delay: 0.3 }
       );
 
-      // ── Spec cards: scroll-triggered stagger ──
-      const specCards = document.querySelectorAll(".o3-spec-card");
-      gsap.fromTo(specCards,
+      gsap.fromTo(".o3-spec-card",
         { x: -24, opacity: 0 },
-        {
-          x: 0, opacity: 1,
-          duration: 0.55,
-          stagger: 0.055,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".o3-specs-grid",
-            start: "top 82%",
-          },
-        }
+        { x: 0, opacity: 1, duration: 0.55, stagger: 0.055, ease: "power2.out",
+          scrollTrigger: { trigger: ".o3-specs-grid", start: "top 82%" } }
       );
 
-      // ── Size buttons pop ──
-      const sizeBtns = document.querySelectorAll(".o3-size-btn");
-      gsap.fromTo(sizeBtns,
+      gsap.fromTo(".o3-size-btn",
         { scale: 0.88, opacity: 0 },
-        {
-          scale: 1, opacity: 1,
-          duration: 0.45,
-          stagger: 0.07,
-          ease: "back.out(1.4)",
-          scrollTrigger: {
-            trigger: ".o3-sizes",
-            start: "top 85%",
-          },
-        }
+        { scale: 1, opacity: 1, duration: 0.45, stagger: 0.07, ease: "back.out(1.4)",
+          scrollTrigger: { trigger: ".o3-sizes", start: "top 85%" } }
       );
 
-      // ── Feature rows slide in ──
-      const feats = document.querySelectorAll(".o3-feat");
-      gsap.fromTo(feats,
+      gsap.fromTo(".o3-feat",
         { x: 30, opacity: 0 },
-        {
-          x: 0, opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".o3-feats",
-            start: "top 80%",
-          },
-        }
+        { x: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out",
+          scrollTrigger: { trigger: ".o3-feats", start: "top 80%" } }
       );
 
-      // ── Heading counter/reveal on right column ──
-      const h2 = document.querySelector(".o3-h2");
-      gsap.fromTo(h2,
+      gsap.fromTo(".o3-h2",
         { y: 40, opacity: 0 },
-        {
-          y: 0, opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".o3-h2",
-            start: "top 85%",
-          },
-        }
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out",
+          scrollTrigger: { trigger: ".o3-h2", start: "top 85%" } }
       );
 
-      // ── CTA card: fade + slight scale ──
-      const cta = document.querySelector(".o3-cta");
-      gsap.fromTo(cta,
+      gsap.fromTo(".o3-cta",
         { y: 30, opacity: 0, scale: 0.97 },
-        {
-          y: 0, opacity: 1, scale: 1,
-          duration: 0.75,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".o3-cta",
-            start: "top 85%",
-          },
-        }
+        { y: 0, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out",
+          scrollTrigger: { trigger: ".o3-cta", start: "top 85%" } }
       );
 
-      // ── Dims counter animation ──
-      // (purely visual pulse on the dimension values)
-      const dimVals = document.querySelectorAll(".o3-dim-v");
-      gsap.fromTo(dimVals,
+      gsap.fromTo(".o3-dim-v",
         { opacity: 0, y: 12 },
-        {
-          opacity: 1, y: 0,
-          duration: 0.5,
-          stagger: 0.12,
-          ease: "power2.out",
-          delay: 1.2,
-        }
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: "power2.out", delay: 1.2 }
       );
     };
 
@@ -884,7 +804,6 @@ export default function Osaka3Page() {
 
       {/* HERO */}
       <section className="o3-hero" ref={heroRef}>
-        {/* Image */}
         <div className="o3-hero-img">
           <div className="o3-hero-img-inner">
             <Image
@@ -896,10 +815,6 @@ export default function Osaka3Page() {
               sizes="50vw"
             />
           </div>
-          {/* <div className="o3-colour-badge">
-            <div className="o3-colour-swatch" />
-            <span className="o3-colour-label">{product.colour}</span>
-          </div> */}
         </div>
 
         {/* Text */}

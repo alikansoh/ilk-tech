@@ -13,6 +13,7 @@ import {
   Gauge,
   Wind,
   Layers,
+  GitMerge,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────
@@ -45,7 +46,7 @@ const product = {
   cataloguePdf: "/catalogues/osaka2.pdf",
   sizes:    ["1250mm", "1875mm", "2500mm", "3750mm"],
   dimensions: { Height: "203 cm", Depth: "75 cm" },
-  subtitle: "The Osaka 2 in Elegant White brings refined clarity to the chilled aisle — EC fan efficiency, dual-glass doors, and precision temperature control in one clean, authoritative package.",
+  subtitle: "The Osaka 2 in Elegant White brings refined clarity to the chilled aisle — multiplexed system compatibility, dual-glass doors, and precision temperature control in one clean, authoritative package.",
   specs: [
     { label: "Temperature",    value: "+1 to +4 °C",              note: "Chilled range",      icon: "temp"  },
     { label: "Cooling",        value: "Remote",                   note: "External condenser", icon: "cool"  },
@@ -54,13 +55,13 @@ const product = {
     { label: "Controller",     value: "Electronic",               note: "Smart control",      icon: "ctrl"  },
     { label: "Pipework",       value: "Top entry",                note: "Clean install",      icon: "pipe"  },
     { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS",note: "Adj. levels",        icon: "shelf" },
-    { label: "EC Fans",        value: "Low-energy",               note: "Optimised airflow",  icon: "fan"   },
+    { label: "Multiplexed",    value: "Compatible",               note: "Shared system",      icon: "mplex" },
     { label: "End Walls",      value: "Solid or Mirrored",        note: "Your choice",        icon: "end"   },
     { label: "Solenoid Valve", value: "Not included",             note: "Simplified system",  icon: "valve" },
   ],
   features: [
     { num: "01", title: "Elegant White Finish",   desc: "The crisp white powder coat brings a clean, premium feel to any retail environment — bright, approachable, designed to let your products take centre stage." },
-    { num: "02", title: "EC Fan Technology",      desc: "Low-energy electronically commutated fans deliver optimised airflow with substantially reduced running costs — a measurable upgrade over standard AC motors." },
+    { num: "02", title: "Multiplexed Compatible", desc: "Designed to run on a shared refrigeration system, the Osaka 2 integrates seamlessly into multiplexed store setups — reducing plant room complexity and overall running costs." },
     { num: "03", title: "Dual-Glass Doors",       desc: "Hinged double-glazed doors minimise energy loss while keeping every product fully visible, uncompromised from every angle." },
     { num: "04", title: "Flexible Configuration", desc: "Choice of solid or mirrored end walls, five adjustable 450 mm shelves, and EPOS rail — configure precisely for your range and space." },
   ],
@@ -69,7 +70,7 @@ const product = {
 const TICKER_ITEMS = [
   "Elegant White",
   "Remote Cooling",
-  "EC Fan Technology",
+  "Multiplexed Compatible",
   "Dual Glass Doors",
   "+1 to +4 °C",
   "Fast UK Delivery",
@@ -80,7 +81,7 @@ const TICKER_ITEMS = [
 ];
 
 /* ─────────────────────────────────────────────
-   STYLES  — Osaka 2 layout, light colours
+   STYLES
 ───────────────────────────────────────────── */
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&display=swap');
@@ -117,8 +118,7 @@ const css = `
   .o2-hero-img {
     position: relative;
     overflow: hidden;
-    background: ${T.gray100};
-    perspective: 1200px;
+    background: ${T.white};
   }
 
   .o2-hero-img::before {
@@ -130,20 +130,14 @@ const css = `
     z-index: 20;
   }
 
-  .o2-hero-img::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg, transparent 55%, ${T.bg} 100%);
-    z-index: 2;
-    pointer-events: none;
-  }
+  /* NOTE: ::after removed entirely — it was causing the white gradient fade over the image */
 
   .o2-hero-img-inner {
     position: absolute;
     inset: 0;
     z-index: 1;
-    will-change: transform, opacity;
+    will-change: transform;
+    opacity: 1;
   }
   .o2-hero-img-inner img {
     width: 100%;
@@ -154,7 +148,7 @@ const css = `
     backface-visibility: hidden;
   }
 
-  /* ── Sliding DOORS — no center seam, translateX animation ── */
+  /* ── Sliding DOORS ── */
   .o2-doors {
     position: absolute;
     inset: 0;
@@ -168,16 +162,15 @@ const css = `
     bottom: 0;
     width: 50%;
     background: ${T.white};
-    /* no borders so no seam appears */
     box-shadow: 0 6px 30px rgba(17,24,39,0.06);
     will-change: transform;
+    opacity: 1;
   }
-  .o2-door-left { left: 0; }
+  .o2-door-left  { left: 0; }
   .o2-door-right { right: 0; }
 
   .o2-door-handle {
     position: absolute;
-    left: 50%;
     top: 52%;
     width: 8px;
     height: 28px;
@@ -220,7 +213,6 @@ const css = `
     color: ${T.gray900};
   }
 
-  /* rest of styles unchanged (text, sizes, specs, etc.) */
   .o2-hero-txt { display:flex; flex-direction:column; justify-content:center; padding:80px 72px 80px 64px; position:relative; z-index:1; }
   .o2-eyebrow { font-size:10px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:${T.red}; margin-bottom:24px; display:flex; align-items:center; gap:12px; opacity:0; }
   .o2-eyebrow::before { content:""; width:28px; height:1.5px; background:${T.red}; flex-shrink:0; }
@@ -310,7 +302,7 @@ const ICONS: Record<string, React.ReactNode> = {
   ctrl:  <MonitorDot      {...ICON_P} />,
   pipe:  <ArrowDownToLine {...ICON_P} />,
   shelf: <LayoutList      {...ICON_P} />,
-  fan:   <Wind            {...ICON_P} />,
+  mplex: <GitMerge        {...ICON_P} />,
   end:   <Layers          {...ICON_P} />,
   valve: <Gauge           {...ICON_P} />,
 };
@@ -334,10 +326,10 @@ export default function Osaka2Page() {
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
 
-      const hero    = heroRef.current;
-      const left    = leftDoorRef.current;
-      const right   = rightDoorRef.current;
-      const badge   = badgeRef.current;
+      const hero  = heroRef.current;
+      const left  = leftDoorRef.current;
+      const right = rightDoorRef.current;
+      const badge = badgeRef.current;
       if (!hero || !left || !right) return;
 
       const eyebrow  = hero.querySelector(".o2-eyebrow");
@@ -347,36 +339,27 @@ export default function Osaka2Page() {
       const tagline  = hero.querySelector(".o2-tagline");
       const dims     = hero.querySelector(".o2-dims");
       const actions  = hero.querySelector(".o2-hero-actions");
-      const imgInner = hero.querySelector(".o2-hero-img-inner");
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      /* 0. Warm-up image while doors are closed */
+      // 1. Doors slide apart — pure translateX
+      tl.to(left,  { xPercent: -100, duration: 0.85, ease: "power2.inOut" }, 0);
+      tl.to(right, { xPercent:  100, duration: 0.85, ease: "power2.inOut" }, 0);
+
+      // 2. Badge slides up after doors finish
       tl.fromTo(
-        imgInner,
-        { scale: 1.06, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.55 },
-        0
-      );
-
-      /* 1. Sliding doors open simultaneously (no seam, pure translate) */
-      // left slides left (-100% of its own width), right slides right (+100%)
-      tl.to(left, { xPercent: -100, duration: 0.8, ease: "power2.inOut" }, 0.28);
-      tl.to(right, { xPercent: 100, duration: 0.8, ease: "power2.inOut" }, 0.28);
-
-      /* 2. Badge slides in after doors moving */
-      tl.fromTo(badge,
+        badge,
         { y: 14, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.45 },
-        0.95
+        0.9
       );
 
-      /* 3. Text cascade */
+      // 3. Text cascade
       tl.fromTo(
         [eyebrow, h1, h1acc, rule, tagline, dims, actions],
         { y: 32, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, stagger: 0.08 },
-        0.8
+        0.75
       );
 
       /* ── SCROLL ANIMATIONS ── */
@@ -418,19 +401,20 @@ export default function Osaka2Page() {
       <section className="o2-hero" ref={heroRef}>
 
         <div className="o2-hero-img">
-          {/* Product photo */}
+          {/* Product photo — visible from frame 1, revealed as doors slide away */}
           <div className="o2-hero-img-inner">
             <Image
               src={product.image}
               alt={product.name}
               fill
               quality={95}
+              priority
               style={{ objectFit: "cover", objectPosition: "center top" }}
               sizes="50vw"
             />
           </div>
 
-          {/* ── Sliding DOORS (no seam) ── */}
+          {/* ── Sliding DOORS ── */}
           <div className="o2-doors" aria-hidden>
             <div className="o2-door o2-door-left" ref={leftDoorRef}>
               <div className="o2-door-handle" style={{ left: "75%", transform: "translateX(-50%)" }} />
