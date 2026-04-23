@@ -154,6 +154,26 @@ function NewsletterModal({ open, onClose }: { open: boolean; onClose: () => void
   return (
     <>
       <style>{`
+        /* Prevent mobile browsers from auto-scaling small form text */
+        html { -webkit-text-size-adjust: 100%; }
+
+        /* Prevent iOS Safari / mobile zoom by ensuring form controls are 16px on small screens */
+        @media (max-width: 640px) {
+          .nl-field input,
+          .field input,
+          .field select,
+          .field textarea {
+            font-size: 16px !important;
+            line-height: 1.3;
+          }
+
+          /* Slightly increase button text on small screens to avoid zoom triggers */
+          .nl-submit,
+          .submit-btn {
+            font-size: 13px;
+          }
+        }
+
         .nl-overlay {
           position: fixed; inset: 0; z-index: 2000;
           background: rgba(11,37,64,0.72); backdrop-filter: blur(4px);
