@@ -2,19 +2,24 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import NewsletterModal from "@/components/NewsLatterModal"; // adjust path if your components folder differs
+import emailjs from "@emailjs/browser";
+import NewsletterModal from "@/components/NewsLatterModal";
 
 const NAVY = "#0B2540";
 const RED = "#C8102E";
 const BORDER = "rgba(11,37,64,0.1)";
 const MUTED = "#6B7280";
 
-// WhatsApp config (no leading + in the number for wa.me)
+// ─── EMAILJS CONFIG ── swap these when you have your IDs ───
+const EMAILJS_SERVICE_ID = "service_typ98iv";
+const EMAILJS_TEMPLATE_ID = "template_fa24dhe";
+const EMAILJS_PUBLIC_KEY = "YF7C7rYxFblL_ulv4";
+// ──────────────────────────────────────────────────────────
+
 const WHATSAPP_NUMBER = "447721776002";
 const WHATSAPP_DEFAULT_MSG = "Hi, I would like to enquire about ILK Technology services.";
 const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_DEFAULT_MSG)}`;
 
-// Updated contact details
 const CONTACT_INFO = {
   address: ["Poplar View", "East Lane Business Park", "Wembley", "HA9 7RD", "England, United Kingdom"],
   phone: "0203 051 0367",
@@ -83,6 +88,8 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
   const formRef = useRef<HTMLDivElement>(null);
 
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [newsletterOpen, setNewsletterOpen] = useState(false);
 
   const [form, setForm] = useState({
@@ -102,8 +109,36 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Replace with your real form submission logic
-    setSubmitted(true);
+    setSending(true);
+    setErrorMsg("");
+
+    // The keys here must match the variable names in your EmailJS template
+    const templateParams = {
+      from_first_name: form.firstName,
+      from_last_name: form.lastName,
+      from_name: `${form.firstName} ${form.lastName}`,
+      company: form.company,
+      from_email: form.email,
+      phone: form.phone,
+      enquiry_type: form.enquiryType,
+      brand: form.brand || "Not specified",
+      message: form.message,
+    };
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      );
+      setSubmitted(true);
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      setErrorMsg("Something went wrong. Please try again or email us directly.");
+    } finally {
+      setSending(false);
+    }
   };
 
   useEffect(() => {
@@ -121,36 +156,19 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
           .from(".hero-desc", { opacity: 0, y: 20, duration: 0.8, ease: "power3.out" }, "-=0.55");
 
         gsap.from(".info-block", {
-          opacity: 0,
-          y: 24,
-          stagger: 0.1,
-          duration: 0.8,
-          ease: "power3.out",
+          opacity: 0, y: 24, stagger: 0.1, duration: 0.8, ease: "power3.out",
           scrollTrigger: { trigger: ".contact-info", start: "top 82%" },
         });
-
         gsap.from(".map-wrap", {
-          opacity: 0,
-          y: 20,
-          duration: 0.8,
-          ease: "power3.out",
+          opacity: 0, y: 20, duration: 0.8, ease: "power3.out",
           scrollTrigger: { trigger: ".map-wrap", start: "top 85%" },
         });
-
         gsap.from(".contact-form-wrap", {
-          opacity: 0,
-          x: 30,
-          duration: 0.9,
-          ease: "power3.out",
+          opacity: 0, x: 30, duration: 0.9, ease: "power3.out",
           scrollTrigger: { trigger: formRef.current, start: "top 82%" },
         });
-
         gsap.from(".callout-item", {
-          opacity: 0,
-          y: 28,
-          stagger: 0.1,
-          duration: 0.8,
-          ease: "power3.out",
+          opacity: 0, y: 28, stagger: 0.1, duration: 0.8, ease: "power3.out",
           scrollTrigger: { trigger: ".bottom-callout", start: "top 82%" },
         });
       });
@@ -162,498 +180,94 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
   return (
     <>
       <style>{`
-        html, body {
-          overflow-x: hidden;
-          width: 100%;
-          max-width: 100%;
-        }
+        html, body { overflow-x: hidden; width: 100%; max-width: 100%; }
 
-        .contact-root {
-          background: #fff;
-          color: ${NAVY};
-          min-height: 100vh;
-          overflow-x: hidden;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
+        .contact-root { background: #fff; color: ${NAVY}; min-height: 100vh; overflow-x: hidden; width: 100%; box-sizing: border-box; }
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* ─── HERO ─── */
-        .hero {
-          position: relative;
-          width: 100%;
-          height: var(--hero-height, 52vh);
-          min-height: 320px;
-          max-height: 600px;
-          background: ${NAVY};
-          display: flex;
-          align-items: flex-end;
-          overflow: hidden;
-        }
+        .hero { position: relative; width: 100%; height: var(--hero-height, 52vh); min-height: 320px; max-height: 600px; background: ${NAVY}; display: flex; align-items: flex-end; overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #0B2540 0%, #162d4a 50%, #0d1f34 100%); }
+        .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(200,16,46,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.04) 1px, transparent 1px); background-size: 60px 60px; }
+        .hero::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: ${RED}; z-index: 3; }
+        .hero-content { position: relative; z-index: 2; width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 64px 64px; }
+        .hero-eyebrow { display: flex; align-items: center; gap: 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: ${RED}; margin-bottom: 20px; }
+        .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 1.5px; background: ${RED}; flex-shrink: 0; }
+        .hero-title { font-size: clamp(2rem, 4.5vw, 4.5rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.04em; color: #fff; max-width: 600px; }
+        .hero-desc { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.75; max-width: 460px; margin-top: 18px; }
 
-        .hero-bg {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, #0B2540 0%, #162d4a 50%, #0d1f34 100%);
-        }
+        @media (max-width: 820px) { .hero-content { padding: 0 28px 48px; } }
+        @media (max-width: 600px) { .hero { height: 48vh; min-height: 260px; } .hero-content { padding: 0 20px 36px; } .hero-desc { font-size: 14px; margin-top: 12px; } }
 
-        .hero-grid {
-          position: absolute;
-          inset: 0;
-          background-image:
-            linear-gradient(rgba(200,16,46,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(200,16,46,0.04) 1px, transparent 1px);
-          background-size: 60px 60px;
-        }
+        .body-inner { max-width: 1160px; margin: 0 auto; padding: 0 64px 100px; width: 100%; overflow-x: hidden; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; padding: 52px 0 0; border-bottom: 1px solid ${BORDER}; }
+        .section-header-label { font-size: 10px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; color: ${MUTED}; }
 
-        .hero::before {
-          content: '';
-          position: absolute;
-          left: 0; top: 0; bottom: 0;
-          width: 4px;
-          background: ${RED};
-          z-index: 3;
-        }
-
-        .hero-content {
-          position: relative;
-          z-index: 2;
-          width: 100%;
-          max-width: 1160px;
-          margin: 0 auto;
-          padding: 0 64px 64px;
-        }
-
-        .hero-eyebrow {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-          color: ${RED};
-          margin-bottom: 20px;
-        }
-        .hero-eyebrow::before {
-          content: '';
-          display: block;
-          width: 28px;
-          height: 1.5px;
-          background: ${RED};
-          flex-shrink: 0;
-        }
-
-        .hero-title {
-          font-size: clamp(2rem, 4.5vw, 4.5rem);
-          font-weight: 800;
-          line-height: 1.05;
-          letter-spacing: -0.04em;
-          color: #fff;
-          max-width: 600px;
-        }
-
-        .hero-desc {
-          font-size: 15px;
-          color: rgba(255,255,255,0.55);
-          line-height: 1.75;
-          max-width: 460px;
-          margin-top: 18px;
-        }
-
-        @media (max-width: 820px) {
-          .hero-content { padding: 0 28px 48px; }
-        }
-        @media (max-width: 600px) {
-          .hero { height: 48vh; min-height: 260px; }
-          .hero-content { padding: 0 20px 36px; }
-          .hero-desc { font-size: 14px; margin-top: 12px; }
-        }
-
-        /* ─── BODY ─── */
-        .body-inner {
-          max-width: 1160px;
-          margin: 0 auto;
-          padding: 0 64px 100px;
-          width: 100%;
-          overflow-x: hidden;
-        }
-
-        .section-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 52px 0 0;
-          border-bottom: 1px solid ${BORDER};
-        }
-        .section-header-label {
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.26em;
-          text-transform: uppercase;
-          color: ${MUTED};
-        }
-
-        /* ─── TWO-COL GRID ─── */
-        .contact-grid {
-          display: grid;
-          grid-template-columns: 1fr 1.1fr;
-          gap: 64px;
-          margin-top: 56px;
-          align-items: start;
-        }
-
-        /* ─── LEFT: INFO ─── */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; margin-top: 56px; align-items: start; }
         .contact-info { display: flex; flex-direction: column; }
-
-        .info-rule {
-          width: 28px; height: 1.5px;
-          background: ${RED};
-          margin-bottom: 20px;
-        }
-        .info-title {
-          font-size: 1.65rem;
-          font-weight: 800;
-          letter-spacing: -0.035em;
-          line-height: 1.1;
-          color: ${NAVY};
-          margin-bottom: 16px;
-        }
-        .info-sub {
-          font-size: 14px;
-          line-height: 1.8;
-          color: ${MUTED};
-          margin-bottom: 40px;
-        }
-
+        .info-rule { width: 28px; height: 1.5px; background: ${RED}; margin-bottom: 20px; }
+        .info-title { font-size: 1.65rem; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; color: ${NAVY}; margin-bottom: 16px; }
+        .info-sub { font-size: 14px; line-height: 1.8; color: ${MUTED}; margin-bottom: 40px; }
         .info-blocks { display: flex; flex-direction: column; }
-
-        .info-block {
-          padding: 24px 0;
-          border-bottom: 1px solid ${BORDER};
-          display: flex;
-          gap: 20px;
-          align-items: flex-start;
-        }
+        .info-block { padding: 24px 0; border-bottom: 1px solid ${BORDER}; display: flex; gap: 20px; align-items: flex-start; }
         .info-block:first-of-type { border-top: 1px solid ${BORDER}; }
-
-        .info-icon {
-          width: 36px; height: 36px;
-          border-radius: 3px;
-          background: rgba(200,16,46,0.07);
-          display: flex; align-items: center; justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .info-label {
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: ${MUTED};
-          margin-bottom: 6px;
-        }
-        .info-value {
-          font-size: 14px;
-          font-weight: 600;
-          color: ${NAVY};
-          line-height: 1.6;
-        }
-        .info-value a {
-          color: ${NAVY};
-          text-decoration: none;
-          transition: color 0.18s;
-        }
+        .info-icon { width: 36px; height: 36px; border-radius: 3px; background: rgba(200,16,46,0.07); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .info-label { font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: ${MUTED}; margin-bottom: 6px; }
+        .info-value { font-size: 14px; font-weight: 600; color: ${NAVY}; line-height: 1.6; }
+        .info-value a { color: ${NAVY}; text-decoration: none; transition: color 0.18s; }
         .info-value a:hover { color: ${RED}; }
-
-        .hours-row {
-          display: flex;
-          justify-content: space-between;
-          font-size: 13px;
-          padding: 3px 0;
-          color: ${NAVY};
-          font-weight: 500;
-        }
+        .hours-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; color: ${NAVY}; font-weight: 500; }
         .hours-row .hours-time { color: ${MUTED}; font-weight: 400; }
         .hours-row.closed .hours-time { color: #9CA3AF; }
 
-        /* ─── MAP ─── */
-        .map-wrap {
-          border-radius: 6px;
-          overflow: hidden;
-          border: 1px solid ${BORDER};
-          height: 260px;
-          margin-top: 32px;
-          background: #e9edf1;
-          position: relative;
-        }
-        .map-wrap iframe {
-          width: 100%; height: 100%;
-          border: 0; display: block;
-        }
-        .map-placeholder {
-          width: 100%; height: 100%;
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center;
-          gap: 10px;
-          color: ${MUTED};
-          font-size: 13px;
-          text-align: center;
-          padding: 20px;
-          font-weight: 500;
-        }
+        .map-wrap { border-radius: 6px; overflow: hidden; border: 1px solid ${BORDER}; height: 260px; margin-top: 32px; background: #e9edf1; position: relative; }
+        .map-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
+        .map-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: ${MUTED}; font-size: 13px; text-align: center; padding: 20px; font-weight: 500; }
 
-        /* ─── RIGHT: FORM ─── */
-        .contact-form-wrap {
-          background: ${NAVY};
-          border-radius: 6px;
-          padding: 52px 48px;
-          position: relative;
-          overflow: hidden;
-        }
-        .contact-form-wrap::before {
-          content: '';
-          position: absolute;
-          left: 0; top: 0; bottom: 0;
-          width: 4px;
-          background: ${RED};
-        }
-        .contact-form-wrap::after {
-          content: '';
-          position: absolute;
-          width: 380px; height: 380px;
-          border-radius: 50%;
-          border: 1px solid rgba(200,16,46,0.12);
-          top: -100px; right: -80px;
-          pointer-events: none;
-        }
-
-        .form-eyebrow {
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-          color: ${RED};
-          display: flex; align-items: center; gap: 10px;
-          margin-bottom: 16px;
-          position: relative; z-index: 1;
-        }
-        .form-eyebrow::before {
-          content: '';
-          display: block;
-          width: 20px; height: 1.5px;
-          background: ${RED};
-          flex-shrink: 0;
-        }
-        .form-title {
-          font-size: 1.4rem;
-          font-weight: 800;
-          letter-spacing: -0.03em;
-          color: #fff;
-          margin-bottom: 28px;
-          position: relative; z-index: 1;
-          line-height: 1.15;
-        }
+        .contact-form-wrap { background: ${NAVY}; border-radius: 6px; padding: 52px 48px; position: relative; overflow: hidden; }
+        .contact-form-wrap::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: ${RED}; }
+        .contact-form-wrap::after { content: ''; position: absolute; width: 380px; height: 380px; border-radius: 50%; border: 1px solid rgba(200,16,46,0.12); top: -100px; right: -80px; pointer-events: none; }
+        .form-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: ${RED}; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; position: relative; z-index: 1; }
+        .form-eyebrow::before { content: ''; display: block; width: 20px; height: 1.5px; background: ${RED}; flex-shrink: 0; }
+        .form-title { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; color: #fff; margin-bottom: 28px; position: relative; z-index: 1; line-height: 1.15; }
 
         .form { display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 1; }
-
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
         .field { display: flex; flex-direction: column; gap: 6px; }
-
-        .field label {
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.45);
-        }
-
-        .field input,
-        .field select,
-        .field textarea {
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.12);
-          border-radius: 3px;
-          color: #fff;
-          font-size: 13.5px;
-          padding: 11px 14px;
-          font-family: inherit;
-          transition: border-color 0.18s, background 0.18s;
-          outline: none;
-          width: 100%;
-        }
-        .field input::placeholder,
-        .field textarea::placeholder { color: rgba(255,255,255,0.28); }
-        .field input:focus,
-        .field select:focus,
-        .field textarea:focus {
-          border-color: rgba(200,16,46,0.6);
-          background: rgba(255,255,255,0.09);
-        }
+        .field label { font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+        .field input, .field select, .field textarea { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 3px; color: #fff; font-size: 13.5px; padding: 11px 14px; font-family: inherit; transition: border-color 0.18s, background 0.18s; outline: none; width: 100%; }
+        .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.28); }
+        .field input:focus, .field select:focus, .field textarea:focus { border-color: rgba(200,16,46,0.6); background: rgba(255,255,255,0.09); }
         .field select { appearance: none; cursor: pointer; }
         .field select option { background: ${NAVY}; color: #fff; }
         .field textarea { resize: vertical; min-height: 100px; }
 
-        .submit-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: #fff;
-          background: ${RED};
-          border: none;
-          padding: 15px 28px;
-          border-radius: 3px;
-          cursor: pointer;
-          transition: background 0.18s, transform 0.18s;
-          font-family: inherit;
-          align-self: flex-start;
-        }
+        .submit-btn { display: inline-flex; align-items: center; gap: 10px; font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #fff; background: ${RED}; border: none; padding: 15px 28px; border-radius: 3px; cursor: pointer; transition: background 0.18s, transform 0.18s; font-family: inherit; align-self: flex-start; }
         .submit-btn:hover { background: #a50d24; transform: translateX(3px); }
         .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .submit-btn .arrow { display: inline-block; transition: transform 0.18s; }
         .submit-btn:hover:not(:disabled) .arrow { transform: translateX(4px); }
+        .form-note { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.6; }
 
-        .form-note {
-          font-size: 11px;
-          color: rgba(255,255,255,0.3);
-          line-height: 1.6;
-        }
+        .success-msg { display: flex; align-items: center; gap: 12px; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 3px; padding: 14px 18px; font-size: 13px; color: #6EE7B7; }
+        .error-msg { display: flex; align-items: center; gap: 12px; background: rgba(200,16,46,0.1); border: 1px solid rgba(200,16,46,0.3); border-radius: 3px; padding: 12px 16px; font-size: 13px; color: #fca5a5; }
 
-        .success-msg {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          background: rgba(16,185,129,0.12);
-          border: 1px solid rgba(16,185,129,0.3);
-          border-radius: 3px;
-          padding: 14px 18px;
-          font-size: 13px;
-          color: #6EE7B7;
-        }
-
-        /* ─── BOTTOM 3-COL ─── */
-        .bottom-callout {
-          margin-top: 72px;
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1px;
-          background: ${BORDER};
-          border: 1px solid ${BORDER};
-          border-radius: 6px;
-          overflow: hidden;
-        }
-
-        .callout-item {
-          background: #fff;
-          padding: 36px 32px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .callout-icon {
-          width: 40px; height: 40px;
-          border-radius: 3px;
-          background: rgba(200,16,46,0.07);
-          display: flex; align-items: center; justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .callout-label {
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: ${MUTED};
-        }
-        .callout-value {
-          font-size: 14px;
-          font-weight: 700;
-          color: ${NAVY};
-          line-height: 1.45;
-          word-break: break-all;
-        }
+        .bottom-callout { margin-top: 72px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: ${BORDER}; border: 1px solid ${BORDER}; border-radius: 6px; overflow: hidden; }
+        .callout-item { background: #fff; padding: 36px 32px; display: flex; flex-direction: column; gap: 12px; }
+        .callout-icon { width: 40px; height: 40px; border-radius: 3px; background: rgba(200,16,46,0.07); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .callout-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: ${MUTED}; }
+        .callout-value { font-size: 14px; font-weight: 700; color: ${NAVY}; line-height: 1.45; word-break: break-all; }
         .callout-desc { font-size: 12.5px; color: ${MUTED}; line-height: 1.6; }
 
-        /* ─── WHATSAPP INLINE (phone row) ─── */
-        .whatsapp-inline {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: transparent;
-          color: ${NAVY};
-          border: 1px solid rgba(11,37,64,0.06);
-          padding: 6px 8px;
-          border-radius: 4px;
-          text-decoration: none;
-          font-weight: 700;
-          margin-left: 10px;
-        }
+        .whatsapp-inline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: ${NAVY}; border: 1px solid rgba(11,37,64,0.06); padding: 6px 8px; border-radius: 4px; text-decoration: none; font-weight: 700; margin-left: 10px; }
 
-        /* ─── WHATSAPP FLOATING BUTTON ─── */
-        .whatsapp-float {
-          position: fixed;
-          bottom: 24px;
-          right: 24px;
-          z-index: 1300;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          background: #25D366;
-          color: #fff;
-          padding: 12px 20px;
-          border-radius: 999px;
-          box-shadow: 0 8px 20px rgba(37,211,102,0.35);
-          text-decoration: none;
-          font-weight: 700;
-          font-size: 14px;
-          transition: box-shadow 0.2s, transform 0.2s;
-          white-space: nowrap;
-        }
-        .whatsapp-float:hover {
-          box-shadow: 0 12px 28px rgba(37,211,102,0.45);
-          transform: translateY(-2px);
-        }
+        .whatsapp-float { position: fixed; bottom: 24px; right: 24px; z-index: 1300; display: inline-flex; align-items: center; gap: 10px; background: #25D366; color: #fff; padding: 12px 20px; border-radius: 999px; box-shadow: 0 8px 20px rgba(37,211,102,0.35); text-decoration: none; font-weight: 700; font-size: 14px; transition: box-shadow 0.2s, transform 0.2s; white-space: nowrap; }
+        .whatsapp-float:hover { box-shadow: 0 12px 28px rgba(37,211,102,0.45); transform: translateY(-2px); }
+        .whatsapp-float-label { display: inline; }
 
-        /* Label hidden on small screens — icon only */
-        .whatsapp-float-label {
-          display: inline;
-        }
-
-        @media (max-width: 540px) {
-          .whatsapp-float {
-            bottom: 16px;
-            right: 16px;
-            padding: 12px;        /* equal padding → perfect circle */
-            gap: 0;
-          }
-          .whatsapp-float-label {
-            display: none;        /* hide text, keep icon */
-          }
-        }
-
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 960px) {
-          .body-inner { padding: 0 32px 80px; }
-          .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-          .bottom-callout { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 620px) {
-          .body-inner { padding: 0 20px 60px; }
-          .contact-form-wrap { padding: 36px 24px; }
-          .form-row { grid-template-columns: 1fr; }
-          .bottom-callout { margin-top: 48px; }
-        }
-        @media (max-width: 460px) {
-          .body-inner { padding: 0 16px 52px; }
-          .submit-btn { width: 100%; justify-content: center; }
-        }
+        @media (max-width: 960px) { .body-inner { padding: 0 32px 80px; } .contact-grid { grid-template-columns: 1fr; gap: 40px; } .bottom-callout { grid-template-columns: 1fr; } }
+        @media (max-width: 620px) { .body-inner { padding: 0 20px 60px; } .contact-form-wrap { padding: 36px 24px; } .form-row { grid-template-columns: 1fr; } .bottom-callout { margin-top: 48px; } }
+        @media (max-width: 540px) { .whatsapp-float { bottom: 16px; right: 16px; padding: 12px; gap: 0; } .whatsapp-float-label { display: none; } }
+        @media (max-width: 460px) { .body-inner { padding: 0 16px 52px; } .submit-btn { width: 100%; justify-content: center; } }
       `}</style>
 
       <div className="contact-root">
@@ -691,8 +305,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
               </p>
 
               <div className="info-blocks">
-
-                {/* Address */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -710,7 +322,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                 </div>
 
-                {/* Phone with WhatsApp inline */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -721,14 +332,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                     <p className="info-label">Phone</p>
                     <p className="info-value" style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <a href={CONTACT_INFO.phoneHref}>{CONTACT_INFO.phone}</a>
-
-                      <a
-                        className="whatsapp-inline"
-                        href={WHATSAPP_HREF}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Chat with us on WhatsApp"
-                      >
+                      <a className="whatsapp-inline" href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
                           <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 .12 5.27.12 11.8a11.6 11.6 0 001.58 5.68L0 24l6.6-1.95A11.93 11.93 0 0012 24c6.63 0 11.88-5.27 11.88-11.8 0-3.16-1.21-6.1-3.36-8.72z" fill="#25D366"/>
                           <path d="M17.1 14.7c-.28-.2-1.62-.9-1.85-1-.28-.12-.47-.18-.68.24-.2.41-.78 1.05-1 1.27-.24.22-.44.24-.73.07-.3-.18-1.15-.42-2.19-1.37-.81-.76-1.34-1.7-1.5-2-.16-.3.02-.46.14-.58.14-.12.3-.3.45-.45.15-.15.2-.25.3-.42.1-.17.05-.31-.02-.43-.07-.12-.68-1.66-.94-2.28-.25-.6-.5-.52-.69-.53-.18-.01-.38-.01-.58-.01s-.43.06-.65.3c-.22.24-.86.83-.86 2.03 0 1.2.88 2.36 1 2.53.12.17 1.86 2.86 4.5 3.9 2.6 1.04 3.9.9 4.26.84.36-.07 1.16-.47 1.33-.92.18-.45.18-.83.12-.92-.06-.1-.26-.15-.54-.27z" fill="#fff"/>
@@ -739,7 +343,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                 </div>
 
-                {/* Email */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -755,7 +358,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                 </div>
 
-                {/* Hours */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -773,33 +375,22 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                     ))}
                   </div>
                 </div>
-
               </div>
 
-              {/* MAP */}
               <div className="map-wrap">
                 {CONTACT_INFO.mapSrc ? (
-                  <iframe
-                    src={CONTACT_INFO.mapSrc}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="ILK Technology location"
-                  />
+                  <iframe src={CONTACT_INFO.mapSrc} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="ILK Technology location" />
                 ) : (
                   <div className="map-placeholder">
                     <svg viewBox="0 0 24 24" width={32} height={32} fill="none" stroke={RED} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
-                    <span style={{ color: NAVY, fontWeight: 600, display: "block", marginBottom: 4 }}>
-                      Map placeholder
-                    </span>
+                    <span style={{ color: NAVY, fontWeight: 600, display: "block", marginBottom: 4 }}>Map placeholder</span>
                     <span>Paste your Google Maps embed URL into <code>CONTACT_INFO.mapSrc</code></span>
                   </div>
                 )}
               </div>
-
             </div>
 
             {/* RIGHT: Form */}
@@ -861,18 +452,20 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
 
                   <div className="field">
                     <label htmlFor="message">Your Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      placeholder="Tell us about your requirements, project scope, or any questions you have…"
-                      required
-                      value={form.message}
-                      onChange={handleChange}
-                    />
+                    <textarea id="message" name="message" placeholder="Tell us about your requirements, project scope, or any questions you have…" required value={form.message} onChange={handleChange} />
                   </div>
 
-                  <button type="submit" className="submit-btn">
-                    Send Enquiry <span className="arrow">→</span>
+                  {errorMsg && (
+                    <div className="error-msg">
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fca5a5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                        <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                      {errorMsg}
+                    </div>
+                  )}
+
+                  <button type="submit" className="submit-btn" disabled={sending}>
+                    {sending ? "Sending…" : <>Send Enquiry <span className="arrow">→</span></>}
                   </button>
 
                   <p className="form-note">
@@ -881,7 +474,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                 </form>
               )}
             </div>
-
           </div>
 
           {/* ── BOTTOM 3-COL ── */}
@@ -894,18 +486,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                     <p className="callout-label">{label}</p>
                     <p className="callout-desc">{desc}</p>
                     <div style={{ marginTop: 8 }}>
-                      <button
-                        onClick={() => setNewsletterOpen(true)}
-                        style={{
-                          background: RED,
-                          color: "#fff",
-                          border: "none",
-                          padding: "10px 14px",
-                          borderRadius: 3,
-                          cursor: "pointer",
-                          fontWeight: 700,
-                        }}
-                      >
+                      <button onClick={() => setNewsletterOpen(true)} style={{ background: RED, color: "#fff", border: "none", padding: "10px 14px", borderRadius: 3, cursor: "pointer", fontWeight: 700 }}>
                         Subscribe
                       </button>
                     </div>
@@ -917,9 +498,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   <div className="callout-icon">{icon}</div>
                   <p className="callout-label">{label}</p>
                   <p className="callout-value">
-                    <Link href={`mailto:${email}`} style={{ color: NAVY, textDecoration: "none" }}>
-                      {email}
-                    </Link>
+                    <Link href={`mailto:${email}`} style={{ color: NAVY, textDecoration: "none" }}>{email}</Link>
                   </p>
                   <p className="callout-desc">{desc}</p>
                 </div>
@@ -930,17 +509,9 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
         </div>
       </div>
 
-      {/* Newsletter modal */}
       <NewsletterModal open={newsletterOpen} onClose={() => setNewsletterOpen(false)} />
 
-      {/* Floating WhatsApp button */}
-      <a
-        href={WHATSAPP_HREF}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="whatsapp-float"
-        aria-label="Chat with ILK Technology on WhatsApp"
-      >
+      <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" className="whatsapp-float" aria-label="Chat with ILK Technology on WhatsApp">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 .12 5.27.12 11.8a11.6 11.6 0 001.58 5.68L0 24l6.6-1.95A11.93 11.93 0 0012 24c6.63 0 11.88-5.27 11.88-11.8 0-3.16-1.21-6.1-3.36-8.72z" fill="#fff"/>
           <path d="M17.1 14.7c-.28-.2-1.62-.9-1.85-1-.28-.12-.47-.18-.68.24-.2.41-.78 1.05-1 1.27-.24.22-.44.24-.73.07-.3-.18-1.15-.42-2.19-1.37-.81-.76-1.34-1.7-1.5-2-.16-.3.02-.46.14-.58.14-.12.3-.3.45-.45.15-.15.2-.25.3-.42.1-.17.05-.31-.02-.43-.07-.12-.68-1.66-.94-2.28-.25-.6-.5-.52-.69-.53-.18-.01-.38-.01-.58-.01s-.43.06-.65.3c-.22.24-.86.83-.86 2.03 0 1.2.88 2.36 1 2.53.12.17 1.86 2.86 4.5 3.9 2.6 1.04 3.9.9 4.26.84.36-.07 1.16-.47 1.33-.92.18-.45.18-.83.12-.92-.06-.1-.26-.15-.54-.27z" fill="#fff"/>
