@@ -3,18 +3,18 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
-import NewsletterModal from "@/components/NewsLatterModal";
 
 const NAVY = "#0B2540";
 const RED = "#C8102E";
 const BORDER = "rgba(11,37,64,0.1)";
 const MUTED = "#6B7280";
 
-// ─── EMAILJS CONFIG ── swap these when you have your IDs ───
+// ─── EMAILJS CONFIG ────────────────────────────────────────────────────────────
 const EMAILJS_SERVICE_ID = "service_typ98iv";
 const EMAILJS_TEMPLATE_ID = "template_fa24dhe";
+const EMAILJS_NEWSLETTER_TEMPLATE_ID = "template_rvpmczd"; // ← replace when ready
 const EMAILJS_PUBLIC_KEY = "YF7C7rYxFblL_ulv4";
-// ──────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────────────
 
 const WHATSAPP_NUMBER = "447721776002";
 const WHATSAPP_DEFAULT_MSG = "Hi, I would like to enquire about ILK Technology services.";
@@ -83,6 +83,298 @@ const BOTTOM_CARDS = [
   },
 ];
 
+// ─────────────────────────────────────────────────────────────────────────────
+// NEWSLETTER MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+function NewsletterModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", company: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setErrorMsg("");
+
+    const templateParams = {
+      from_first_name: form.firstName,
+      from_last_name: form.lastName,
+      from_name: `${form.firstName} ${form.lastName}`,
+      from_email: form.email,
+      company: form.company || "Not provided",
+      reply_to: form.email,
+    };
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_NEWSLETTER_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      );
+      setSubmitted(true);
+    } catch (err) {
+      console.error("EmailJS newsletter error:", err);
+      setErrorMsg("Something went wrong. Please try again or email us directly.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!open) {
+      setTimeout(() => {
+        setSubmitted(false);
+        setErrorMsg("");
+        setForm({ firstName: "", lastName: "", email: "", company: "" });
+      }, 300);
+    }
+  }, [open]);
+
+  // Close on overlay click
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === overlayRef.current) onClose();
+  };
+
+  // Close on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    if (open) document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <>
+      <style>{`
+        .nl-overlay {
+          position: fixed; inset: 0; z-index: 2000;
+          background: rgba(11,37,64,0.72); backdrop-filter: blur(4px);
+          display: flex; align-items: center; justify-content: center;
+          padding: 24px; animation: nlFadeIn 0.22s ease;
+        }
+        @keyframes nlFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .nl-modal {
+          background: ${NAVY}; border-radius: 6px; width: 100%; max-width: 480px;
+          position: relative; overflow: hidden;
+          animation: nlSlideUp 0.28s cubic-bezier(0.22,1,0.36,1);
+          box-shadow: 0 32px 80px rgba(0,0,0,0.45);
+        }
+        @keyframes nlSlideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+        .nl-modal::before {
+          content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+          width: 4px; background: ${RED};
+        }
+        .nl-modal::after {
+          content: ''; position: absolute; width: 320px; height: 320px;
+          border-radius: 50%; border: 1px solid rgba(200,16,46,0.1);
+          top: -100px; right: -80px; pointer-events: none;
+        }
+
+        .nl-inner { padding: 48px 44px 44px; position: relative; z-index: 1; }
+
+        .nl-close {
+          position: absolute; top: 16px; right: 16px; z-index: 10;
+          background: rgba(255,255,255,0.07); border: none; border-radius: 3px;
+          width: 32px; height: 32px; cursor: pointer; display: flex;
+          align-items: center; justify-content: center;
+          color: rgba(255,255,255,0.5); transition: background 0.15s, color 0.15s;
+        }
+        .nl-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        .nl-eyebrow {
+          font-size: 10px; font-weight: 600; letter-spacing: 0.28em;
+          text-transform: uppercase; color: ${RED};
+          display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+        }
+        .nl-eyebrow::before {
+          content: ''; display: block; width: 20px; height: 1.5px;
+          background: ${RED}; flex-shrink: 0;
+        }
+
+        .nl-title {
+          font-size: 1.45rem; font-weight: 800; letter-spacing: -0.03em;
+          color: #fff; margin-bottom: 8px; line-height: 1.15;
+        }
+        .nl-subtitle {
+          font-size: 13px; color: rgba(255,255,255,0.45);
+          line-height: 1.7; margin-bottom: 28px;
+        }
+
+        .nl-form { display: flex; flex-direction: column; gap: 14px; }
+        .nl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .nl-field { display: flex; flex-direction: column; gap: 5px; }
+        .nl-field label {
+          font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
+          text-transform: uppercase; color: rgba(255,255,255,0.4);
+        }
+        .nl-field input {
+          background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 3px; color: #fff; font-size: 13.5px;
+          padding: 10px 14px; font-family: inherit; outline: none; width: 100%;
+          transition: border-color 0.18s, background 0.18s;
+        }
+        .nl-field input::placeholder { color: rgba(255,255,255,0.25); }
+        .nl-field input:focus {
+          border-color: rgba(200,16,46,0.6); background: rgba(255,255,255,0.09);
+        }
+
+        .nl-submit {
+          display: inline-flex; align-items: center; gap: 10px;
+          font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
+          text-transform: uppercase; color: #fff; background: ${RED};
+          border: none; padding: 14px 24px; border-radius: 3px;
+          cursor: pointer; transition: background 0.18s, transform 0.18s;
+          font-family: inherit; align-self: flex-start; margin-top: 4px;
+        }
+        .nl-submit:hover { background: #a50d24; transform: translateX(3px); }
+        .nl-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .nl-arrow { transition: transform 0.18s; display: inline-block; }
+        .nl-submit:hover:not(:disabled) .nl-arrow { transform: translateX(4px); }
+
+        .nl-note {
+          font-size: 11px; color: rgba(255,255,255,0.28); line-height: 1.6; margin-top: 2px;
+        }
+
+        .nl-success {
+          display: flex; align-items: flex-start; gap: 12px;
+          background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.28);
+          border-radius: 3px; padding: 16px 18px; font-size: 13px; color: #6EE7B7;
+          line-height: 1.6; margin-top: 4px;
+        }
+
+        .nl-error {
+          display: flex; align-items: center; gap: 10px;
+          background: rgba(200,16,46,0.1); border: 1px solid rgba(200,16,46,0.3);
+          border-radius: 3px; padding: 11px 14px; font-size: 13px; color: #fca5a5;
+        }
+
+        @media (max-width: 540px) {
+          .nl-inner { padding: 40px 24px 36px; }
+          .nl-row { grid-template-columns: 1fr; }
+          .nl-submit { width: 100%; justify-content: center; }
+        }
+      `}</style>
+
+      <div
+        ref={overlayRef}
+        className="nl-overlay"
+        onClick={handleOverlayClick}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Newsletter signup"
+      >
+        <div className="nl-modal">
+          <button className="nl-close" onClick={onClose} aria-label="Close modal">
+            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+
+          <div className="nl-inner">
+            <p className="nl-eyebrow">Stay Informed</p>
+            <h2 className="nl-title">Subscribe to Our<br />Newsletter</h2>
+            <p className="nl-subtitle">
+              Get the latest product updates, industry news, and exclusive offers from ILK Technology and our brand partners.
+            </p>
+
+            {submitted ? (
+              <div className="nl-success">
+                <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>
+                  <strong>You&apos;re subscribed!</strong> Thanks for signing up.
+                  We&apos;ll be in touch with the latest news and updates.
+                </span>
+              </div>
+            ) : (
+              <form className="nl-form" onSubmit={handleSubmit} >
+                <div className="nl-row">
+                  <div className="nl-field">
+                    <label htmlFor="nl-firstName">First Name</label>
+                    <input
+                      id="nl-firstName" name="firstName" type="text"
+                      placeholder="John" required
+                      value={form.firstName} onChange={handleChange}
+                    />
+                  </div>
+                  <div className="nl-field">
+                    <label htmlFor="nl-lastName">Last Name</label>
+                    <input
+                      id="nl-lastName" name="lastName" type="text"
+                      placeholder="Smith" required
+                      value={form.lastName} onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="nl-field">
+                  <label htmlFor="nl-email">Email Address</label>
+                  <input
+                    id="nl-email" name="email" type="email"
+                    placeholder="you@company.com" required
+                    value={form.email} onChange={handleChange}
+                  />
+                </div>
+
+                <div className="nl-field">
+                  <label htmlFor="nl-company">
+                    Company{" "}
+                    <span style={{ opacity: 0.5, fontWeight: 400, textTransform: "none", letterSpacing: 0, fontSize: 10 }}>
+                      (optional)
+                    </span>
+                  </label>
+                  <input
+                    id="nl-company" name="company" type="text"
+                    placeholder="Your Company Ltd"
+                    value={form.company} onChange={handleChange}
+                  />
+                </div>
+
+                {errorMsg && (
+                  <div className="nl-error">
+                    <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#fca5a5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    {errorMsg}
+                  </div>
+                )}
+
+                <button type="submit" className="nl-submit" disabled={sending}>
+                  {sending ? "Subscribing…" : (
+                    <><span>Subscribe Now</span> <span className="nl-arrow">→</span></>
+                  )}
+                </button>
+
+                <p className="nl-note">
+                  You can unsubscribe at any time. We respect your privacy and will never share your details.
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONTACT PAGE
+// ─────────────────────────────────────────────────────────────────────────────
 export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: string }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -112,7 +404,6 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
     setSending(true);
     setErrorMsg("");
 
-    // The keys here must match the variable names in your EmailJS template
     const templateParams = {
       from_first_name: form.firstName,
       from_last_name: form.lastName,
@@ -305,6 +596,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
               </p>
 
               <div className="info-blocks">
+                {/* Address */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -322,6 +614,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                 </div>
 
+                {/* Phone */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -332,7 +625,13 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                     <p className="info-label">Phone</p>
                     <p className="info-value" style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <a href={CONTACT_INFO.phoneHref}>{CONTACT_INFO.phone}</a>
-                      <a className="whatsapp-inline" href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
+                      <a
+                        className="whatsapp-inline"
+                        href={WHATSAPP_HREF}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Chat with us on WhatsApp"
+                      >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
                           <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 .12 5.27.12 11.8a11.6 11.6 0 001.58 5.68L0 24l6.6-1.95A11.93 11.93 0 0012 24c6.63 0 11.88-5.27 11.88-11.8 0-3.16-1.21-6.1-3.36-8.72z" fill="#25D366"/>
                           <path d="M17.1 14.7c-.28-.2-1.62-.9-1.85-1-.28-.12-.47-.18-.68.24-.2.41-.78 1.05-1 1.27-.24.22-.44.24-.73.07-.3-.18-1.15-.42-2.19-1.37-.81-.76-1.34-1.7-1.5-2-.16-.3.02-.46.14-.58.14-.12.3-.3.45-.45.15-.15.2-.25.3-.42.1-.17.05-.31-.02-.43-.07-.12-.68-1.66-.94-2.28-.25-.6-.5-.52-.69-.53-.18-.01-.38-.01-.58-.01s-.43.06-.65.3c-.22.24-.86.83-.86 2.03 0 1.2.88 2.36 1 2.53.12.17 1.86 2.86 4.5 3.9 2.6 1.04 3.9.9 4.26.84.36-.07 1.16-.47 1.33-.92.18-.45.18-.83.12-.92-.06-.1-.26-.15-.54-.27z" fill="#fff"/>
@@ -343,6 +642,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                 </div>
 
+                {/* Email */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -358,6 +658,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   </div>
                 </div>
 
+                {/* Hours */}
                 <div className="info-block">
                   <div className="info-icon">
                     <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke={RED} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
@@ -377,9 +678,16 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                 </div>
               </div>
 
+              {/* Map */}
               <div className="map-wrap">
                 {CONTACT_INFO.mapSrc ? (
-                  <iframe src={CONTACT_INFO.mapSrc} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="ILK Technology location" />
+                  <iframe
+                    src={CONTACT_INFO.mapSrc}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="ILK Technology location"
+                  />
                 ) : (
                   <div className="map-placeholder">
                     <svg viewBox="0 0 24 24" width={32} height={32} fill="none" stroke={RED} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
@@ -393,7 +701,7 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
               </div>
             </div>
 
-            {/* RIGHT: Form */}
+            {/* RIGHT: Contact Form */}
             <div ref={formRef} className="contact-form-wrap">
               <p className="form-eyebrow">Make an Enquiry</p>
               <h2 className="form-title">Tell Us About<br />Your Project</h2>
@@ -406,37 +714,60 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                   Thank you — your enquiry has been sent. We&apos;ll be in touch shortly.
                 </div>
               ) : (
-                <form className="form" onSubmit={handleSubmit}>
+                <form className="form" onSubmit={handleSubmit} id="contact">
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="firstName">First Name</label>
-                      <input id="firstName" name="firstName" type="text" placeholder="John" required value={form.firstName} onChange={handleChange} />
+                      <input
+                        id="firstName" name="firstName" type="text"
+                        placeholder="John" required
+                        value={form.firstName} onChange={handleChange}
+                      />
                     </div>
                     <div className="field">
                       <label htmlFor="lastName">Last Name</label>
-                      <input id="lastName" name="lastName" type="text" placeholder="Smith" required value={form.lastName} onChange={handleChange} />
+                      <input
+                        id="lastName" name="lastName" type="text"
+                        placeholder="Smith" required
+                        value={form.lastName} onChange={handleChange}
+                      />
                     </div>
                   </div>
 
                   <div className="field">
                     <label htmlFor="company">Company Name</label>
-                    <input id="company" name="company" type="text" placeholder="Your Company Ltd" value={form.company} onChange={handleChange} />
+                    <input
+                      id="company" name="company" type="text"
+                      placeholder="Your Company Ltd"
+                      value={form.company} onChange={handleChange}
+                    />
                   </div>
 
                   <div className="form-row">
                     <div className="field">
                       <label htmlFor="email">Email Address</label>
-                      <input id="email" name="email" type="email" placeholder="you@company.com" required value={form.email} onChange={handleChange} />
+                      <input
+                        id="email" name="email" type="email"
+                        placeholder="you@company.com" required
+                        value={form.email} onChange={handleChange}
+                      />
                     </div>
                     <div className="field">
                       <label htmlFor="phone">Phone Number</label>
-                      <input id="phone" name="phone" type="tel" placeholder="+44 000 000 0000" value={form.phone} onChange={handleChange} />
+                      <input
+                        id="phone" name="phone" type="tel"
+                        placeholder="+44 000 000 0000"
+                        value={form.phone} onChange={handleChange}
+                      />
                     </div>
                   </div>
 
                   <div className="field">
                     <label htmlFor="enquiryType">Enquiry Type</label>
-                    <select id="enquiryType" name="enquiryType" required value={form.enquiryType} onChange={handleChange}>
+                    <select
+                      id="enquiryType" name="enquiryType" required
+                      value={form.enquiryType} onChange={handleChange}
+                    >
                       <option value="" disabled>Select a category…</option>
                       {ENQUIRY_TYPES.map((t) => <option key={t}>{t}</option>)}
                     </select>
@@ -444,7 +775,10 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
 
                   <div className="field">
                     <label htmlFor="brand">Brand Interest</label>
-                    <select id="brand" name="brand" value={form.brand} onChange={handleChange}>
+                    <select
+                      id="brand" name="brand"
+                      value={form.brand} onChange={handleChange}
+                    >
                       <option value="" disabled>Select a brand (optional)…</option>
                       {BRANDS.map((b) => <option key={b}>{b}</option>)}
                     </select>
@@ -452,20 +786,27 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
 
                   <div className="field">
                     <label htmlFor="message">Your Message</label>
-                    <textarea id="message" name="message" placeholder="Tell us about your requirements, project scope, or any questions you have…" required value={form.message} onChange={handleChange} />
+                    <textarea
+                      id="message" name="message"
+                      placeholder="Tell us about your requirements, project scope, or any questions you have…"
+                      required
+                      value={form.message} onChange={handleChange}
+                    />
                   </div>
 
                   {errorMsg && (
                     <div className="error-msg">
                       <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#fca5a5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                        <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
                       </svg>
                       {errorMsg}
                     </div>
                   )}
 
                   <button type="submit" className="submit-btn" disabled={sending}>
-                    {sending ? "Sending…" : <>Send Enquiry <span className="arrow">→</span></>}
+                    {sending ? "Sending…" : <><span>Send Enquiry</span> <span className="arrow">→</span></>}
                   </button>
 
                   <p className="form-note">
@@ -486,7 +827,14 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
                     <p className="callout-label">{label}</p>
                     <p className="callout-desc">{desc}</p>
                     <div style={{ marginTop: 8 }}>
-                      <button onClick={() => setNewsletterOpen(true)} style={{ background: RED, color: "#fff", border: "none", padding: "10px 14px", borderRadius: 3, cursor: "pointer", fontWeight: 700 }}>
+                      <button
+                        onClick={() => setNewsletterOpen(true)}
+                        style={{
+                          background: RED, color: "#fff", border: "none",
+                          padding: "10px 14px", borderRadius: 3,
+                          cursor: "pointer", fontWeight: 700,
+                        }}
+                      >
                         Subscribe
                       </button>
                     </div>
@@ -509,9 +857,17 @@ export default function ContactPage({ heroHeight = "52vh" }: { heroHeight?: stri
         </div>
       </div>
 
+      {/* ── NEWSLETTER MODAL ── */}
       <NewsletterModal open={newsletterOpen} onClose={() => setNewsletterOpen(false)} />
 
-      <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" className="whatsapp-float" aria-label="Chat with ILK Technology on WhatsApp">
+      {/* ── WHATSAPP FLOAT ── */}
+      <a
+        href={WHATSAPP_HREF}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="whatsapp-float"
+        aria-label="Chat with ILK Technology on WhatsApp"
+      >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 .12 5.27.12 11.8a11.6 11.6 0 001.58 5.68L0 24l6.6-1.95A11.93 11.93 0 0012 24c6.63 0 11.88-5.27 11.88-11.8 0-3.16-1.21-6.1-3.36-8.72z" fill="#fff"/>
           <path d="M17.1 14.7c-.28-.2-1.62-.9-1.85-1-.28-.12-.47-.18-.68.24-.2.41-.78 1.05-1 1.27-.24.22-.44.24-.73.07-.3-.18-1.15-.42-2.19-1.37-.81-.76-1.34-1.7-1.5-2-.16-.3.02-.46.14-.58.14-.12.3-.3.45-.45.15-.15.2-.25.3-.42.1-.17.05-.31-.02-.43-.07-.12-.68-1.66-.94-2.28-.25-.6-.5-.52-.69-.53-.18-.01-.38-.01-.58-.01s-.43.06-.65.3c-.22.24-.86.83-.86 2.03 0 1.2.88 2.36 1 2.53.12.17 1.86 2.86 4.5 3.9 2.6 1.04 3.9.9 4.26.84.36-.07 1.16-.47 1.33-.92.18-.45.18-.83.12-.92-.06-.1-.26-.15-.54-.27z" fill="#fff"/>

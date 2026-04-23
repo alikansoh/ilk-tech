@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, Keyboard } from "swiper/modules";
-
+import Link from "next/link";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -619,10 +619,13 @@ export default function ArnegWorks() {
                 crafted to elevate every square meter.
               </p>
 
-              <a href="#contact" className="aw-cta">
-                Book a Consultation
+              <Link
+                    href="/contact#contact"
+                    className="ap-cta"
+                    aria-label="Go to contact form"
+                  >Book a Consultation
                 <span className="aw-cta-icon">→</span>
-              </a>
+           </Link>
             </div>
           </div>
 

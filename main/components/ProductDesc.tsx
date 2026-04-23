@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const RAL9010 = "#F5F4F2";
 
@@ -465,20 +466,17 @@ export default function ArnegProducts() {
         }
 
         /* --- Responsive fixed heights for large screens --- */
-        /* On larger screens we switch from aspect-ratio to a fixed height to control card visual height */
         @media (min-width: 1024px) {
-          /* desktop / large: set image height to 320px and ensure tile has enough min-height to include footer */
           .ap-tile-img-wrap {
             aspect-ratio: auto;
             height: 320px;
           }
           .ap-tile {
-            min-height: 380px; /* image height + footer + some breathing room */
+            min-height: 380px;
           }
         }
 
         @media (min-width: 1280px) {
-          /* larger desktop: slightly taller images */
           .ap-tile-img-wrap {
             height: 360px;
           }
@@ -587,13 +585,13 @@ export default function ArnegProducts() {
                 </a>
 
                 <div className="ap-left-cta-wrap">
-                  <a
-                    href="mailto:sales@ilktechnology.com?subject=Request%20a%20Quote"
+                  <Link
+                    href="/contact#contact"
                     className="ap-cta"
-                    aria-label="Request a quote via email"
+                    aria-label="Go to contact form"
                   >
                     Book A Consultation
-                  </a>
+                  </Link>
                   <div className="ap-cta-note">
                     Or call us to discuss your project — we’ll respond within
                     one business day.
