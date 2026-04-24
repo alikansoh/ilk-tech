@@ -125,7 +125,7 @@ export default function Footer() {
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm text-white/60 flex items-center gap-2">
               <span className="inline-block h-1 w-1 rounded-full bg-red-600" aria-hidden />
-              © {new Date().getFullYear()} ILk-Tech Arneg Distribution Partner. All rights reserved.
+              © {new Date().getFullYear()} ILK Technology. All rights reserved.
             </p>
 
             <div className="flex items-center gap-4">

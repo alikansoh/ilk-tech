@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 const PRIMARY = "#0B2540";
 const LOGO_GRAY = "#BDBDBD";
@@ -9,7 +10,7 @@ const PRIMARY_SOFT = "rgba(11,37,64,0.12)";
 const ACCENT = "#dc2626";
 
 const STATS = [
-  { value: 25, suffix: "+", label: "Years Experience" },
+  { value: 20, suffix: "+", label: "Years Experience" },
   { value: 5000, suffix: "+", label: "Projects Delivered" },
   { value: 4, suffix: "", label: "Brand Partners" },
 ];
@@ -640,8 +641,8 @@ export default function AboutPage() {
                 ))}
               </div>
 
-              <a
-                href="/arneg-group"
+              <Link
+                href="/arneg"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -658,7 +659,7 @@ export default function AboutPage() {
                 }}
               >
                 Visit Arneg Partners Page →
-              </a>
+              </Link>
             </div>
           </div>
         </section>

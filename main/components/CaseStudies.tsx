@@ -14,8 +14,8 @@ const works = [
   { src: "/gallery1.jpg", alt: "Store Fitout A", category: "Fitout", location: "Tooting" },
   { src: "/gallery2.jpeg", alt: "Supermarket B", category: "Retail", location: "South End On Sea" },
   { src: "/gallery3.jpeg", alt: "Checkout Area C", category: "Checkout", location: "Cotswold" },
-  { src: "/gallery4.png", alt: "Coldroom D", category: "Coldroom", location: "Brighton" },
-  { src: "/gallery5.png", alt: "Display Shelves E", category: "Shelving", location: "South London" },
+  { src: "/gallery4.png", alt: "Coldroom D", category: "Coldroom", location: "South London" },
+  { src: "/gallery5.png", alt: "Display Shelves E", category: "Shelving", location: "Brighton" },
   { src: "/gallery6.jpg", alt: "Backroom F", category: "Storage", location: "Tooting" },
   { src: "/gallery7.jpeg", alt: "Backroom F", category: "Storage", location: "Chelmsford" },
   { src: "/gallery8 .jpg", alt: "Backroom F", category: "Storage", location: "South London" },
@@ -292,7 +292,7 @@ export default function ArnegWorks() {
 
         .aw-heading em {
           font-style: normal;
-          -webkit-text-stroke: 1.5px rgba(248,244,239,0.22);
+          -webkit-text-stroke: 2.5px white;
           color: transparent;
         }
 

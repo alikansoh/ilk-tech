@@ -43,7 +43,7 @@ const product = {
   image:    "/pro3.png",
   cataloguePdf: "/catalogues/osaka3.pdf",
   sizes:    ["1250mm", "1875mm", "2500mm", "3750mm"],
-  dimensions: { Height: "203 cm", Depth: "75 cm" },
+  dimensions: { Height: { value: "203", unit: "cm" }, Depth: { value: "75", unit: "cm" } },
   subtitle: "The Osaka 3 in Anthracite Grey brings industrial confidence to the chilled aisle — multiplexed system compatibility, mirrored end walls, and precision temperature control in one authoritative package.",
   specs: [
     { label: "Temperature",    value: "+1 to +4 °C",              note: "Chilled range",      icon: "temp"  },
@@ -142,8 +142,6 @@ const css = `
     overflow: hidden;
     background: ${T.anthracite3};
   }
-  /* NOTE: ::after removed — it was causing a gradient fade over the image */
-  /* Red top accent line */
   .o3-hero-img::before {
     content: "";
     position: absolute;
@@ -224,14 +222,20 @@ const css = `
     flex-shrink: 0;
   }
 
+  /* OSAKA 3 on one line */
+  .o3-h1-row {
+    display: flex;
+    align-items: baseline;
+    line-height: 0.85;
+    margin-bottom: 40px;
+    opacity: 0;
+  }
   .o3-h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(110px, 13vw, 170px);
     line-height: 0.85;
     color: ${T.white};
     letter-spacing: 0.01em;
-    margin-bottom: 0;
-    opacity: 0;
   }
   .o3-h1-accent {
     font-family: 'Bebas Neue', sans-serif;
@@ -240,8 +244,7 @@ const css = `
     color: transparent;
     -webkit-text-stroke: 1.5px ${T.red};
     letter-spacing: 0.01em;
-    margin-bottom: 40px;
-    opacity: 0;
+    margin-left: 16px;
   }
 
   .o3-rule {
@@ -286,12 +289,24 @@ const css = `
     color: ${T.red};
     margin-bottom: 6px;
   }
+  /* value + unit on same line */
   .o3-dim-v {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    line-height: 1;
+  }
+  .o3-dim-v-num {
     font-size: 26px;
     font-weight: 600;
     color: ${T.white};
-    line-height: 1;
     letter-spacing: -0.01em;
+  }
+  .o3-dim-v-unit {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.04em;
   }
 
   .o3-hero-actions {
@@ -728,8 +743,7 @@ export default function Osaka3Page() {
       if (!hero) return;
 
       const eyebrow   = hero.querySelector(".o3-eyebrow");
-      const h1        = hero.querySelector(".o3-h1");
-      const h1accent  = hero.querySelector(".o3-h1-accent");
+      const h1row     = hero.querySelector(".o3-h1-row");
       const rule      = hero.querySelector(".o3-rule");
       const tagline   = hero.querySelector(".o3-tagline");
       const dims      = hero.querySelector(".o3-dims");
@@ -748,7 +762,7 @@ export default function Osaka3Page() {
       );
 
       gsap.fromTo(
-        [eyebrow, h1, h1accent, rule, tagline, dims, actions],
+        [eyebrow, h1row, rule, tagline, dims, actions],
         { y: 36, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.75, stagger: 0.09, ease: "power3.out", delay: 0.3 }
       );
@@ -783,7 +797,7 @@ export default function Osaka3Page() {
           scrollTrigger: { trigger: ".o3-cta", start: "top 85%" } }
       );
 
-      gsap.fromTo(".o3-dim-v",
+      gsap.fromTo(".o3-dim-v-num",
         { opacity: 0, y: 12 },
         { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: "power2.out", delay: 1.2 }
       );
@@ -815,14 +829,22 @@ export default function Osaka3Page() {
               sizes="50vw"
             />
           </div>
+          {/* Colour badge */}
+          <div className="o3-colour-badge">
+            <div className="o3-colour-swatch" />
+            <span className="o3-colour-label">{product.colour}</span>
+          </div>
         </div>
 
         {/* Text */}
         <div className="o3-hero-txt">
           <span className="o3-eyebrow">{product.range}</span>
 
-          <div className="o3-h1">OSAKA</div>
-          <span className="o3-h1-accent">3.</span>
+          {/* OSAKA 3 — both on one line */}
+          <div className="o3-h1-row">
+            <span className="o3-h1">OSAKA</span>
+            <span className="o3-h1-accent">3.</span>
+          </div>
 
           <div className="o3-rule" />
           <p className="o3-tagline">{product.subtitle}</p>
@@ -831,7 +853,10 @@ export default function Osaka3Page() {
             {Object.entries(product.dimensions).map(([k, v]) => (
               <div key={k} className="o3-dim">
                 <div className="o3-dim-k">{k}</div>
-                <div className="o3-dim-v">{v}</div>
+                <div className="o3-dim-v">
+                  <span className="o3-dim-v-num">{v.value}</span>
+                  <span className="o3-dim-v-unit">{v.unit}</span>
+                </div>
               </div>
             ))}
           </div>

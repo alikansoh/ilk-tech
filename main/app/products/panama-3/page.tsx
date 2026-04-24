@@ -43,35 +43,30 @@ const product = {
   range:    "Remote Multideck",
   colour:   "Anthracite Grey",
   image:    "/pro1.png",
-  cataloguePdf: "/catalogues/panama3.pdf",
+  cataloguePdf: "/catalogues/osaka3.pdf",
   sizes:    ["1250mm", "1875mm", "2500mm", "3750mm"],
-  dimensions: { Height: "203 cm", Depth: "75 cm" },
-  subtitle: "The Panama 3 pairs a classic Arneg blind system with dual-glass doors and precision EC fan cooling — a masterclass in disciplined refrigeration for the modern chilled aisle.",
+  dimensions: { Height: { value: "203", unit: "cm" }, Depth: { value: "75", unit: "cm" } },
+  subtitle: "The Panama 3 pairs a classic Arneg blind system with dual-glass doors and precision Low eneregy fan— a masterclass in disciplined refrigeration for the modern chilled aisle.",
   specs: [
     { label: "Temperature",    value: "+1 to +4 °C",             note: "Chilled range",       icon: "temp"   },
     { label: "Cooling",        value: "Remote",                  note: "External condenser",  icon: "cool"   },
     { label: "Lighting",       value: "LED canopy",              note: "Low energy",          icon: "light"  },
-    { label: "Doors",          value: "Open Chiller",              note: "Double-glazed",       icon: "door"   },
+    { label: "Doors",          value: "Open Chiller",            note: "Double-glazed",       icon: "door"   },
     { label: "Controller",     value: "Electronic",              note: "Smart control",       icon: "ctrl"   },
     { label: "Pipework",       value: "Top entry",               note: "Clean install",       icon: "pipe"   },
     { label: "Shelving",       value: "Base + 5 × 450 mm + EPOS",note: "Adj. levels",         icon: "shelf"  },
-    { label: "EC Fans",        value: "Low-energy",              note: "Optimised airflow",   icon: "fan"    },
+    { label: "Low Eneregy fan",value: "Low-energy",              note: "Optimised airflow",   icon: "fan"    },
     { label: "End Walls",      value: "Solid or Mirrored",       note: "Your choice",         icon: "end"    },
     { label: "Manual Blind",   value: "Included",                note: "Night blind system",  icon: "blind"  },
     { label: "Solenoid Valve", value: "Not included",            note: "Simplified system",   icon: "valve"  },
   ],
   features: [
     { num: "01", title: "Manual Blind System",      desc: "The signature Panama blind rolls down smoothly to seal the cabinet overnight, slashing energy consumption and extending refrigerant life for years of reliable performance." },
-    { num: "02", title: "EC Fan Technology",        desc: "Low-energy electronically commutated fans deliver optimised airflow and substantially reduced running costs — a measurable upgrade over standard AC motors." },
+    { num: "02", title: "Low Eneregy Fan Technology",        desc: "Low-energy electronically commutated fans deliver optimised airflow and substantially reduced running costs — a measurable upgrade over standard AC motors." },
     { num: "03", title: "Anthracite Grey Finish",   desc: "The deep powder coat finish commands respect on the shop floor. Paired with your choice of solid or mirrored end walls, it sets a premium retail tone." },
     { num: "04", title: "Flexible Configuration",   desc: "Five adjustable 450 mm shelves, full EPOS rail, dual-glass doors, and top-entry pipework — every detail engineered for a clean, professional installation." },
   ],
 };
-
-/* ─────────────────────────────────────────────
-   BLIND SLAT COUNT (kept for compatibility but slats replaced by overlay)
-───────────────────────────────────────────── */
-const SLAT_COUNT = 14;
 
 /* ─────────────────────────────────────────────
    TICKER ITEMS
@@ -86,7 +81,7 @@ const TICKER_ITEMS = [
   "Professional Installation",
   "5 Shelf Levels",
   "LED Canopy",
-  "EC Fan Technology",
+  "Low Eneregy Fan Technology",
 ];
 
 /* ─────────────────────────────────────────────
@@ -133,7 +128,6 @@ const css = `
     background: ${T.anthracite3};
   }
 
-  /* Red top accent line */
   .p3-hero-img-topline {
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -142,7 +136,6 @@ const css = `
     z-index: 20;
   }
 
-  /* Actual image */
   .p3-hero-img-actual {
     position: absolute;
     inset: 0;
@@ -152,11 +145,10 @@ const css = `
     width: 100%;
     height: 50%;
     object-fit: cover;
-    object-position: center; ;
+    object-position: center;
     display: block;
   }
 
-  /* Right-side fade into text panel */
   .p3-hero-img-fade {
     position: absolute;
     inset: 0;
@@ -165,7 +157,7 @@ const css = `
     pointer-events: none;
   }
 
-  /* ─── BLIND (single overlay) ─── */
+  /* ─── BLIND ─── */
   .p3-blind {
     position: absolute;
     inset: 0;
@@ -176,7 +168,7 @@ const css = `
   .p3-blind-overlay {
     position: absolute;
     inset: 0;
-    background: ${T.anthracite}; /* solid cover identical to background */
+    background: ${T.anthracite};
     will-change: transform;
   }
 
@@ -209,14 +201,20 @@ const css = `
     flex-shrink: 0;
   }
 
+  /* PANAMA 3 on one line */
+  .p3-h1-row {
+    display: flex;
+    align-items: baseline;
+    line-height: 0.85;
+    margin-bottom: 40px;
+    opacity: 0;
+  }
   .p3-h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(110px, 13vw, 170px);
     line-height: 0.85;
     color: ${T.white};
     letter-spacing: 0.01em;
-    margin-bottom: 0;
-    opacity: 0;
   }
   .p3-h1-accent {
     font-family: 'Bebas Neue', sans-serif;
@@ -225,8 +223,7 @@ const css = `
     color: transparent;
     -webkit-text-stroke: 1.5px ${T.red};
     letter-spacing: 0.01em;
-    margin-bottom: 40px;
-    opacity: 0;
+    margin-left: 16px;
   }
 
   .p3-rule {
@@ -246,6 +243,7 @@ const css = `
     opacity: 0;
   }
 
+  /* Dimensions — value + unit on same line */
   .p3-dims {
     display: flex;
     gap: 0;
@@ -272,11 +270,22 @@ const css = `
     margin-bottom: 6px;
   }
   .p3-dim-v {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    line-height: 1;
+  }
+  .p3-dim-v-num {
     font-size: 26px;
     font-weight: 600;
     color: ${T.white};
-    line-height: 1;
     letter-spacing: -0.01em;
+  }
+  .p3-dim-v-unit {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.04em;
   }
 
   .p3-hero-actions {
@@ -421,7 +430,6 @@ const css = `
     align-items: start;
   }
 
-  /* ── SECTION LABEL ── */
   .p3-section-label {
     font-size: 9px;
     font-weight: 700;
@@ -440,7 +448,6 @@ const css = `
     flex-shrink: 0;
   }
 
-  /* ── SIZES ── */
   .p3-sizes {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -463,7 +470,6 @@ const css = `
     position: relative;
     overflow: hidden;
   }
-  /* Blind-stripe decorative background */
   .p3-size-btn::before {
     content: "";
     position: absolute;
@@ -483,7 +489,6 @@ const css = `
     color: ${T.white};
   }
 
-  /* ── SPEC CARDS ── */
   .p3-specs-header {
     display: flex;
     align-items: center;
@@ -568,7 +573,6 @@ const css = `
     white-space: nowrap;
   }
 
-  /* ── RIGHT COLUMN ── */
   .p3-h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(58px, 6.5vw, 88px);
@@ -591,7 +595,6 @@ const css = `
     margin-bottom: 60px;
   }
 
-  /* Features */
   .p3-feats { margin-bottom: 68px; }
   .p3-feat {
     display: grid;
@@ -637,7 +640,6 @@ const css = `
     line-height: 1.65;
   }
 
-  /* CTA card */
   .p3-cta {
     border: 1px solid ${T.borderLight};
     border-radius: 8px;
@@ -653,7 +655,6 @@ const css = `
     width: 3px;
     background: ${T.red};
   }
-  /* Blind stripe texture on CTA */
   .p3-cta::after {
     content: "";
     position: absolute;
@@ -776,11 +777,10 @@ export default function Panama3Page() {
       const hero = heroRef.current;
       if (!hero) return;
 
-      const blindEl = blindRef.current; // whole blind container (single overlay inside)
+      const blindEl = blindRef.current;
       const badge   = badgeRef.current;
       const eyebrow = hero.querySelector(".p3-eyebrow");
-      const h1      = hero.querySelector(".p3-h1");
-      const h1acc   = hero.querySelector(".p3-h1-accent");
+      const h1row   = hero.querySelector(".p3-h1-row");
       const rule    = hero.querySelector(".p3-rule");
       const tagline = hero.querySelector(".p3-tagline");
       const dims    = hero.querySelector(".p3-dims");
@@ -789,7 +789,7 @@ export default function Panama3Page() {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // 1) Image slides up subtly while fading/zooming in
+      // 1) Image slides up subtly
       tl.fromTo(
         imgEl,
         { y: 40, scale: 1.06, opacity: 0 },
@@ -797,7 +797,7 @@ export default function Panama3Page() {
         0
       );
 
-      // 2) Move the whole blind container up as a single piece to reveal the image
+      // 2) Blind slides up to reveal image
       if (blindEl) {
         tl.fromTo(
           blindEl,
@@ -817,7 +817,7 @@ export default function Panama3Page() {
 
       // 4) Text stagger reveal
       tl.fromTo(
-        [eyebrow, h1, h1acc, rule, tagline, dims, actions],
+        [eyebrow, h1row, rule, tagline, dims, actions],
         { y: 36, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, stagger: 0.085 },
         0.85
@@ -827,65 +827,32 @@ export default function Panama3Page() {
       gsap.fromTo(
         ".p3-spec-card",
         { x: -24, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.55,
-          stagger: 0.055,
-          ease: "power2.out",
-          scrollTrigger: { trigger: ".p3-specs-grid", start: "top 82%" },
-        }
+        { x: 0, opacity: 1, duration: 0.55, stagger: 0.055, ease: "power2.out",
+          scrollTrigger: { trigger: ".p3-specs-grid", start: "top 82%" } }
       );
-
       gsap.fromTo(
         ".p3-size-btn",
         { scaleY: 0, opacity: 0, transformOrigin: "top" },
-        {
-          scaleY: 1,
-          opacity: 1,
-          duration: 0.4,
-          stagger: 0.08,
-          ease: "power2.out",
-          scrollTrigger: { trigger: ".p3-sizes", start: "top 85%" },
-        }
+        { scaleY: 1, opacity: 1, duration: 0.4, stagger: 0.08, ease: "power2.out",
+          scrollTrigger: { trigger: ".p3-sizes", start: "top 85%" } }
       );
-
       gsap.fromTo(
         ".p3-feat",
         { x: 30, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: "power2.out",
-          scrollTrigger: { trigger: ".p3-feats", start: "top 80%" },
-        }
+        { x: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out",
+          scrollTrigger: { trigger: ".p3-feats", start: "top 80%" } }
       );
-
       gsap.fromTo(
         ".p3-h2",
         { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".p3-h2", start: "top 85%" },
-        }
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out",
+          scrollTrigger: { trigger: ".p3-h2", start: "top 85%" } }
       );
-
       gsap.fromTo(
         ".p3-cta",
         { y: 30, opacity: 0, scale: 0.97 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.75,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".p3-cta", start: "top 85%" },
-        }
+        { y: 0, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out",
+          scrollTrigger: { trigger: ".p3-cta", start: "top 85%" } }
       );
     };
 
@@ -903,24 +870,19 @@ export default function Panama3Page() {
         <div className="p3-hero-img">
           <div className="p3-hero-img-topline" />
 
-          {/* Actual image beneath overlay */}
           <div className="p3-hero-img-actual">
             <Image
               src={product.image}
               alt={product.name}
               fill
               quality={95}
-              style={{ 
-              
-               }}
               sizes="70vw"
             />
           </div>
 
-          {/* Right-edge fade */}
           <div className="p3-hero-img-fade" />
 
-          {/* Single solid overlay (replaces slats) */}
+          {/* Single solid blind overlay */}
           <div className="p3-blind" ref={blindRef}>
             <div className="p3-blind-overlay" />
           </div>
@@ -936,8 +898,11 @@ export default function Panama3Page() {
         <div className="p3-hero-txt">
           <span className="p3-eyebrow">{product.range}</span>
 
-          <div className="p3-h1">PANAMA</div>
-          <span className="p3-h1-accent">3.</span>
+          {/* PANAMA 3 — both on one line */}
+          <div className="p3-h1-row">
+            <span className="p3-h1">PANAMA</span>
+            <span className="p3-h1-accent">3.</span>
+          </div>
 
           <div className="p3-rule" />
           <p className="p3-tagline">{product.subtitle}</p>
@@ -946,7 +911,10 @@ export default function Panama3Page() {
             {Object.entries(product.dimensions).map(([k, v]) => (
               <div key={k} className="p3-dim">
                 <div className="p3-dim-k">{k}</div>
-                <div className="p3-dim-v">{v}</div>
+                <div className="p3-dim-v">
+                  <span className="p3-dim-v-num">{v.value}</span>
+                  <span className="p3-dim-v-unit">{v.unit}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -1067,4 +1035,4 @@ export default function Panama3Page() {
       </section>
     </div>
   );
-}
+} 

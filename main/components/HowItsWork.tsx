@@ -26,7 +26,7 @@ const steps = [
     index: "04",
     label: "Install",
     headline: "Ready to Run",
-    desc: "Prepared for installation by your engineer or through our installation services. Designed to look professional, with accessories included, and built to last.",
+    desc: "Prepared for installation for your engineer or through our installation services. Designed to look professional, with accessories included, and built to last.",
   },
 ];
 
@@ -283,7 +283,7 @@ export default function HowItWorks() {
             </h3>
             {/* ✅ Fixed: was text-white/35 font-light — now readable */}
             <p className="text-[15px] leading-[1.85] text-white/60 font-medium max-w-[300px] mb-10">
-              Direct from our ILK warehouse warehouse. Fully tracked,
+              Direct from our ILK warehouse. Fully tracked,
               blanket-wrapped, and delivered to your site .
             </p>
             <div className="flex flex-col gap-4">

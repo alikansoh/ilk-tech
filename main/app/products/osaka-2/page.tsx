@@ -45,7 +45,7 @@ const product = {
   image:    "/pro2.png",
   cataloguePdf: "/catalogues/osaka2.pdf",
   sizes:    ["1250mm", "1875mm", "2500mm", "3750mm"],
-  dimensions: { Height: "203 cm", Depth: "75 cm" },
+  dimensions: { Height: { value: "203", unit: "cm" }, Depth: { value: "75", unit: "cm" } },
   subtitle: "The Osaka 2 in Elegant White brings refined clarity to the chilled aisle — multiplexed system compatibility, dual-glass doors, and precision temperature control in one clean, authoritative package.",
   specs: [
     { label: "Temperature",    value: "+1 to +4 °C",              note: "Chilled range",      icon: "temp"  },
@@ -77,7 +77,7 @@ const TICKER_ITEMS = [
   "Professional Installation",
   "5 Shelf Levels",
   "LED Canopy",
-  "Mirrored End Walls",
+  "Solid end walls",
 ];
 
 /* ─────────────────────────────────────────────
@@ -129,8 +129,6 @@ const css = `
     background: ${T.red};
     z-index: 20;
   }
-
-  /* NOTE: ::after removed entirely — it was causing the white gradient fade over the image */
 
   .o2-hero-img-inner {
     position: absolute;
@@ -216,14 +214,29 @@ const css = `
   .o2-hero-txt { display:flex; flex-direction:column; justify-content:center; padding:80px 72px 80px 64px; position:relative; z-index:1; }
   .o2-eyebrow { font-size:10px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:${T.red}; margin-bottom:24px; display:flex; align-items:center; gap:12px; opacity:0; }
   .o2-eyebrow::before { content:""; width:28px; height:1.5px; background:${T.red}; flex-shrink:0; }
-  .o2-h1 { font-family:'Bebas Neue', sans-serif; font-size:clamp(110px,13vw,170px); line-height:0.85; color:${T.gray900}; letter-spacing:0.01em; margin-bottom:0; opacity:0; }
-  .o2-h1-accent { font-family:'Bebas Neue', sans-serif; font-size:clamp(110px,13vw,170px); line-height:0.85; color:transparent; -webkit-text-stroke:1.5px ${T.red}; margin-bottom:40px; opacity:0; }
+
+  /* OSAKA 2 on one line */
+  .o2-h1-row {
+    display: flex;
+    align-items: baseline;
+    line-height: 0.85;
+    margin-bottom: 40px;
+    opacity: 0;
+  }
+  .o2-h1 { font-family:'Bebas Neue', sans-serif; font-size:clamp(110px,13vw,170px); line-height:0.85; color:${T.gray900}; letter-spacing:0.01em; }
+  .o2-h1-accent { font-family:'Bebas Neue', sans-serif; font-size:clamp(110px,13vw,170px); line-height:0.85; color:transparent; -webkit-text-stroke:1.5px ${T.red}; margin-left:16px; }
+
   .o2-rule { width:48px; height:1px; background:${T.gray200}; margin-bottom:36px; opacity:0; }
   .o2-tagline { font-size:clamp(15px,1.8vw,18px); font-weight:300; color:${T.gray600}; line-height:1.65; max-width:500px; margin-bottom:52px; opacity:0; }
+
+  /* Dimensions box — value + unit on same line */
   .o2-dims { display:flex; gap:0; margin-bottom:52px; border:1px solid ${T.borderMd}; border-radius:8px; overflow:hidden; max-width:280px; opacity:0; }
   .o2-dim { flex:1; padding:18px 24px; border-right:1px solid ${T.border}; background:${T.surface}; } .o2-dim:last-child{ border-right:none; }
-  .o2-dim-k{ font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:${T.red}; margin-bottom:6px; }
-  .o2-dim-v{ font-size:26px; font-weight:600; color:${T.gray900}; line-height:1; letter-spacing:-0.01em; }
+  .o2-dim-k { font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:${T.red}; margin-bottom:6px; }
+  .o2-dim-v { display:flex; align-items:baseline; gap:4px; line-height:1; }
+  .o2-dim-v-num { font-size:26px; font-weight:600; color:${T.gray900}; letter-spacing:-0.01em; }
+  .o2-dim-v-unit { font-size:13px; font-weight:500; color:${T.gray400}; letter-spacing:0.04em; }
+
   .o2-hero-actions{ display:flex; align-items:center; gap:20px; opacity:0; }
   .o2-btn-primary{ padding:15px 30px; background:${T.red}; color:#fff; font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; border-radius:3px; border:none; display:inline-flex; gap:10px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:background .22s, transform .18s; }
   .o2-btn-primary:hover{ background:${T.red2}; transform:translateY(-1px); }
@@ -333,8 +346,7 @@ export default function Osaka2Page() {
       if (!hero || !left || !right) return;
 
       const eyebrow  = hero.querySelector(".o2-eyebrow");
-      const h1       = hero.querySelector(".o2-h1");
-      const h1acc    = hero.querySelector(".o2-h1-accent");
+      const h1row    = hero.querySelector(".o2-h1-row");
       const rule     = hero.querySelector(".o2-rule");
       const tagline  = hero.querySelector(".o2-tagline");
       const dims     = hero.querySelector(".o2-dims");
@@ -342,7 +354,7 @@ export default function Osaka2Page() {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // 1. Doors slide apart — pure translateX
+      // 1. Doors slide apart
       tl.to(left,  { xPercent: -100, duration: 0.85, ease: "power2.inOut" }, 0);
       tl.to(right, { xPercent:  100, duration: 0.85, ease: "power2.inOut" }, 0);
 
@@ -356,7 +368,7 @@ export default function Osaka2Page() {
 
       // 3. Text cascade
       tl.fromTo(
-        [eyebrow, h1, h1acc, rule, tagline, dims, actions],
+        [eyebrow, h1row, rule, tagline, dims, actions],
         { y: 32, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, stagger: 0.08 },
         0.75
@@ -401,7 +413,7 @@ export default function Osaka2Page() {
       <section className="o2-hero" ref={heroRef}>
 
         <div className="o2-hero-img">
-          {/* Product photo — visible from frame 1, revealed as doors slide away */}
+          {/* Product photo */}
           <div className="o2-hero-img-inner">
             <Image
               src={product.image}
@@ -435,8 +447,11 @@ export default function Osaka2Page() {
         <div className="o2-hero-txt">
           <span className="o2-eyebrow">{product.range}</span>
 
-          <div className="o2-h1">OSAKA</div>
-          <span className="o2-h1-accent">2.</span>
+          {/* OSAKA 2 — both on one line */}
+          <div className="o2-h1-row">
+            <span className="o2-h1">OSAKA</span>
+            <span className="o2-h1-accent">2.</span>
+          </div>
 
           <div className="o2-rule" />
           <p className="o2-tagline">{product.subtitle}</p>
@@ -445,7 +460,10 @@ export default function Osaka2Page() {
             {Object.entries(product.dimensions).map(([k, v]) => (
               <div key={k} className="o2-dim">
                 <div className="o2-dim-k">{k}</div>
-                <div className="o2-dim-v">{v}</div>
+                <div className="o2-dim-v">
+                  <span className="o2-dim-v-num">{v.value}</span>
+                  <span className="o2-dim-v-unit">{v.unit}</span>
+                </div>
               </div>
             ))}
           </div>

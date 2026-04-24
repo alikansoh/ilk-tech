@@ -138,16 +138,14 @@ export default function WhoWeAre() {
               </span>
             </div>
 
-            {/* heading */}
-            <h2 className="text-[clamp(2rem,4.2vw,3rem)] font-black leading-[1.1] tracking-[-0.03em] text-[#001845] uppercase mb-2">
-              Why Choose
-            </h2>
-            <h2 className="text-[clamp(2rem,4.2vw,3rem)] font-black leading-[1.1] tracking-[-0.03em] text-[#001845] uppercase mb-2">
-              ILK 
-            </h2>
-            <h2 className="text-[clamp(2rem,4.2vw,3rem)] font-black leading-[1.1] tracking-[-0.03em] uppercase mb-8 text-[#001845]/25">
-            Technology ?
-            </h2>
+            {/* heading (single line with Technology gray) */}
+<h2 className="text-[clamp(2rem,4.2vw,3rem)] font-black leading-[1.1] tracking-[-0.03em] uppercase mb-8">
+  Why Choose{" "}
+  <span className="ml-2 whitespace-nowrap">
+    <span className="text-[#001845]">ILK</span>{" "}
+    <span className="text-[#001845]/25">Technology?</span>
+  </span>
+</h2>
 
             {/* rule */}
             <div className="flex items-center gap-4 mb-8">

@@ -40,7 +40,7 @@ const BRANDS: Brand[] = [
     tagline: "Retail Space Designers",
     index: "03",
     logo: "/logo2.png",
-    desc: "Designers crafting compelling retail spaces. Specializing in shelving, checkouts, and accessories to turn ideas into successful environments.",
+    desc: "Designers crafting compelling retail spaces. Specialising in shelving, checkouts, and accessories to turn ideas into successful environments.",
     url: "https://www.intrac.it/",
   },
   {
@@ -48,7 +48,7 @@ const BRANDS: Brand[] = [
     tagline: "Cold Room Specialists",
     index: "04",
     logo: "/logo4.png",
-    desc: "Leading manufacturer of modular cold rooms, insulated panels, rapid doors, and specialized insulation solutions for every refrigeration need.",
+    desc: "Leading manufacturer of modular cold rooms, insulated panels, rapid doors, and specialised insulation solutions for every refrigeration need.",
     url: "https://www.incold.it/",
   },
 ];
@@ -303,11 +303,12 @@ export default function BrandsPage({
           flex-shrink: 0;
         }
 
+        /* CHANGED: stack text and meta vertically so the "04 Brand Partners" sits under the copy */
         .hero-bottom {
           display: grid;
-          grid-template-columns: 1fr auto;
-          align-items: end;
-          gap: 48px;
+          grid-template-columns: 1fr; /* single-column so meta flows under the text */
+          align-items: start;
+          gap: 20px; /* reduced gap for stacked layout */
         }
 
         .hero-title {
@@ -327,9 +328,11 @@ export default function BrandsPage({
           margin-top: 20px;
         }
 
+        /* CHANGED: left-align meta when stacked */
         .hero-meta {
-          text-align: right;
+          text-align: left;
           flex-shrink: 0;
+          margin-top: 6px;
         }
         .hero-meta-count {
           font-size: 5rem;
@@ -346,7 +349,7 @@ export default function BrandsPage({
           text-transform: uppercase;
           color: rgba(255,255,255,0.35);
           margin-top: 6px;
-          text-align: right;
+          text-align: left;
         }
 
         .hero-scroll-hint {
@@ -383,14 +386,14 @@ export default function BrandsPage({
           .hero-scroll-hint { right: 28px; }
         }
         @media (max-width: 800px) {
-          .hero-bottom { grid-template-columns: 1fr; gap: 20px; }
+          /* for small screens the layout is still stacked; these rules remain */
           .hero-meta { text-align: left; }
           .hero-meta-label { text-align: left; }
         }
         @media (max-width: 600px) {
           .hero { height: 58vh; min-height: 280px; max-height: 480px; }
           .hero-content { padding: 0 20px; transform: translateY(-6%); }
-          .hero-meta { display: none; }
+          .hero-meta { display: block; }
           .hero-scroll-hint { right: 20px; bottom: 16px; }
           .hero-desc { font-size: 14px; margin-top: 12px; }
         }
@@ -1308,7 +1311,6 @@ export default function BrandsPage({
   .hero-img-desktop { display: none; }
   .hero-img-mobile  { display: block; }
 }
-          
       `}</style>
 
       <div className="brands-root">

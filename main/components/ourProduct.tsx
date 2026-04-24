@@ -199,18 +199,18 @@ export default function OurProducts() {
         {/* ── CARDS ── */}
         <div
           ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch"
         >
           {products.map((p, i) => (
             <div
               key={p.href}
-              className="prod-card opacity-0 group relative flex flex-col cursor-pointer will-change-transform"
+              className="prod-card opacity-0 group relative flex flex-col cursor-pointer will-change-transform h-full"
               style={{ transition: "transform 0.25s cubic-bezier(0.23,1,0.32,1)" }}
               onMouseMove={(e) => handleMouseMove(e, i)}
               onMouseLeave={handleMouseLeave}
             >
               {/* image container — aspect ratio reduced from [3/4] to [4/5] */}
-              <div className="relative overflow-hidden aspect-[4/5] shadow-[0_16px_48px_rgba(0,24,69,0.10)]">
+              <div className="relative overflow-hidden aspect-[4/5] shadow-[0_16px_48px_rgba(0,24,69,0.10)] flex-none">
 
                 {/* index number top-left */}
                 <div className="absolute top-0 left-0 z-20 flex items-start gap-2 p-5">
@@ -264,7 +264,7 @@ export default function OurProducts() {
 
               {/* card footer */}
               <div
-                className="flex flex-col flex-1 px-5 py-5"
+                className="flex flex-col flex-1 px-5 py-5 justify-between"
                 style={{
                   background: activeIdx === i ? "#001845" : "#ffffff",
                   border: "1px solid rgba(0,24,69,0.08)",

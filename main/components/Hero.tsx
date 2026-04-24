@@ -111,7 +111,7 @@ export default function HeroSection() {
   const heading = ["Commercial", "Refrigeration,", "Engineered", "for the UK."];
 
   const stats = [
-    { n: 25,   suf: "+", label: "Years Experience" },
+    { n: 20,   suf: "+", label: "Years Experience" },
     { n: 1000, suf: "+", label: "Clients Served" },
     { n: 5000, suf: "+", label: "Installations" },
     { n: 100,  suf: "%", label: "Satisfaction" },
