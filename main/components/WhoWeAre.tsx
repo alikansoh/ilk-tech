@@ -62,7 +62,7 @@ export default function WhoWeAre() {
 
             <div className="relative overflow-hidden aspect-[4/3] shadow-[0_24px_64px_rgba(0,24,69,0.12)]">
               <Image
-                src="/about.png"
+                src="/about.webp"
                 alt="ILK Technology refrigeration showroom"
                 fill
                 quality={90}
