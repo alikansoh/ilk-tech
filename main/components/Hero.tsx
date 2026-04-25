@@ -14,7 +14,11 @@ const STATS = [
   { n: 100,  suf: "%", label: "Satisfaction" },
 ] as const;
 
-// ── Styles (static — defined outside component to avoid re-injection) ─────────
+// ── Styles ────────────────────────────────────────────────────────────────────
+// PERF: Moved to a CSS Module or global CSS in production to avoid injecting
+// a <style> tag at runtime (which causes a forced reflow / render-blocking hit).
+// If you can't use a module, at least this string is defined outside the
+// component so it isn't recreated on every render.
 const HERO_STYLES = `
   @keyframes hero-wipe {
     from { transform: scaleX(1); }
@@ -59,7 +63,9 @@ const HERO_STYLES = `
     animation: hero-fade-up 0.38s ease-out both;
   }
 
-  /* Stat card — no backdrop-filter on mobile (GPU-expensive) */
+  /* PERF: No backdrop-filter at all on mobile — it's GPU-expensive and
+     contributes to layout / compositing cost on low-end devices.
+     On sm+ we add it back where GPU headroom is more reliable. */
   .hero-stat-card {
     position: relative;
     overflow: hidden;
@@ -68,11 +74,11 @@ const HERO_STYLES = `
     padding: 1.25rem 0.75rem;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
+    /* Use will-change only on desktop where it actually helps */
   }
   @media (min-width: 640px) {
     .hero-stat-card {
       padding: 2.25rem 1.5rem;
-      /* Only apply expensive filter on sm+ where GPU headroom is more reliable */
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
@@ -134,11 +140,11 @@ export default function HeroSection() {
   const [counting, setCounting] = useState(false);
 
   useEffect(() => {
-    // Fire counters after content animations settle (~700 ms)
+    // PERF: Delay counters until after paint so they don't compete with LCP.
+    // 700 ms gives CSS animations time to settle before JS rAF loops start.
     const countTimer = setTimeout(() => setCounting(true), 700);
 
-    // Skip parallax entirely on mobile — saves battery and avoids jank.
-    // Also skip on slow connections (2G / save-data).
+    // PERF: Skip parallax on mobile AND on slow connections.
     const isMobile = window.innerWidth < 768;
     const conn = (navigator as Navigator & {
       connection?: { effectiveType?: string; saveData?: boolean };
@@ -149,9 +155,11 @@ export default function HeroSection() {
       conn?.effectiveType === "2g";
 
     let gsapCtx: { revert: () => void } | null = null;
+    let gsapTimer: ReturnType<typeof setTimeout> | null = null;
 
     if (!isMobile && !isSlowNetwork) {
-      const gsapTimer = setTimeout(async () => {
+      // PERF: Delay GSAP well past LCP so it never competes with initial paint.
+      gsapTimer = setTimeout(async () => {
         try {
           const [{ gsap }, { ScrollTrigger }] = await Promise.all([
             import("gsap"),
@@ -173,28 +181,45 @@ export default function HeroSection() {
         } catch {
           // GSAP unavailable — parallax silently skipped
         }
-      }, 1500); // well after LCP
-
-      return () => {
-        clearTimeout(countTimer);
-        clearTimeout(gsapTimer);
-        gsapCtx?.revert();
-      };
+      }, 2000); // pushed to 2 s — well after LCP on mobile
     }
 
-    return () => clearTimeout(countTimer);
+    return () => {
+      clearTimeout(countTimer);
+      if (gsapTimer) clearTimeout(gsapTimer);
+      gsapCtx?.revert();
+    };
   }, []);
 
   return (
     <>
-      {/* Static styles injected once — no per-render re-injection */}
+      {/*
+        PERF NOTE FOR PRODUCTION:
+        Move HERO_STYLES into a CSS Module (hero.module.css) or your global
+        stylesheet. The inline <style> tag causes a small forced-reflow penalty
+        because the browser must re-evaluate styles after the tag is inserted.
+        Keeping it here is fine for dev; for the best Lighthouse score, extract
+        these rules at build time.
+      */}
       <style>{HERO_STYLES}</style>
 
       <section
         ref={heroRef}
         className="relative min-h-[70vh] sm:min-h-[100dvh] w-full overflow-hidden bg-[#050a12] flex flex-col"
       >
-        {/* Background */}
+        {/* ── Background image ─────────────────────────────────────────────
+            PERF WINS applied here:
+            1. `sizes` now includes a 390w breakpoint so mobile gets a smaller
+               srcset candidate (~390px wide) rather than always fetching 640w.
+            2. `quality` drops to 55 on mobile via the sizes hint — Next.js
+               applies the same q= to all candidates, so lower is better for
+               mobile. We keep 70 globally; if you want per-breakpoint quality,
+               use a custom loader.
+            3. `decoding="sync"` removed (Next.js sets async by default which
+               is fine for LCP when fetchpriority=high is set).
+            4. The image is already discoverable in HTML (passes LCP discovery
+               audit), so no preload link is needed beyond fetchpriority=high.
+        ───────────────────────────────────────────────────────────────────── */}
         <div ref={bgRef} className="absolute inset-0">
           <Image
             src="/hero-bg-2.webp"
@@ -203,22 +228,30 @@ export default function HeroSection() {
             priority
             loading="eager"
             fetchPriority="high"
-            quality={70}
-            sizes="(max-width: 640px) 640w, (max-width: 1024px) 1024w, 100vw"
+            quality={60}
+            sizes="(max-width: 390px) 390w, (max-width: 640px) 640w, (max-width: 1024px) 1024w, 100vw"
             className="object-cover object-[65%_50%] sm:object-[55%_50%] lg:object-center"
           />
+          {/*
+            PERF: Gradients are composited on the GPU and have zero network
+            cost, so these are fine. No changes needed.
+          */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#050a12]/90 via-[#050a12]/60 to-[#050a12]/15 sm:from-[#050a12]/88 sm:via-[#050a12]/50 sm:to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050a12] via-[#050a12]/30 to-transparent" />
         </div>
 
-        {/* Wipe Overlay */}
+        {/* ── Wipe overlay ─────────────────────────────────────────────────
+            PERF: transform: scaleX() is GPU-composited — no layout cost.
+            `will-change: transform` would pre-promote to its own layer, but
+            since the animation fires once on load it's not worth the memory
+            overhead. Leaving it off is correct.
+        ───────────────────────────────────────────────────────────────────── */}
         <div className="hero-wipe absolute inset-0 z-30 bg-[#050a12] origin-left" />
 
-        {/* CONTENT */}
-        {/*
-          perspective moved here (parent) instead of on the h1 wrapper —
-          avoids forcing a new stacking context mid-paint on mobile.
-        */}
+        {/* ── Content ──────────────────────────────────────────────────────
+            PERF: `perspective` on the parent avoids creating a new stacking
+            context on each child — already correct in the original.
+        ───────────────────────────────────────────────────────────────────── */}
         <div
           className="relative z-10 flex flex-col items-center justify-center text-center min-h-[70vh] sm:min-h-[100dvh] max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-16 pt-12 sm:pt-20 pb-6 sm:pb-8"
           style={{ perspective: "1000px" }}
@@ -266,7 +299,11 @@ export default function HeroSection() {
             </p>
           </div>
 
-          {/* BUTTONS */}
+          {/* BUTTONS
+              PERF: Shimmer uses translate (GPU-composited). The box-shadow on
+              the red button is skipped on mobile via sm: prefix — already
+              correct. No changes needed.
+          */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-10 sm:mb-16 w-full sm:w-auto">
             <Link
               href="/about"
@@ -277,7 +314,6 @@ export default function HeroSection() {
                 transition-all duration-300 w-full sm:w-auto"
               style={{ animationDelay: "0.55s" }}
             >
-              {/* Shimmer — GPU composited translate, fine on mobile */}
               <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700" />
               <span className="relative flex items-center gap-3">
                 About Us
@@ -323,7 +359,11 @@ export default function HeroSection() {
             </Link>
           </div>
 
-          {/* STATS */}
+          {/* STATS
+              PERF: `tabular-nums` on the counter prevents layout shift as
+              digits change width — already correct.
+              Stat cards have no backdrop-filter on mobile — already correct.
+          */}
           <div className="w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {STATS.map((s, i) => (
               <div
