@@ -243,7 +243,7 @@ const organizationSchema = {
   sameAs: [
     // Add your social profiles here:
      "https://www.linkedin.com/company/ilk-technology27/",
-    // "https://www.facebook.com/ilktechnology",
+     "https://www.facebook.com/profile.php?id=61570825201141",
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
