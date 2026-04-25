@@ -36,7 +36,6 @@ function useCountUp(target: number, duration: number, started: boolean) {
   return value;
 }
 
-// Memoised so parent re-renders don't restart the animation
 const Counter = ({ target, suffix, started }: { target: number; suffix: string; started: boolean }) => {
   const n = useCountUp(target, 1400, started);
   return <>{n}{suffix}</>;
@@ -55,7 +54,6 @@ export default function HeroSection() {
 
   const [counting, setCounting] = useState(false);
 
-  // boot runs once; stable ref means no re-creation across renders
   const boot = useCallback(async () => {
     const [{ gsap }, { ScrollTrigger }] = await Promise.all([
       import("gsap"),
@@ -140,11 +138,19 @@ export default function HeroSection() {
         className="absolute inset-0"
         style={{ willChange: "transform" }}
       >
+        {/* ✅ LCP FIX: fetchPriority="high" added explicitly.
+            Next.js `priority` alone isn't enough when the component is
+            "use client" — the browser won't discover the preload hint
+            from the HTML because the image is rendered client-side.
+            `fetchPriority="high"` forces the browser to treat this
+            request with high priority without relying on a <link rel="preload">
+            injected by the framework. */}
         <Image
           src="/hero-bg.webp"
           alt="ILK Technology commercial refrigeration"
           fill
           priority
+          fetchPriority="high"
           quality={85}
           sizes="100vw"
           className="object-cover object-[65%_50%] sm:object-[55%_50%] lg:object-center"
