@@ -14,6 +14,88 @@ const STATS = [
   { n: 100,  suf: "%", label: "Satisfaction" },
 ] as const;
 
+// ── Styles (static — defined outside component to avoid re-injection) ─────────
+const HERO_STYLES = `
+  @keyframes hero-wipe {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+  }
+  @keyframes hero-line {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes hero-word {
+    from { transform: translateY(110%) rotateX(-40deg); opacity: 0; }
+    to   { transform: translateY(0)     rotateX(0deg);  opacity: 1; }
+  }
+  @keyframes hero-fade-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .hero-wipe {
+    transform-origin: left center;
+    animation: hero-wipe 0.55s cubic-bezier(0.87,0,0.13,1) 0.05s forwards;
+  }
+  .hero-line {
+    transform-origin: center;
+    animation: hero-line 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both;
+  }
+  .hero-word {
+    display: inline-block;
+    opacity: 0;
+    animation: hero-word 0.48s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .hero-desc {
+    opacity: 0;
+    animation: hero-fade-up 0.42s ease-out both;
+  }
+  .hero-cta {
+    opacity: 0;
+    animation: hero-fade-up 0.38s ease-out both;
+  }
+  .hero-stat {
+    opacity: 0;
+    animation: hero-fade-up 0.38s ease-out both;
+  }
+
+  /* Stat card — no backdrop-filter on mobile (GPU-expensive) */
+  .hero-stat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    text-align: center;
+    padding: 1.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  @media (min-width: 640px) {
+    .hero-stat-card {
+      padding: 2.25rem 1.5rem;
+      /* Only apply expensive filter on sm+ where GPU headroom is more reliable */
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+  }
+
+  .hero-stat-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.08) 0%, transparent 65%);
+  }
+  .hero-stat-topline {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2rem;
+    height: 2px;
+    border-radius: 0 0 9999px 9999px;
+    background: rgb(239, 68, 68);
+  }
+`;
+
 // ── Count-up hook ─────────────────────────────────────────────────────────────
 function useCountUp(target: number, duration: number, started: boolean) {
   const [value, setValue] = useState(0);
@@ -55,90 +137,58 @@ export default function HeroSection() {
     // Fire counters after content animations settle (~700 ms)
     const countTimer = setTimeout(() => setCounting(true), 700);
 
-    // Lazy-load GSAP for scroll parallax only — well after first paint
-    let gsapCtx: { revert: () => void } | null = null;
-    const gsapTimer = setTimeout(async () => {
-      try {
-        const [{ gsap }, { ScrollTrigger }] = await Promise.all([
-          import("gsap"),
-          import("gsap/ScrollTrigger"),
-        ]);
-        gsap.registerPlugin(ScrollTrigger);
-        gsapCtx = gsap.context(() => {
-          gsap.to(bgRef.current, {
-            yPercent: 16,
-            ease: "none",
-            scrollTrigger: {
-              trigger: heroRef.current,
-              start: "top top",
-              end: "bottom top",
-              scrub: 1.2,
-            },
-          });
-        });
-      } catch {
-        // GSAP not available — parallax silently skipped
-      }
-    }, 1000); // well after LCP is painted
+    // Skip parallax entirely on mobile — saves battery and avoids jank.
+    // Also skip on slow connections (2G / save-data).
+    const isMobile = window.innerWidth < 768;
+    const conn = (navigator as Navigator & {
+      connection?: { effectiveType?: string; saveData?: boolean };
+    }).connection;
+    const isSlowNetwork =
+      conn?.saveData ||
+      conn?.effectiveType === "slow-2g" ||
+      conn?.effectiveType === "2g";
 
-    return () => {
-      clearTimeout(countTimer);
-      clearTimeout(gsapTimer);
-      gsapCtx?.revert();
-    };
+    let gsapCtx: { revert: () => void } | null = null;
+
+    if (!isMobile && !isSlowNetwork) {
+      const gsapTimer = setTimeout(async () => {
+        try {
+          const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+            import("gsap"),
+            import("gsap/ScrollTrigger"),
+          ]);
+          gsap.registerPlugin(ScrollTrigger);
+          gsapCtx = gsap.context(() => {
+            gsap.to(bgRef.current, {
+              yPercent: 16,
+              ease: "none",
+              scrollTrigger: {
+                trigger: heroRef.current,
+                start: "top top",
+                end: "bottom top",
+                scrub: 1.2,
+              },
+            });
+          });
+        } catch {
+          // GSAP unavailable — parallax silently skipped
+        }
+      }, 1500); // well after LCP
+
+      return () => {
+        clearTimeout(countTimer);
+        clearTimeout(gsapTimer);
+        gsapCtx?.revert();
+      };
+    }
+
+    return () => clearTimeout(countTimer);
   }, []);
 
   return (
     <>
-      <style>{`
-        /* Wipe OUT (left → right reveal) */
-        @keyframes hero-wipe {
-          from { transform: scaleX(1); }
-          to   { transform: scaleX(0); }
-        }
-        /* Accent line */
-        @keyframes hero-line {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
-        }
-        /* Per-word headline reveal */
-        @keyframes hero-word {
-          from { transform: translateY(110%) rotateX(-40deg); opacity: 0; }
-          to   { transform: translateY(0)     rotateX(0deg);  opacity: 1; }
-        }
-        /* Generic fade-up */
-        @keyframes hero-fade-up {
-          from { transform: translateY(20px); opacity: 0; }
-          to   { transform: translateY(0);    opacity: 1; }
-        }
-
-        .hero-wipe {
-          transform-origin: left center;
-          animation: hero-wipe 0.55s cubic-bezier(0.87,0,0.13,1) 0.05s forwards;
-        }
-
-        .hero-line {
-          transform-origin: center;
-          animation: hero-line 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both;
-        }
-        .hero-word {
-          display: inline-block;
-          opacity: 0;
-          animation: hero-word 0.48s cubic-bezier(0.16,1,0.3,1) both;
-        }
-        .hero-desc {
-          opacity: 0;
-          animation: hero-fade-up 0.42s ease-out both;
-        }
-        .hero-cta {
-          opacity: 0;
-          animation: hero-fade-up 0.38s ease-out both;
-        }
-        .hero-stat {
-          opacity: 0;
-          animation: hero-fade-up 0.38s ease-out both;
-        }
-      `}</style>
+      {/* Static styles injected once — no per-render re-injection */}
+      <style>{HERO_STYLES}</style>
 
       <section
         ref={heroRef}
@@ -153,8 +203,8 @@ export default function HeroSection() {
             priority
             loading="eager"
             fetchPriority="high"
-            quality={75} /* reduced slightly for mobile bandwidth */
-            sizes="100vw"
+            quality={70}
+            sizes="(max-width: 640px) 640w, (max-width: 1024px) 1024w, 100vw"
             className="object-cover object-[65%_50%] sm:object-[55%_50%] lg:object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050a12]/90 via-[#050a12]/60 to-[#050a12]/15 sm:from-[#050a12]/88 sm:via-[#050a12]/50 sm:to-transparent" />
@@ -165,13 +215,19 @@ export default function HeroSection() {
         <div className="hero-wipe absolute inset-0 z-30 bg-[#050a12] origin-left" />
 
         {/* CONTENT */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center min-h-[70vh] sm:min-h-[100dvh] max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-16 pt-12 sm:pt-20 pb-6 sm:pb-8">
-
+        {/*
+          perspective moved here (parent) instead of on the h1 wrapper —
+          avoids forcing a new stacking context mid-paint on mobile.
+        */}
+        <div
+          className="relative z-10 flex flex-col items-center justify-center text-center min-h-[70vh] sm:min-h-[100dvh] max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-16 pt-12 sm:pt-20 pb-6 sm:pb-8"
+          style={{ perspective: "1000px" }}
+        >
           {/* Accent line */}
           <div className="hero-line mb-5 sm:mb-9 h-[2px] w-10 sm:w-20 bg-red-500" />
 
           {/* HEADING */}
-          <div className="mb-4 sm:mb-8" style={{ perspective: "1000px" }}>
+          <div className="mb-4 sm:mb-8">
             <h1 className="text-[clamp(2rem,9.5vw,3.6rem)] sm:text-[clamp(3rem,7vw,6rem)] font-black leading-[1.0] tracking-[-0.03em] text-white uppercase">
               {HEADING.map((w, i) => (
                 <span key={i} className="inline-block overflow-hidden mr-[0.16em] align-top">
@@ -221,6 +277,7 @@ export default function HeroSection() {
                 transition-all duration-300 w-full sm:w-auto"
               style={{ animationDelay: "0.55s" }}
             >
+              {/* Shimmer — GPU composited translate, fine on mobile */}
               <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700" />
               <span className="relative flex items-center gap-3">
                 About Us
@@ -271,23 +328,11 @@ export default function HeroSection() {
             {STATS.map((s, i) => (
               <div
                 key={i}
-                className="hero-stat relative overflow-hidden rounded-2xl text-center px-3 py-5 sm:px-6 sm:py-9"
-                style={{
-                  animationDelay: `${0.6 + i * 0.05}s`,
-                  background: "rgba(255, 255, 255, 0.03)",
-                  border: "1px solid rgba(255, 255, 255, 0.06)",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                }}
+                className="hero-stat hero-stat-card"
+                style={{ animationDelay: `${0.6 + i * 0.05}s` }}
               >
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.08) 0%, transparent 65%)",
-                  }}
-                />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] rounded-b-full bg-red-500" />
+                <div className="hero-stat-glow" />
+                <div className="hero-stat-topline" />
                 <p className="relative z-10 text-2xl sm:text-3xl lg:text-4xl font-black leading-none tracking-tight tabular-nums mb-2 text-white">
                   <Counter target={s.n} suffix={s.suf} started={counting} />
                 </p>
