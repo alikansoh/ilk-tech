@@ -20,8 +20,8 @@ const BRANDS = ["Arneg", "Oscartielle", "Intrac", "Incold"];
 const VALUES = [
   {
     number: "01",
-    title: "Premium Quality",
-    desc: "We only stock products from trusted manufacturers that meet our rigorous standards and deliver exceptional performance.",
+    title: "High Quality",
+    desc: "Our products are sourced exclusively from trusted manufacturers who meet strict quality standards, ensuring superior performance and complete customer satisfaction",
     detail: "Every cabinet, every component — built to last.",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,8 +31,8 @@ const VALUES = [
   },
   {
     number: "02",
-    title: "Customer First",
-    desc: "Your satisfaction is our priority. We provide expert advice, competitive prices, and support at every step of your journey.",
+    title: "High Quality",
+    desc: "Your satisfaction isn't just our goal - it's our commitment. Count on our competitive pricing, expert guidance and dedicated support every step of the way",
     detail: "From first enquiry to the delivery.",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,8 +42,8 @@ const VALUES = [
   },
   {
     number: "03",
-    title: "Sustainability",
-    desc: "We promote energy-efficient solutions that reduce environmental impact and save you money on running costs.",
+    title: "Eco friendly",
+    desc: "Discover our energy - efficient solutions that not only significantly reduce environmental impact but also cut your operational costs, helping you save money while making a positive difference",
     detail: "Better for the planet. Better for your bills.",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
