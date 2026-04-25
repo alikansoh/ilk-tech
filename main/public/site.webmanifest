@@ -1,0 +1,25 @@
+{
+    "name": "ILK Technology",
+    "short_name": "ILK Tech",
+    "description": "UK's authorised Arneg distribution partner supplying commercial refrigeration cabinets, cold rooms, plug-in systems, checkouts and shelving.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#001845",
+    "lang": "en-GB",
+    "scope": "/",
+    "icons": [
+      {
+        "src": "/icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  }

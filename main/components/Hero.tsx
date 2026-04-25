@@ -125,7 +125,7 @@ export default function HeroSection() {
       {/* ── BACKGROUND ── */}
       <div ref={bgRef} className="absolute inset-0 will-change-transform">
         <Image
-          src="/hero-bg.jpeg"
+          src="/hero-bg.webp"
           alt="ILK Technology commercial refrigeration"
           fill
           priority

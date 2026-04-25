@@ -6,7 +6,7 @@ import Image from "next/image";
 const logos = [
   { src: "/logo1.png", alt: "Commercial Refrigeration", label: "Commercial Refrigeration" },
   { src: "/logo2.png", alt: "Shelving and Check-outs", label: "Shelving & Check-outs" },
-  { src: "/logo3.png", alt: "Commercial Refrigeration", label: "Commercial Refrigeration -plug in" },
+  { src: "/logo3.png", alt: "Commercial Refrigeration", label: "Commercial Refrigeration -plug in System" },
   { src: "/logo4.png", alt: "Cold Rooms & High-Speed Doors", label: "Cold Rooms, Isothermal & High-Speed Doors" },
 ];
 

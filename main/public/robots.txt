@@ -1,0 +1,29 @@
+# robots.txt for https://ilktechnology.com
+# Allow all well-behaved crawlers while preventing indexing of internal/build files and API endpoints.
+
+User-agent: *
+# Block build and repo internals
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /build/
+Disallow: /coverage/
+Disallow: /scripts/
+
+# Next.js internals and runtime paths (avoid indexing API routes and dynamic internals)
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Common sensitive files
+Disallow: /*.env$
+Disallow: /*.key$
+Disallow: /*.pem$
+Disallow: /*.log$
+
+# Allow everything else
+Allow: /
+
+# Sitemap location
+Sitemap: https://ilktechnology.com/sitemap.xml
