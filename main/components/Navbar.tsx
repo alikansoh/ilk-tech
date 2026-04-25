@@ -70,7 +70,7 @@ export default function Navbar() {
           {/* Brand */}
           <Link href="/" className="group flex-shrink-0">
             <div className="relative h-[72px] w-[108px] transition-all duration-500 group-hover:opacity-80">
-              <Image src="/logo.png" alt="Logo" fill className="object-contain" priority />
+              <Image src="/logo.webp" alt="Logo" fill className="object-contain" priority />
             </div>
           </Link>
 
