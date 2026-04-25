@@ -146,7 +146,7 @@ export default function HeroSection() {
             request with high priority without relying on a <link rel="preload">
             injected by the framework. */}
         <Image
-          src="/hero-bg-.webp"
+          src="/hero-bg.webp"
           alt="ILK Technology commercial refrigeration"
           fill
           priority
