@@ -26,7 +26,7 @@ function useCountUp(target: number, duration: number, started: boolean) {
 }
 
 function Counter({ target, suffix, started }: { target: number; suffix: string; started: boolean }) {
-  const n = useCountUp(target, 2400, started);
+  const n = useCountUp(target, 1400, started); // was 2400
   return <>{n}{suffix}</>;
 }
 
@@ -50,53 +50,60 @@ export default function HeroSection() {
 
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
+    // Wipe: 1.4s → 0.9s
     tl.fromTo(wipeRef.current,
       { scaleX: 1, transformOrigin: "left" },
-      { scaleX: 0, duration: 1.4, ease: "expo.inOut" }
+      { scaleX: 0, duration: 0.9, ease: "expo.inOut" }
     );
 
+    // BG scale: 2.8s → 1.8s, overlap tightened
     tl.fromTo(bgRef.current,
       { scale: 1.35 },
-      { scale: 1.05, duration: 2.8, ease: "power2.out" },
-      "-=1.0"
+      { scale: 1.05, duration: 1.8, ease: "power2.out" },
+      "-=0.7"
     );
 
+    // Accent line: same duration, earlier start
     tl.fromTo(lineRef.current,
       { scaleX: 0 },
-      { scaleX: 1, duration: 1, ease: "expo.out" },
-      "-=2.0"
+      { scaleX: 1, duration: 0.8, ease: "expo.out" },
+      "-=1.5"
     );
 
+    // Heading words: stagger 0.09 → 0.055, duration 1.1 → 0.75
     if (headRef.current) {
       tl.fromTo(
         headRef.current.querySelectorAll(".word"),
         { y: "120%", opacity: 0, rotateX: -45 },
-        { y: "0%", opacity: 1, rotateX: 0, duration: 1.1, stagger: 0.09, ease: "power4.out" },
-        "-=1.6"
+        { y: "0%", opacity: 1, rotateX: 0, duration: 0.75, stagger: 0.055, ease: "power4.out" },
+        "-=1.3"
       );
     }
 
+    // Description: 1.0s → 0.65s
     tl.fromTo(descRef.current,
       { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1 },
-      "-=0.5"
+      { y: 0, opacity: 1, duration: 0.65 },
+      "-=0.4"
     );
 
+    // CTA buttons: 0.7s → 0.45s
     if (ctaRef.current) {
       tl.fromTo(
         ctaRef.current.querySelectorAll(".cta"),
         { y: 22, opacity: 0, scale: 0.96 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.7, stagger: 0.1, ease: "back.out(1.4)" },
-        "-=0.5"
+        { y: 0, opacity: 1, scale: 1, duration: 0.45, stagger: 0.08, ease: "back.out(1.4)" },
+        "-=0.35"
       );
     }
 
+    // Stats: 0.8s → 0.5s, stagger 0.12 → 0.07
     if (statsRef.current) {
       tl.fromTo(
         statsRef.current.querySelectorAll(".stat"),
         { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, stagger: 0.12, ease: "power3.out", onStart: () => setCounting(true) },
-        "-=0.35"
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.07, ease: "power3.out", onStart: () => setCounting(true) },
+        "-=0.25"
       );
     }
 
