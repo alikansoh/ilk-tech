@@ -7,12 +7,12 @@ import Link from "next/link";
 const RAL9010 = "#F5F4F2";
 
 const products = [
-  { src: "/pic3.png", label: "Remote Multidecks" },
-  { src: "/pic2.png", label: "Coldroom" },
-  { src: "/pic6.png", label: "Plug in Freezer" },
-  { src: "/pic4.png", label: "Shelving" },
-  { src: "/pic1.png", label: "Checkouts" },
-  { src: "/pic5.png", label: "Wine Cooler" },
+  { src: "/pic3.webp", label: "Remote Multidecks" },
+  { src: "/pic2.webp", label: "Coldroom" },
+  { src: "/pic6.webp", label: "Plug in Freezer" },
+  { src: "/pic4.webp", label: "Shelving" },
+  { src: "/pic1.webp", label: "Checkouts" },
+  { src: "/pic5.webp", label: "Wine Cooler" },
 ];
 
 const stageList = [
