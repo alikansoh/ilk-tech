@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ── Static data outside component ────────────────────────────────────────────
 const HEADING = ["Commercial", "Refrigeration,", "Engineered", "for the UK."];
@@ -54,53 +58,47 @@ export default function HeroSection() {
 
   const [counting, setCounting] = useState(false);
 
-  const boot = useCallback(async () => {
-    const [{ gsap }, { ScrollTrigger }] = await Promise.all([
-      import("gsap"),
-      import("gsap/ScrollTrigger"),
-    ]);
-    gsap.registerPlugin(ScrollTrigger);
-
+  const boot = useCallback(() => {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
     tl.fromTo(wipeRef.current,
       { scaleX: 1, transformOrigin: "left" },
-      { scaleX: 0, duration: 0.9, ease: "expo.inOut" }
+      { scaleX: 0, duration: 0.65, ease: "expo.inOut" }
     );
 
     tl.fromTo(bgRef.current,
       { scale: 1.35 },
-      { scale: 1.05, duration: 1.8, ease: "power2.out" },
-      "-=0.7"
+      { scale: 1.05, duration: 1.2, ease: "power2.out" },
+      "-=0.55"
     );
 
     tl.fromTo(lineRef.current,
       { scaleX: 0 },
-      { scaleX: 1, duration: 0.8, ease: "expo.out" },
-      "-=1.5"
+      { scaleX: 1, duration: 0.55, ease: "expo.out" },
+      "-=1.1"
     );
 
     if (headRef.current) {
       tl.fromTo(
         headRef.current.querySelectorAll(".word"),
         { y: "120%", opacity: 0, rotateX: -45 },
-        { y: "0%", opacity: 1, rotateX: 0, duration: 0.75, stagger: 0.055, ease: "power4.out" },
-        "-=1.3"
+        { y: "0%", opacity: 1, rotateX: 0, duration: 0.55, stagger: 0.05, ease: "power4.out" },
+        "-=1.0"
       );
     }
 
     tl.fromTo(descRef.current,
       { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.65 },
-      "-=0.4"
+      { y: 0, opacity: 1, duration: 0.45 },
+      "-=0.3"
     );
 
     if (ctaRef.current) {
       tl.fromTo(
         ctaRef.current.querySelectorAll(".cta"),
         { y: 22, opacity: 0, scale: 0.96 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.45, stagger: 0.08, ease: "back.out(1.4)" },
-        "-=0.35"
+        { y: 0, opacity: 1, scale: 1, duration: 0.35, stagger: 0.07, ease: "back.out(1.4)" },
+        "-=0.28"
       );
     }
 
@@ -108,8 +106,11 @@ export default function HeroSection() {
       tl.fromTo(
         statsRef.current.querySelectorAll(".stat"),
         { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.07, ease: "power3.out", onStart: () => setCounting(true) },
-        "-=0.25"
+        {
+          y: 0, opacity: 1, duration: 0.35, stagger: 0.06, ease: "power3.out",
+          onComplete: () => setCounting(true),
+        },
+        "-=0.2"
       );
     }
 
@@ -138,13 +139,6 @@ export default function HeroSection() {
         className="absolute inset-0"
         style={{ willChange: "transform" }}
       >
-        {/* ✅ LCP FIX: fetchPriority="high" added explicitly.
-            Next.js `priority` alone isn't enough when the component is
-            "use client" — the browser won't discover the preload hint
-            from the HTML because the image is rendered client-side.
-            `fetchPriority="high"` forces the browser to treat this
-            request with high priority without relying on a <link rel="preload">
-            injected by the framework. */}
         <Image
           src="/hero-bg.webp"
           alt="ILK Technology commercial refrigeration"
@@ -163,7 +157,6 @@ export default function HeroSection() {
       <div
         ref={wipeRef}
         className="absolute inset-0 z-30 bg-[#050a12]"
-        style={{ willChange: "transform" }}
       />
 
       {/* ── CONTENT ── */}
