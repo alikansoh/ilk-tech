@@ -173,7 +173,7 @@ export default function HeroSection() {
          */}
         <div ref={bgRef} className="absolute inset-0">
           <Image
-            src="/hero-bg.webp"
+            src="/hero-bg-2.webp"
             alt="ILK Technology commercial refrigeration"
             fill
             priority
