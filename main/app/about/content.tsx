@@ -31,7 +31,7 @@ const VALUES = [
   },
   {
     number: "02",
-    title: "High Quality",
+    title: "We put customer first",
     desc: "Your satisfaction isn't just our goal - it's our commitment. Count on our competitive pricing, expert guidance and dedicated support every step of the way",
     detail: "From first enquiry to the delivery.",
     icon: (
