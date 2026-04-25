@@ -90,21 +90,6 @@ export default function HeroSection() {
 
   return (
     <>
-      {/*
-       * ─── CRITICAL CSS ───────────────────────────────────────────────────────
-       *
-       * KEY LCP DECISIONS:
-       *  1. NO animation on .hero-bg — the image must be painted immediately.
-       *     A scale/fade on the LCP element pushes Largest Contentful Paint
-       *     all the way to when the animation ends.
-       *  2. .hero-wipe is a sibling overlay (z-30) that covers non-image layers;
-       *     it does NOT wrap or clip the <Image> element itself, so the browser
-       *     can composite and report LCP paint before the wipe completes.
-       *  3. All content animations start at ≥ 0.05 s delay so the first frame
-       *     is clean, but none of them gate the image.
-       *  4. will-change is applied only to elements that actually animate on
-       *     scroll (bgRef) — not everything, to avoid excess compositing layers.
-       */}
       <style>{`
         /* Wipe OUT (left → right reveal) */
         @keyframes hero-wipe {
@@ -127,17 +112,11 @@ export default function HeroSection() {
           to   { transform: translateY(0);    opacity: 1; }
         }
 
-        /*
-         * hero-wipe: the overlay animates away very quickly (0.55 s).
-         * Because it is a separate layer on top of the image — not wrapping it —
-         * the browser can still record the LCP paint of the image underneath.
-         */
         .hero-wipe {
           transform-origin: left center;
           animation: hero-wipe 0.55s cubic-bezier(0.87,0,0.13,1) 0.05s forwards;
         }
 
-       
         .hero-line {
           transform-origin: center;
           animation: hero-line 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both;
@@ -163,14 +142,9 @@ export default function HeroSection() {
 
       <section
         ref={heroRef}
-        className="relative min-h-[100dvh] w-full overflow-hidden bg-[#050a12] flex flex-col"
+        className="relative min-h-[70vh] sm:min-h-[100dvh] w-full overflow-hidden bg-[#050a12] flex flex-col"
       >
-        {/* ── BACKGROUND ──────────────────────────────────────────────────────
-         *  • No wrapper animation — image is immediately visible to the browser
-         *  • will-change set here so the GPU layer is ready for GSAP parallax,
-         *    but only after paint (GSAP adds it via inline style at runtime)
-         *  • fetchPriority="high" + priority + loading="eager" = maximum preload
-         */}
+        {/* Background */}
         <div ref={bgRef} className="absolute inset-0">
           <Image
             src="/hero-bg-2.webp"
@@ -179,41 +153,36 @@ export default function HeroSection() {
             priority
             loading="eager"
             fetchPriority="high"
-            quality={85}
+            quality={75} /* reduced slightly for mobile bandwidth */
             sizes="100vw"
             className="object-cover object-[65%_50%] sm:object-[55%_50%] lg:object-center"
           />
-          {/* Gradients are cheap CSS — don't affect LCP */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#050a12]/90 via-[#050a12]/60 to-[#050a12]/15 sm:from-[#050a12]/88 sm:via-[#050a12]/50 sm:to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050a12] via-[#050a12]/30 to-transparent" />
         </div>
 
-        {/* ── WIPE OVERLAY ────────────────────────────────────────────────────
-         *  Sits above everything visually but does NOT wrap the <Image>.
-         *  The browser can still composite-and-report the image LCP paint
-         *  through this sibling layer.
-         */}
+        {/* Wipe Overlay */}
         <div className="hero-wipe absolute inset-0 z-30 bg-[#050a12] origin-left" />
 
-        {/* ── CONTENT ── */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center min-h-[100dvh] max-w-5xl mx-auto w-full px-5 sm:px-10 lg:px-16 pt-20 pb-8 sm:py-0">
+        {/* CONTENT */}
+        <div className="relative z-10 flex flex-col items-center justify-center text-center min-h-[70vh] sm:min-h-[100dvh] max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-16 pt-12 sm:pt-20 pb-6 sm:pb-8">
 
           {/* Accent line */}
-          <div className="hero-line mb-7 sm:mb-9 h-[2px] w-12 sm:w-20 bg-red-500" />
+          <div className="hero-line mb-5 sm:mb-9 h-[2px] w-10 sm:w-20 bg-red-500" />
 
-          {/* ── HEADING ── */}
-          <div className="mb-6 sm:mb-8" style={{ perspective: "1000px" }}>
-            <h1 className="text-[clamp(2.5rem,10vw,5.8rem)] sm:text-[clamp(3rem,7vw,6rem)] font-black leading-[1.0] tracking-[-0.03em] text-white uppercase">
+          {/* HEADING */}
+          <div className="mb-4 sm:mb-8" style={{ perspective: "1000px" }}>
+            <h1 className="text-[clamp(2rem,9.5vw,3.6rem)] sm:text-[clamp(3rem,7vw,6rem)] font-black leading-[1.0] tracking-[-0.03em] text-white uppercase">
               {HEADING.map((w, i) => (
-                <span key={i} className="inline-block overflow-hidden mr-[0.2em] align-top">
+                <span key={i} className="inline-block overflow-hidden mr-[0.16em] align-top">
                   <span
                     className="hero-word"
-                    style={{ animationDelay: `${0.18 + i * 0.05}s` }}
+                    style={{ animationDelay: `${0.15 + i * 0.045}s` }}
                   >
                     {w.includes("Refrigeration") ? (
                       <span
                         className="text-transparent"
-                        style={{ WebkitTextStroke: "3px rgba(255,255,255,0.5)" }}
+                        style={{ WebkitTextStroke: "2.5px rgba(255,255,255,0.5)" }}
                       >
                         {w}
                       </span>
@@ -228,12 +197,12 @@ export default function HeroSection() {
             </h1>
           </div>
 
-          {/* ── DESCRIPTION ── */}
+          {/* DESCRIPTION */}
           <div
-            className="hero-desc mb-10 sm:mb-12 max-w-2xl"
+            className="hero-desc mb-8 sm:mb-12 max-w-2xl"
             style={{ animationDelay: "0.45s" }}
           >
-            <p className="text-[15px] sm:text-[18px] lg:text-[20px] leading-[1.8] sm:leading-[1.9] text-white/60 font-light">
+            <p className="text-[14px] sm:text-[18px] lg:text-[20px] leading-[1.7] sm:leading-[1.9] text-white/60 font-light">
               <span className="text-white font-semibold">ILK Technology</span> —
               Commercial Refrigeration Supplier and{" "}
               <span className="text-red-500 font-semibold">Arneg</span>{" "}
@@ -241,14 +210,14 @@ export default function HeroSection() {
             </p>
           </div>
 
-          {/* ── BUTTONS ── */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-14 sm:mb-16 w-full sm:w-auto">
+          {/* BUTTONS */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-10 sm:mb-16 w-full sm:w-auto">
             <Link
               href="/about"
               className="hero-cta group relative inline-flex items-center justify-center gap-3
                 bg-red-500 hover:bg-red-400 active:bg-red-600 overflow-hidden
-                px-9 py-4 text-[11px] sm:text-[12px] font-black tracking-[0.25em] uppercase text-white
-                shadow-[0_0_32px_rgba(239,68,68,0.2)] hover:shadow-[0_0_48px_rgba(239,68,68,0.35)]
+                px-6 py-3 sm:px-9 sm:py-4 text-[11px] sm:text-[12px] font-black tracking-[0.25em] uppercase text-white
+                sm:shadow-[0_0_32px_rgba(239,68,68,0.2)] sm:hover:shadow-[0_0_48px_rgba(239,68,68,0.35)]
                 transition-all duration-300 w-full sm:w-auto"
               style={{ animationDelay: "0.55s" }}
             >
@@ -271,8 +240,8 @@ export default function HeroSection() {
               href="/contact"
               className="hero-cta group inline-flex items-center justify-center gap-3
                 border border-white/10 hover:border-white/30
-                bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-sm
-                px-9 py-4 text-[11px] sm:text-[12px] font-black tracking-[0.25em] uppercase
+                bg-white/[0.04] hover:bg-white/[0.08]
+                px-6 py-3 sm:px-9 sm:py-4 text-[11px] sm:text-[12px] font-black tracking-[0.25em] uppercase
                 text-white/50 hover:text-white transition-all duration-300
                 w-full sm:w-auto"
               style={{ animationDelay: "0.62s" }}
@@ -297,29 +266,29 @@ export default function HeroSection() {
             </Link>
           </div>
 
-          {/* ── STATS ── */}
+          {/* STATS */}
           <div className="w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {STATS.map((s, i) => (
               <div
                 key={i}
-                className="hero-stat relative overflow-hidden rounded-2xl text-center px-4 py-7 sm:px-6 sm:py-9"
+                className="hero-stat relative overflow-hidden rounded-2xl text-center px-3 py-5 sm:px-6 sm:py-9"
                 style={{
-                  animationDelay: `${0.68 + i * 0.06}s`,
-                  background: "rgba(255, 255, 255, 0.04)",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
+                  animationDelay: `${0.6 + i * 0.05}s`,
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.06)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
                 }}
               >
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      "radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.10) 0%, transparent 65%)",
+                      "radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.08) 0%, transparent 65%)",
                   }}
                 />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[2px] rounded-b-full bg-red-500" />
-                <p className="relative z-10 text-3xl sm:text-4xl lg:text-5xl font-black leading-none tracking-tight tabular-nums mb-2 text-white">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] rounded-b-full bg-red-500" />
+                <p className="relative z-10 text-2xl sm:text-3xl lg:text-4xl font-black leading-none tracking-tight tabular-nums mb-2 text-white">
                   <Counter target={s.n} suffix={s.suf} started={counting} />
                 </p>
                 <div className="w-5 h-px bg-white/10 mx-auto mb-2" />
@@ -331,8 +300,8 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* ── BOTTOM FADE ── */}
-        <div className="absolute bottom-0 inset-x-0 h-32 sm:h-40 bg-gradient-to-t from-[#050a12] to-transparent z-10 pointer-events-none" />
+        {/* BOTTOM FADE */}
+        <div className="absolute bottom-0 inset-x-0 h-24 sm:h-40 bg-gradient-to-t from-[#050a12] to-transparent z-10 pointer-events-none" />
       </section>
     </>
   );
