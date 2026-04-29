@@ -209,7 +209,7 @@ export default function HeroSection() {
           {/* Mobile image — hidden on sm+ */}
           <div className="block sm:hidden absolute inset-0">
             <Image
-              src="/hero-bg-mobile.heif"
+              src="/hero-bg-mobile.webp"
               alt="ILK Technology commercial refrigeration"
               fill
               priority
