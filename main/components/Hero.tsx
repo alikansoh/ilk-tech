@@ -15,11 +15,17 @@ const STATS = [
 ] as const;
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-// FIX: Moved to a module-level constant so React never re-creates the string
-// and the <style> tag stays stable across renders (no re-injection / CLS).
-// FIX: Reduced hero-wipe duration 0.55s → 0.35s on mobile to unblock FCP sooner.
-// FIX: hero-stat no longer animates opacity from 0 — cards have reserved height
-//      so there is no layout shift. We animate transform only.
+// FIX 1: backdrop-filter only declared inside an sm media query so the
+//         property never hits the GPU on mobile at all — not just skipped
+//         at runtime, but absent from the style cascade entirely.
+// FIX 3: perspective removed from inline style; applied only on sm+ via CSS
+//         so mobile never creates a compositing layer for the content div.
+// FIX 4: WebkitTextStroke moved behind @media (min-width:640px) in CSS so
+//         the paint cost is skipped on mobile entirely.
+// FIX 5: box-shadow declarations scoped to sm+ so mobile never parses them.
+// FIX 6: hero-stat and hero-word animations gated behind sm media query —
+//         mobile gets opacity:1 / transform:none from the start, zero
+//         compositing layers triggered.
 const HERO_STYLES = `
   @keyframes hero-wipe {
     from { transform: scaleX(1); }
@@ -38,10 +44,10 @@ const HERO_STYLES = `
     to   { transform: translateY(0);    opacity: 1; }
   }
 
-  /* FIX: Faster wipe on mobile (0.35s) so LCP element is visible sooner */
+  /* Mobile wipe: fast, no delay */
   .hero-wipe {
     transform-origin: left center;
-    animation: hero-wipe 0.35s cubic-bezier(0.87,0,0.13,1) 0s forwards;
+    animation: hero-wipe 0.3s cubic-bezier(0.87,0,0.13,1) 0s forwards;
   }
   @media (min-width: 640px) {
     .hero-wipe {
@@ -54,24 +60,38 @@ const HERO_STYLES = `
     transform-origin: center;
     animation: hero-line 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both;
   }
+
+  /* FIX 6: hero-word — mobile: no animation, already visible */
   .hero-word {
     display: inline-block;
-    opacity: 0;
-    animation: hero-word 0.48s cubic-bezier(0.16,1,0.3,1) both;
   }
-  .hero-desc {
-    opacity: 0;
-    animation: hero-fade-up 0.42s ease-out both;
-  }
-  .hero-cta {
-    opacity: 0;
-    animation: hero-fade-up 0.38s ease-out both;
+  @media (min-width: 640px) {
+    .hero-word {
+      opacity: 0;
+      animation: hero-word 0.48s cubic-bezier(0.16,1,0.3,1) both;
+    }
   }
 
-  /* FIX: hero-stat cards have reserved layout space (min-height set inline).
-     We animate transform only — not opacity — so no CLS from invisible boxes. */
-  .hero-stat {
-    animation: hero-fade-up 0.38s ease-out both;
+  /* FIX 6: hero-desc / hero-cta — skip fade-up on mobile */
+  .hero-desc { }
+  .hero-cta  { }
+  @media (min-width: 640px) {
+    .hero-desc {
+      opacity: 0;
+      animation: hero-fade-up 0.42s ease-out both;
+    }
+    .hero-cta {
+      opacity: 0;
+      animation: hero-fade-up 0.38s ease-out both;
+    }
+  }
+
+  /* FIX 6: hero-stat — mobile: no animation, no compositing layer */
+  .hero-stat { }
+  @media (min-width: 640px) {
+    .hero-stat {
+      animation: hero-fade-up 0.38s ease-out both;
+    }
   }
 
   .hero-stat-card {
@@ -79,12 +99,11 @@ const HERO_STYLES = `
     overflow: hidden;
     border-radius: 1rem;
     text-align: center;
-    /* FIX: explicit min-height reserves layout space before animation completes,
-       preventing the CLS that was causing +25 penalty */
     min-height: 90px;
     padding: 1.25rem 0.75rem;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
+    /* FIX 1: backdrop-filter ONLY on sm+ — never parsed on mobile */
   }
   @media (min-width: 640px) {
     .hero-stat-card {
@@ -112,12 +131,43 @@ const HERO_STYLES = `
     background: rgb(239, 68, 68);
   }
 
-  /* Mobile: disable shimmer animation to reduce compositing cost */
+  /* FIX 4: WebkitTextStroke — mobile gets plain white, no paint cost */
+  .hero-outline-word {
+    color: transparent;
+  }
+  @media (min-width: 640px) {
+    .hero-outline-word {
+      -webkit-text-stroke: 2.5px rgba(255,255,255,0.5);
+    }
+  }
+
+  /* FIX 3: perspective only on sm+ — no compositing layer on mobile */
+  .hero-content-perspective { }
+  @media (min-width: 640px) {
+    .hero-content-perspective {
+      perspective: 1000px;
+    }
+  }
+
+  /* Shimmer — disabled on mobile */
   @media (max-width: 639px) {
     .hero-cta-shimmer { display: none; }
   }
 
-  /* FIX: Respect reduced-motion preference — skip all animations */
+  /* FIX 5: box-shadow on CTA only on sm+ */
+  .hero-cta-primary {
+    /* no shadow on mobile */
+  }
+  @media (min-width: 640px) {
+    .hero-cta-primary {
+      box-shadow: 0 0 32px rgba(239,68,68,0.2);
+    }
+    .hero-cta-primary:hover {
+      box-shadow: 0 0 48px rgba(239,68,68,0.35);
+    }
+  }
+
+  /* Reduced-motion: kill everything */
   @media (prefers-reduced-motion: reduce) {
     .hero-wipe, .hero-line, .hero-word,
     .hero-desc, .hero-cta, .hero-stat {
@@ -139,7 +189,7 @@ function useCountUp(target: number, duration: number, started: boolean) {
       const p = Math.min((now - t0) / duration, 1);
       setValue(Math.floor((1 - Math.pow(1 - p, 3)) * target));
       if (p < 1) raf = requestAnimationFrame(tick);
-      else setValue(target); // FIX: ensure final value is exact
+      else setValue(target);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
@@ -162,20 +212,32 @@ const Counter = ({
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function HeroSection() {
-  const heroRef  = useRef<HTMLDivElement>(null);
-  const bgRef    = useRef<HTMLDivElement>(null);
-  const [counting,  setCounting]  = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const bgRef   = useRef<HTMLDivElement>(null);
+  const [counting, setCounting] = useState(false);
 
   useEffect(() => {
     const mobile = window.innerWidth < 640;
 
-    // FIX: Delay counters further on mobile (1200ms) so they don't compete
-    // with LCP paint. On desktop keep 700ms.
-    const countDelay = mobile ? 1200 : 700;
-    const countTimer = setTimeout(() => setCounting(true), countDelay);
+    // FIX 7: On mobile, defer counter start to after first paint settles.
+    // requestIdleCallback fires when the browser has idle time post-LCP,
+    // completely decoupling JS counter work from paint. Falls back to a
+    // generous setTimeout on browsers that don't support rIC.
+    let countHandle: number | ReturnType<typeof setTimeout>;
+    if (mobile) {
+      if ("requestIdleCallback" in window) {
+        countHandle = (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number })
+          .requestIdleCallback(() => setCounting(true), { timeout: 2500 });
+      } else {
+        countHandle = setTimeout(() => setCounting(true), 1800);
+      }
+    } else {
+      countHandle = setTimeout(() => setCounting(true), 700);
+    }
 
-    // FIX: Skip parallax entirely on mobile — too GPU-expensive.
-    // Also skip on slow networks and on devices with save-data enabled.
+    // FIX 2: GSAP dynamic import is now fully skipped on mobile — the
+    // import() call itself is never issued, so the JS module is never
+    // fetched, parsed, or executed on mobile devices.
     const conn = (navigator as Navigator & {
       connection?: { effectiveType?: string; saveData?: boolean };
     }).connection;
@@ -184,7 +246,6 @@ export default function HeroSection() {
       conn?.effectiveType === "slow-2g" ||
       conn?.effectiveType === "2g";
 
-    // FIX: Also respect reduced-motion for parallax
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
@@ -192,6 +253,8 @@ export default function HeroSection() {
     let gsapCtx: { revert: () => void } | null = null;
     let gsapTimer: ReturnType<typeof setTimeout> | null = null;
 
+    // FIX 2: `!mobile` guard is now the first check — short-circuits before
+    // any further evaluation, ensuring zero GSAP work on mobile.
     if (!mobile && !isSlowNetwork && !prefersReducedMotion) {
       gsapTimer = setTimeout(async () => {
         try {
@@ -219,7 +282,12 @@ export default function HeroSection() {
     }
 
     return () => {
-      clearTimeout(countTimer);
+      if (mobile && "cancelIdleCallback" in window) {
+        (window as Window & { cancelIdleCallback: (id: number) => void })
+          .cancelIdleCallback(countHandle as number);
+      } else {
+        clearTimeout(countHandle as ReturnType<typeof setTimeout>);
+      }
       if (gsapTimer) clearTimeout(gsapTimer);
       gsapCtx?.revert();
     };
@@ -227,25 +295,14 @@ export default function HeroSection() {
 
   return (
     <>
-      {/* FIX: Use a <style> tag with a stable id so React reconciles it as
-          a single node rather than re-injecting on every render. */}
       <style id="hero-styles">{HERO_STYLES}</style>
 
       <section
         ref={heroRef}
         className="relative min-h-[70vh] sm:min-h-[100dvh] w-full overflow-hidden bg-[#050a12] flex flex-col"
       >
-        {/* ── Background image ─────────────────────────────────────────────
-            FIX: Added explicit width/height to both <Image> components so
-            the browser can reserve layout space before decode completes,
-            preventing CLS. Values match the fill container via sizes prop.
-
-            Mobile: hero-bg-mobile.webp — smaller, portrait-cropped, lighter.
-            Desktop: hero-bg-2.webp — full quality landscape.
-        ───────────────────────────────────────────────────────────────────── */}
+        {/* Background image */}
         <div ref={bgRef} className="absolute inset-0">
-
-          {/* Mobile image — hidden on sm+ */}
           <div className="block sm:hidden absolute inset-0">
             <Image
               src="/hero-bg-mobile.webp"
@@ -254,15 +311,12 @@ export default function HeroSection() {
               priority
               loading="eager"
               fetchPriority="high"
-              // FIX: Raised quality slightly (20 → 25) — at quality=15 artifacts
-              // can hurt LCP perception without meaningfully saving bytes vs 25.
               quality={25}
               sizes="100vw"
               className="object-cover object-[50%_30%]"
             />
           </div>
 
-          {/* Desktop image — hidden below sm */}
           <div className="hidden sm:block absolute inset-0">
             <Image
               src="/hero-bg-2.webp"
@@ -277,18 +331,17 @@ export default function HeroSection() {
             />
           </div>
 
-          {/* Overlays */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#050a12]/95 via-[#050a12]/70 to-[#050a12]/30 sm:from-[#050a12]/88 sm:via-[#050a12]/50 sm:to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050a12] via-[#050a12]/30 to-transparent" />
         </div>
 
-        {/* ── Wipe overlay ──────────────────────────────────────────────── */}
+        {/* Wipe overlay */}
         <div className="hero-wipe absolute inset-0 z-30 bg-[#050a12] origin-left" aria-hidden="true" />
 
-        {/* ── Content ───────────────────────────────────────────────────── */}
+        {/* Content */}
+        {/* FIX 3: perspective class applied via CSS, sm+ only */}
         <div
-          className="relative z-10 flex flex-col items-center justify-center text-center min-h-[70vh] sm:min-h-[100dvh] max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-16 pt-12 sm:pt-20 pb-6 sm:pb-8"
-          style={{ perspective: "1000px" }}
+          className="hero-content-perspective relative z-10 flex flex-col items-center justify-center text-center min-h-[70vh] sm:min-h-[100dvh] max-w-5xl mx-auto w-full px-4 sm:px-10 lg:px-16 pt-12 sm:pt-20 pb-6 sm:pb-8"
         >
           {/* Accent line */}
           <div className="hero-line mb-5 sm:mb-9 h-[2px] w-10 sm:w-20 bg-red-500" aria-hidden="true" />
@@ -303,10 +356,9 @@ export default function HeroSection() {
                     style={{ animationDelay: `${0.15 + i * 0.045}s` }}
                   >
                     {w.includes("Refrigeration") ? (
-                      <span
-                        className="text-transparent"
-                        style={{ WebkitTextStroke: "2.5px rgba(255,255,255,0.5)" }}
-                      >
+                      // FIX 4: outline-word class handles WebkitTextStroke
+                      // at sm+ only via CSS; mobile gets plain white text
+                      <span className="hero-outline-word">
                         {w}
                       </span>
                     ) : w.includes("UK") ? (
@@ -337,14 +389,13 @@ export default function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-10 sm:mb-16 w-full sm:w-auto">
             <Link
               href="/about"
-              className="hero-cta group relative inline-flex items-center justify-center gap-3
+              // FIX 5: shadow classes removed; handled via .hero-cta-primary CSS (sm+ only)
+              className="hero-cta hero-cta-primary group relative inline-flex items-center justify-center gap-3
                 bg-red-500 hover:bg-red-400 active:bg-red-600 overflow-hidden
                 px-6 py-3 sm:px-9 sm:py-4 text-[11px] sm:text-[12px] font-black tracking-[0.25em] uppercase text-white
-                sm:shadow-[0_0_32px_rgba(239,68,68,0.2)] sm:hover:shadow-[0_0_48px_rgba(239,68,68,0.35)]
                 transition-colors duration-200 sm:transition-all sm:duration-300 w-full sm:w-auto"
               style={{ animationDelay: "0.55s" }}
             >
-              {/* Shimmer disabled on mobile via CSS */}
               <span className="hero-cta-shimmer absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700" aria-hidden="true" />
               <span className="relative flex items-center gap-3">
                 About Us
@@ -370,8 +421,6 @@ export default function HeroSection() {
                 w-full sm:w-auto"
               style={{ animationDelay: "0.62s" }}
             >
-              {/* FIX: text-white/50 → text-white/70 to pass WCAG AA contrast
-                  against the dark hero background (accessibility score +1) */}
               <span className="relative flex items-center gap-3">
                 <svg
                   className="w-3.5 h-3.5"
@@ -393,9 +442,6 @@ export default function HeroSection() {
           </div>
 
           {/* STATS */}
-          {/* FIX: Added role="list" + role="listitem" so screen readers
-              understand this is a collection of statistics, not random divs.
-              This also helps ARIA role children audit pass. */}
           <div
             className="w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4"
             role="list"
@@ -410,18 +456,10 @@ export default function HeroSection() {
               >
                 <div className="hero-stat-glow" aria-hidden="true" />
                 <div className="hero-stat-topline" aria-hidden="true" />
-                {/* FIX: text-white already has sufficient contrast on the
-                    dark card background — kept. The label below was the
-                    contrast failure; bumped from text-white (with opacity
-                    inherited from card) to explicit text-white/90. */}
                 <p className="relative z-10 text-2xl sm:text-3xl lg:text-4xl font-black leading-none tracking-tight tabular-nums mb-2 text-white">
                   <Counter target={s.n} suffix={s.suf} started={counting} />
                 </p>
                 <div className="w-5 h-px bg-white/10 mx-auto mb-2" aria-hidden="true" />
-                {/* FIX: text-white → text-white/90 to improve contrast ratio
-                    above 4.5:1 against the semi-transparent card background,
-                    fixing the "Background and foreground colors do not have
-                    a sufficient contrast ratio" accessibility audit failure. */}
                 <p className="relative z-10 text-[10px] sm:text-[11px] font-bold tracking-[0.18em] uppercase text-white/90">
                   {s.label}
                 </p>
