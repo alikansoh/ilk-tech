@@ -5,9 +5,9 @@ import Osaka2Content from "./content";
    SEO METADATA
 ───────────────────────────────────────────── */
 export const metadata: Metadata = {
-  title: "Arneg Osaka 2 | Remote Multideck Refrigeration Cabinet UK",
+  title: "Arneg Osaka 2 | Remote Multideck Refrigeration Cabinet | ILK Technology",
   description:
-    "The Arneg Osaka 2 remote multideck cabinet in Elegant White — dual-glass doors, multiplexed compatible, LED canopy, +1 to +4°C. Available in 1250mm to 3750mm widths. UK supply and installation by ILK Technology.",
+    "Explore the Arneg Osaka 2 remote multideck refrigeration cabinet in Elegant White. Dual-glass doors, LED canopy, multiplexed compatibility, +1 to +4°C. Widths from 1250mm to 3750mm. Supplied and installed across the UK by ILK Technology.",
   alternates: {
     canonical: "https://ilktechnology.com/products/osaka-2",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     url: "https://ilktechnology.com/products/osaka-2",
     title: "Arneg Osaka 2 Remote Multideck Cabinet | ILK Technology UK",
     description:
-      "Arneg Osaka 2 in Elegant White. Remote multideck refrigeration cabinet with dual-glass doors, LED canopy, multiplexed compatibility and precision temperature control. UK supply by ILK Technology.",
+      "Discover the Arneg Osaka 2 in Elegant White — remote multideck refrigeration with dual-glass doors, LED canopy, multiplexed system compatibility and precision temperature control. UK supply and installation by ILK Technology.",
     images: [
       {
         url: "https://ilktechnology.com/og-default.png",
@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   keywords: [
     "Arneg Osaka 2",
     "Arneg Osaka 2 UK",
+    "Arneg Osaka 2 specifications",
     "remote multideck cabinet UK",
     "Arneg multideck refrigeration",
     "multiplexed refrigeration cabinet UK",
@@ -41,110 +42,71 @@ export const metadata: Metadata = {
     "commercial refrigeration multideck UK",
     "ILK Technology Arneg",
     "Arneg refrigeration UK distributor",
+    "multideck cabinet technical specifications",
+    "remote refrigeration display cabinet",
   ],
 };
 
 /* ─────────────────────────────────────────────
-   JSON-LD — Product schema
+   JSON-LD — WebPage (BrochurePage / ItemPage)
 ───────────────────────────────────────────── */
-const productSchema = {
+const webPageSchema = {
   "@context": "https://schema.org",
-  "@type": "Product",
-  "@id": "https://ilktechnology.com/products/osaka-2/#product",
-  name: "Arneg Osaka 2 Remote Multideck Cabinet — Elegant White",
+  "@type": "WebPage",
+  "@id": "https://ilktechnology.com/products/osaka-2/#webpage",
+  url: "https://ilktechnology.com/products/osaka-2",
+  name: "Arneg Osaka 2 Remote Multideck Refrigeration Cabinet | ILK Technology",
   description:
-    "The Arneg Osaka 2 in Elegant White brings refined clarity to the chilled aisle — multiplexed system compatibility, dual-glass doors, and precision temperature control in one clean, authoritative package.",
-  brand: {
-    "@type": "Brand",
-    name: "Arneg",
-    url: "https://www.arneg.com/",
-  },
-  manufacturer: {
-    "@type": "Organization",
-    name: "Arneg",
-    url: "https://www.arneg.com/",
-  },
-  image: [
-    "https://ilktechnology.com/pro2.png",
-    "https://ilktechnology.com/og-default.png",
-  ],
-  color: "Elegant White",
-  category: "Commercial Refrigeration > Remote Multideck Cabinets",
-  additionalProperty: [
-    {
-      "@type": "PropertyValue",
-      name: "Temperature Range",
-      value: "+1 to +4 °C",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Cooling Type",
-      value: "Remote",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Lighting",
-      value: "LED Canopy",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Doors",
-      value: "Hinged Dual-Glass",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Controller",
-      value: "Electronic",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Pipework",
-      value: "Top Entry",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Shelving",
-      value: "Base + 5 × 450mm + EPOS",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Multiplexed",
-      value: "Compatible",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "End Walls",
-      value: "Solid or Mirrored",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Height",
-      value: "203 cm",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Depth",
-      value: "75 cm",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Available Widths",
-      value: "1250mm, 1875mm, 2500mm, 3750mm",
-    },
-  ],
-  offers: {
-    "@type": "Offer",
-    url: "https://ilktechnology.com/products/osaka-2",
-    priceCurrency: "GBP",
-    availability: "https://schema.org/InStock",
-    seller: {
+    "Brochure page for the Arneg Osaka 2 remote multideck refrigeration cabinet in Elegant White. Covering specifications, dimensions, features and UK supply by ILK Technology.",
+  inLanguage: "en-GB",
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": "https://ilktechnology.com/#website",
+    url: "https://ilktechnology.com",
+    name: "ILK Technology",
+    publisher: {
       "@id": "https://ilktechnology.com/#organization",
     },
-    areaServed: {
-      "@type": "Country",
-      name: "United Kingdom",
-    },
   },
+  about: {
+    "@type": "Thing",
+    name: "Arneg Osaka 2",
+    description:
+      "A remote multideck refrigeration cabinet manufactured by Arneg, available in Elegant White with dual-glass doors, LED canopy, and multiplexed system compatibility.",
+  },
+  breadcrumb: {
+    "@id": "https://ilktechnology.com/products/osaka-2/#breadcrumb",
+  },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: "https://ilktechnology.com/pro2.png",
+    width: 1200,
+    height: 800,
+  },
+  publisher: {
+    "@id": "https://ilktechnology.com/#organization",
+  },
+};
+
+/* ─────────────────────────────────────────────
+   JSON-LD — Organization
+───────────────────────────────────────────── */
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://ilktechnology.com/#organization",
+  name: "ILK Technology",
+  url: "https://ilktechnology.com",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://ilktechnology.com/logo.png",
+  },
+  areaServed: {
+    "@type": "Country",
+    name: "United Kingdom",
+  },
+  description:
+    "ILK Technology is a UK supplier and installer of commercial refrigeration equipment, including Arneg multideck cabinets.",
 };
 
 /* ─────────────────────────────────────────────
@@ -153,6 +115,7 @@ const productSchema = {
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "https://ilktechnology.com/products/osaka-2/#breadcrumb",
   itemListElement: [
     {
       "@type": "ListItem",
@@ -183,7 +146,11 @@ export default function Osaka2Page() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
       <script
         type="application/ld+json"

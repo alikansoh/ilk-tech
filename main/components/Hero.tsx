@@ -215,7 +215,7 @@ export default function HeroSection() {
               priority
               loading="eager"
               fetchPriority="high"
-              quality={55}
+              quality={15}
               sizes="100vw"
               className="object-cover object-[50%_30%]"
             />

@@ -5,9 +5,9 @@ import Panama3Content from "./content";
    SEO METADATA
 ───────────────────────────────────────────── */
 export const metadata: Metadata = {
-  title: "Arneg Panama 3 | Open Chiller Multideck Cabinet UK",
+  title: "Arneg Panama 3 | Open Chiller Multideck Cabinet | ILK Technology",
   description:
-    "The Arneg Panama 3 open chiller multideck in Anthracite Grey — manual blind system, low-energy EC fans, LED canopy, +1 to +4°C. Available in 1250mm to 3750mm widths. UK supply and installation by ILK Technology.",
+    "Explore the Arneg Panama 3 open chiller multideck cabinet in Anthracite Grey. Manual blind system, low-energy EC fans, LED canopy, +1 to +4°C. Widths from 1250mm to 3750mm. Supplied and installed across the UK by ILK Technology.",
   alternates: {
     canonical: "https://ilktechnology.com/products/panama-3",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     url: "https://ilktechnology.com/products/panama-3",
     title: "Arneg Panama 3 Open Chiller Multideck Cabinet | ILK Technology UK",
     description:
-      "Arneg Panama 3 in Anthracite Grey. Open chiller multideck with manual night blind, low-energy EC fans, LED canopy and remote cooling. UK supply and installation by ILK Technology.",
+      "Discover the Arneg Panama 3 in Anthracite Grey — open chiller multideck with manual night blind, low-energy EC fans, LED canopy and remote cooling. UK supply and installation by ILK Technology.",
     images: [
       {
         url: "https://ilktechnology.com/og-default.png",
@@ -32,6 +32,7 @@ export const metadata: Metadata = {
     "Arneg Panama 3",
     "Arneg Panama 3 UK",
     "Arneg Panama 3 Anthracite Grey",
+    "Arneg Panama 3 specifications",
     "open chiller multideck UK",
     "open front refrigeration cabinet UK",
     "Arneg open multideck UK",
@@ -42,120 +43,70 @@ export const metadata: Metadata = {
     "commercial refrigeration open front UK",
     "ILK Technology Arneg Panama",
     "Arneg refrigeration UK distributor",
+    "open multideck cabinet technical specifications",
   ],
 };
 
 /* ─────────────────────────────────────────────
-   JSON-LD — Product schema
+   JSON-LD — WebPage
 ───────────────────────────────────────────── */
-const productSchema = {
+const webPageSchema = {
   "@context": "https://schema.org",
-  "@type": "Product",
-  "@id": "https://ilktechnology.com/products/panama-3/#product",
-  name: "Arneg Panama 3 Open Chiller Multideck Cabinet — Anthracite Grey",
+  "@type": "WebPage",
+  "@id": "https://ilktechnology.com/products/panama-3/#webpage",
+  url: "https://ilktechnology.com/products/panama-3",
+  name: "Arneg Panama 3 Open Chiller Multideck Cabinet | ILK Technology",
   description:
-    "The Panama 3 pairs a classic Arneg blind system with dual-glass doors and precision low-energy fans — a masterclass in disciplined refrigeration for the modern chilled aisle.",
-  brand: {
-    "@type": "Brand",
-    name: "Arneg",
-    url: "https://www.arneg.com/",
-  },
-  manufacturer: {
-    "@type": "Organization",
-    name: "Arneg",
-    url: "https://www.arneg.com/",
-  },
-  image: [
-    "https://ilktechnology.com/pro1.png",
-    "https://ilktechnology.com/og-default.png",
-  ],
-  color: "Anthracite Grey",
-  category: "Commercial Refrigeration > Open Chiller Multideck Cabinets",
-  additionalProperty: [
-    {
-      "@type": "PropertyValue",
-      name: "Temperature Range",
-      value: "+1 to +4 °C",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Cooling Type",
-      value: "Remote",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Lighting",
-      value: "LED Canopy",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Doors",
-      value: "Open Chiller",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Controller",
-      value: "Electronic",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Pipework",
-      value: "Top Entry",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Shelving",
-      value: "Base + 5 × 450mm + EPOS",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Fan Type",
-      value: "Low-Energy EC Fan",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "End Walls",
-      value: "Solid or Mirrored",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Manual Blind",
-      value: "Included",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Solenoid Valve",
-      value: "Not Included",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Height",
-      value: "203 cm",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Depth",
-      value: "75 cm",
-    },
-    {
-      "@type": "PropertyValue",
-      name: "Available Widths",
-      value: "1250mm, 1875mm, 2500mm, 3750mm",
-    },
-  ],
-  offers: {
-    "@type": "Offer",
-    url: "https://ilktechnology.com/products/panama-3",
-    priceCurrency: "GBP",
-    availability: "https://schema.org/InStock",
-    seller: {
+    "Brochure page for the Arneg Panama 3 open chiller multideck cabinet in Anthracite Grey. Covering specifications, dimensions, features and UK supply by ILK Technology.",
+  inLanguage: "en-GB",
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": "https://ilktechnology.com/#website",
+    url: "https://ilktechnology.com",
+    name: "ILK Technology",
+    publisher: {
       "@id": "https://ilktechnology.com/#organization",
     },
-    areaServed: {
-      "@type": "Country",
-      name: "United Kingdom",
-    },
   },
+  about: {
+    "@type": "Thing",
+    name: "Arneg Panama 3",
+    description:
+      "An open chiller multideck refrigeration cabinet manufactured by Arneg, available in Anthracite Grey with a manual blind system, low-energy EC fans, LED canopy, and remote cooling.",
+  },
+  breadcrumb: {
+    "@id": "https://ilktechnology.com/products/panama-3/#breadcrumb",
+  },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: "https://ilktechnology.com/pro1.png",
+    width: 1200,
+    height: 800,
+  },
+  publisher: {
+    "@id": "https://ilktechnology.com/#organization",
+  },
+};
+
+/* ─────────────────────────────────────────────
+   JSON-LD — Organization
+───────────────────────────────────────────── */
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://ilktechnology.com/#organization",
+  name: "ILK Technology",
+  url: "https://ilktechnology.com",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://ilktechnology.com/logo.png",
+  },
+  areaServed: {
+    "@type": "Country",
+    name: "United Kingdom",
+  },
+  description:
+    "ILK Technology is a UK supplier and installer of commercial refrigeration equipment, including Arneg multideck cabinets.",
 };
 
 /* ─────────────────────────────────────────────
@@ -164,6 +115,7 @@ const productSchema = {
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "https://ilktechnology.com/products/panama-3/#breadcrumb",
   itemListElement: [
     {
       "@type": "ListItem",
@@ -194,7 +146,11 @@ export default function Panama3Page() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
       <script
         type="application/ld+json"
