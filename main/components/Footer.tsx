@@ -5,7 +5,9 @@ import Link from "next/link";
 const products = [
   { name: "Osaka 2", href: "/products/osaka-2" },
   { name: "Osaka 3", href: "/products/osaka-3" },
+  { name: "Osaka 3 SC", href: "/products/osaka-3-sc" },
   { name: "Panama 3", href: "/products/panama-3" },
+  { name: "Panama 3 SC", href: "/products/panama-3-sc" },
 ];
 
 const navLinks = [
