@@ -49,27 +49,27 @@ const product = {
     "Height B": { value: "216", unit: "cm" },
     "Depth":    { value: "750", unit: "mm" },
   },
-  subtitle: "The Panama 3 SC is engineered around its class-leading low-energy EC fan system — a vertical open multideck that delivers precision chilling with measurably lower running costs across every store format.",
-  highlight: "Low-Energy EC Fan System",
+  subtitle: "The Panama 3 SC is engineered around its class-leading low-energy fan system — a vertical open multideck that delivers precision chilling with measurably lower running costs across every store format.",
+  highlight: "Low-Energy Fan System",
   preorder: true,
   leadTime: "10 weeks",
   specs: [
     { label: "Temperature",    value: "-1 to +5 °C",             note: "Preservation range",  icon: "temp"   },
     { label: "Cooling",        value: "Remote",                  note: "External condenser",  icon: "cool"   },
-    { label: "Lighting",       value: "LED canopy + Door LED",   note: "Low energy",          icon: "light"  },
-    { label: "Doors",          value: "Dual glass hinged",       note: "Double-glazed",       icon: "door"   },
+    { label: "Lighting",       value: "LED canopy",              note: "Low energy",          icon: "light"  },
+    { label: "Doors",          value: "hinged doors",            note: "Glass",               icon: "door"   },
     { label: "Controller",     value: "Electronic",              note: "Smart control",       icon: "ctrl"   },
     { label: "Pipework",       value: "Top entry",               note: "Clean install",       icon: "pipe"   },
     { label: "Shelving",       value: "Base + 5 × 450mm + EPOS", note: "Adj. levels",         icon: "shelf"  },
-    { label: "EC Fan",         value: "Low-energy",              note: "Optimised airflow",   icon: "fan"    },
+    { label: "Fans",           value: "Low-energy",              note: "Optimised airflow",    icon: "fan"    },
     { label: "End Walls",      value: "Solid or Mirrored",       note: "Your choice",         icon: "end"    },
     { label: "Manual Blind",   value: "Included",                note: "Night blind system",  icon: "blind"  },
     { label: "Solenoid Valve", value: "Not included",            note: "Simplified system",   icon: "valve"  },
   ],
   features: [
-    { num: "01", title: "Low-Energy EC Fan Technology",   desc: "Electronically commutated fans are the headline feature: they deliver precision airflow distribution at a fraction of the power draw of conventional AC motors, cutting running costs year on year." },
+    { num: "01", title: "Low-Energy Fan Technology",   desc: "Low-energy fans deliver precision airflow distribution at a fraction of the power draw of conventional motors, cutting running costs year on year." },
     { num: "02", title: "Vertical Open Multideck Format", desc: "The SC open-front configuration maximises product visibility and customer access — the preferred layout for high-volume chilled dairy, deli, and convenience aisles." },
-    { num: "03", title: "Dual Glass Hinged Doors",        desc: "Double-glazed hinged doors with integrated door LED lighting reduce ambient heat gain and slash energy consumption overnight while keeping products under perfectly lit display." },
+    { num: "03", title: "Hinged Doors",        desc: "Hinged doors reduce ambient heat gain and help lower overnight energy consumption while keeping products under an effectively lit display." },
     { num: "04", title: "Manual Night Blind Included",    desc: "The Panama SC ships standard with a manual blind system — roll it down at close and cut overnight energy consumption dramatically without any additional equipment cost." },
   ],
   ralColours: [
@@ -82,15 +82,15 @@ const product = {
 };
 
 const TICKER_ITEMS = [
-  "Low-Energy EC Fans",
+  "Low-Energy Fans",
   "Vertical Open Multideck",
   "Remote Cooling",
   "Manual Blind Included",
-  "Dual Glass Hinged Doors",
+  "Hinged Doors",
   "-1 to +5 °C",
   "Pre-Order · 10 Week Lead",
   "5 Shelf Levels",
-  "LED Canopy + Door LED",
+  "LED Canopy",
   "Anthracite Grey",
 ];
 
@@ -194,14 +194,18 @@ const css = `
     position: absolute;
     bottom: 96px;
     left: 0; right: 0;
-    z-index: 20;
+    z-index: 40;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
+    pointer-events: none; /* allow only buttons to receive pointer events */
   }
+  .p3sc-slide-nav > * { pointer-events: auto; } /* restore pointer for children */
+
+  /* Desktop: slightly larger buttons for better visible targets */
   .p3sc-slide-btn {
-    width: 36px; height: 36px;
+    width: 44px; height: 44px;
     border-radius: 50%;
     background: rgba(28,30,32,0.85);
     border: 1px solid ${T.borderLight};
@@ -209,9 +213,13 @@ const css = `
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+    transition: background 0.2s, border-color 0.2s, transform 0.18s;
     color: rgba(255,255,255,0.7);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    -webkit-tap-highlight-color: transparent;
   }
+  .p3sc-slide-btn svg { width: 18px; height: 18px; display: block; }
+  .p3sc-slide-btn:active { transform: translateY(1px); }
   .p3sc-slide-btn:hover { background: ${T.red}; border-color: ${T.red}; color: #fff; }
   .p3sc-slide-dots {
     display: flex;
@@ -741,6 +749,21 @@ const css = `
     .p3sc-hero-txt { padding: 52px 28px; }
     .p3sc-body-inner { grid-template-columns: 1fr; gap: 52px; padding: 64px 24px 80px; }
     .p3sc-h1, .p3sc-h1-accent { font-size: clamp(64px, 16vw, 110px); }
+
+    /* Responsive slideshow nav tweaks - mobile uses smaller buttons (improves reach) */
+    .p3sc-slide-nav {
+      bottom: 18px; /* bring nav closer to image bottom on mobile */
+      gap: 10px;
+      justify-content: center;
+    }
+    .p3sc-slide-btn {
+      width: 23px;
+      height: 23px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+    .p3sc-slide-btn svg { width: 12px; height: 12px; }
+    /* make the dots less prominent / hide them to improve tap targets */
+    .p3sc-slide-dots { display: none; }
   }
 `;
 
@@ -891,9 +914,9 @@ export default function Panama3SCPage() {
           <div className="p3sc-img-topline" />
 
           {/* Slideshow */}
-          <div className="p3sc-slides">
+          <div className="p3sc-slides" aria-live="polite">
             {product.images.map((src, i) => (
-              <div key={i} className={`p3sc-slide${i === activeSlide ? " active" : ""}`}>
+              <div key={i} className={`p3sc-slide${i === activeSlide ? " active" : ""}`} role="img" aria-label={`${product.name} view ${i + 1}`}>
                 <Image src={src} alt={`${product.name} view ${i + 1}`} fill quality={95} sizes="60vw" style={{ objectFit: "cover" }} />
               </div>
             ))}
@@ -915,14 +938,16 @@ export default function Panama3SCPage() {
           </div>
 
           {/* Slide nav */}
-          <div className="p3sc-slide-nav">
-            <button className="p3sc-slide-btn" onClick={prev} aria-label="Previous"><ChevronLeft size={16} /></button>
-            <div className="p3sc-slide-dots">
+          <div className="p3sc-slide-nav" role="group" aria-label="Slideshow controls">
+            <button className="p3sc-slide-btn" onClick={prev} aria-label="Previous slide"><ChevronLeft /></button>
+
+            <div className="p3sc-slide-dots" aria-hidden>
               {product.images.map((_, i) => (
                 <div key={i} className={`p3sc-dot${i === activeSlide ? " active" : ""}`} onClick={() => setActiveSlide(i)} />
               ))}
             </div>
-            <button className="p3sc-slide-btn" onClick={next} aria-label="Next"><ChevronRight size={16} /></button>
+
+            <button className="p3sc-slide-btn" onClick={next} aria-label="Next slide"><ChevronRight /></button>
           </div>
 
           {/* Highlight badge */}
@@ -1060,7 +1085,7 @@ export default function Panama3SCPage() {
           {/* RIGHT */}
           <div>
             <h2 className="p3sc-h2">
-              EC FANS.<br />
+              LOW-ENERGY FANS.<br />
               LOWER COSTS.<br />
               <span>BETTER CHILL.</span>
             </h2>
@@ -1080,7 +1105,7 @@ export default function Panama3SCPage() {
 
             <div className="p3sc-cta">
               <div className="p3sc-cta-overline">Pre-Order Now</div>
-              <div className="p3sc-cta-heading">10-week lead time.<br />UK delivery included.</div>
+              <div className="p3sc-cta-heading">10-week lead time.</div>
               <p className="p3sc-cta-sub">
                 This product is available to pre-order only. We&apos;ll confirm your order within one business day and keep you updated through production.
               </p>
