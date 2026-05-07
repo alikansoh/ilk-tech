@@ -40,7 +40,7 @@ const T = {
 const product = {
   name:     "Panama 3 SC",
   range:    "Vertical Open Multideck · Remote",
-  colour:   "Anthracite Grey",
+  colour:   "", // anthracite grey removed
   images:   ["/pro4.png", "/pro-4.png"], // replace with actual SC images
   cataloguePdf: "/catalogues/panama3sc.pdf",
   sizes:    ["1875mm", "2500mm", "3750mm"],
@@ -57,7 +57,7 @@ const product = {
     { label: "Temperature",    value: "-1 to +5 °C",             note: "Preservation range",  icon: "temp"   },
     { label: "Cooling",        value: "Remote",                  note: "External condenser",  icon: "cool"   },
     { label: "Lighting",       value: "LED canopy",              note: "Low energy",          icon: "light"  },
-    { label: "Doors",          value: "hinged doors",            note: "Glass",               icon: "door"   },
+    { label: "Doors",          value: "Open-front (no doors)",   note: "Open chiller",         icon: "door"   },
     { label: "Controller",     value: "Electronic",              note: "Smart control",       icon: "ctrl"   },
     { label: "Pipework",       value: "Top entry",               note: "Clean install",       icon: "pipe"   },
     { label: "Shelving",       value: "Base + 5 × 450mm + EPOS", note: "Adj. levels",         icon: "shelf"  },
@@ -69,7 +69,7 @@ const product = {
   features: [
     { num: "01", title: "Low-Energy Fan Technology",   desc: "Low-energy fans deliver precision airflow distribution at a fraction of the power draw of conventional motors, cutting running costs year on year." },
     { num: "02", title: "Vertical Open Multideck Format", desc: "The SC open-front configuration maximises product visibility and customer access — the preferred layout for high-volume chilled dairy, deli, and convenience aisles." },
-    { num: "03", title: "Hinged Doors",        desc: "Hinged doors reduce ambient heat gain and help lower overnight energy consumption while keeping products under an effectively lit display." },
+    { num: "03", title: "Open Front Access",        desc: "Open-front access improves product visibility and customer flow while avoiding door mechanisms — ideal for high-turnover chilled displays." },
     { num: "04", title: "Manual Night Blind Included",    desc: "The Panama SC ships standard with a manual blind system — roll it down at close and cut overnight energy consumption dramatically without any additional equipment cost." },
   ],
   ralColours: [
@@ -77,7 +77,7 @@ const product = {
     { ral: "7024", name: "Graphite Grey",  hex: "#474A51", bordered: false },
     { ral: "9006", name: "White Aluminium",hex: "#A6A8AB", bordered: false },
     { ral: "9004", name: "Signal Black",   hex: "#2B2B2C", bordered: false },
-    { ral: "7016", name: "Anthracite Grey",hex: "#383E42", bordered: false },
+    // Anthracite Grey removed (was 7016)
   ],
 };
 
@@ -86,12 +86,12 @@ const TICKER_ITEMS = [
   "Vertical Open Multideck",
   "Remote Cooling",
   "Manual Blind Included",
-  "Hinged Doors",
+  "Open chiller", // If you'd like this text changed here too, I can update the ticker item — left as-is for now
   "-1 to +5 °C",
   "Pre-Order · 10 Week Lead",
   "5 Shelf Levels",
   "LED Canopy",
-  "Anthracite Grey",
+  // "Anthracite Grey" removed from ticker
 ];
 
 /* ─────────────────────────────────────────────
@@ -1150,5 +1150,5 @@ export default function Panama3SCPage() {
         </div>
       </section>
     </div>
-  );
+  ); 
 }
