@@ -9,6 +9,7 @@ const products = [
   { name: "Osaka 2", href: "/products/osaka-2" },
   { name: "Osaka 3", href: "/products/osaka-3", colorClass: "text-[#293133]" },
   { name: "Panama 3", href: "/products/panama-3", colorClass: "text-[#293133]" },
+  { name: "Panama 3 SC", href: "/products/panama-3-sc" },
 ];
 
 const navLinks = [
@@ -54,12 +55,16 @@ const socials = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-  const isProductActive = products.some((p) => pathname.startsWith(p.href));
+  // stricter product active check: exact match or a subpath (href + '/')
+  const isProductPath = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
+
+  const isProductActive = products.some((p) => isProductPath(p.href));
 
   return (
     <nav className="sticky top-0 z-50 w-full">
@@ -134,7 +139,7 @@ export default function Navbar() {
 
                   <div className="divide-y divide-[#001845]/6">
                     {products.map((p, i) => {
-                      const productActive = pathname.startsWith(p.href);
+                      const productActive = isProductPath(p.href);
                       return (
                         <Link
                           key={p.href}
@@ -154,9 +159,7 @@ export default function Navbar() {
 
                           <p
                             className={`flex-1 text-[13px] font-bold tracking-wide transition-colors duration-150
-                            ${p.colorClass ?? (productActive
-                              ? "text-[#001845]"
-                              : "text-[#001845]/70 group-hover/item:text-[#001845]")}
+                            ${p.colorClass ?? (productActive ? "text-[#001845]" : "text-[#001845]/70 group-hover/item:text-[#001845]")}
                             `}
                           >
                             {p.name}
@@ -164,10 +167,7 @@ export default function Navbar() {
 
                           <svg
                             className={`h-3.5 w-3.5 flex-shrink-0 transition-all duration-200
-                              ${productActive
-                                ? "text-red-600 translate-x-0"
-                                : "text-[#001845]/20 -translate-x-1 group-hover/item:text-red-500 group-hover/item:translate-x-0"
-                              }`}
+                              ${productActive ? "text-red-600 translate-x-0" : "text-[#001845]/20 -translate-x-1 group-hover/item:text-red-500 group-hover/item:translate-x-0"}`}
                             fill="none" stroke="currentColor" viewBox="0 0 24 24"
                           >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -311,7 +311,7 @@ export default function Navbar() {
                     </div>
                     <div className="divide-y divide-[#001845]/6">
                       {products.map((p, i) => {
-                        const productActive = pathname.startsWith(p.href);
+                        const productActive = isProductPath(p.href);
                         return (
                           <Link
                             key={p.href}
@@ -322,10 +322,7 @@ export default function Navbar() {
                           >
                             <div
                               className={`flex h-8 w-8 flex-shrink-0 items-center justify-center border transition-all
-                              ${productActive
-                                ? "border-red-600 bg-red-600 text-white"
-                                : "border-[#001845]/12 text-[#001845]/25"
-                              }`}
+                              ${productActive ? "border-red-600 bg-red-600 text-white" : "border-[#001845]/12 text-[#001845]/25"}`}
                             >
                               <span className="text-[10px] font-black">0{i + 1}</span>
                             </div>
