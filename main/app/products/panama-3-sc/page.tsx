@@ -77,6 +77,8 @@ const product = {
     { ral: "7024", name: "Graphite Grey",  hex: "#474A51", bordered: false },
     { ral: "9006", name: "White Aluminium",hex: "#A6A8AB", bordered: false },
     { ral: "9004", name: "Signal Black",   hex: "#2B2B2C", bordered: false },
+    { ral: "7016", name: "Anthracite Grey", hex: "#383E42", dark: true },
+
     // Anthracite Grey removed (was 7016)
   ],
 };
