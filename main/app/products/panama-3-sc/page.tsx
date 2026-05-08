@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 /* ─────────────────────────────────────────────
-   JSON-LD — WebPage
+   JSON-LD — WebPage (about set to generic Thing — not Product)
 ───────────────────────────────────────────── */
 const webPageSchema = {
   "@context": "https://schema.org",
@@ -48,7 +48,7 @@ const webPageSchema = {
   url: "https://ilktechnology.com/products/panama-3-sc",
   name: "Arneg Panama 3 SC Vertical Open Multideck | ILK Technology",
   description:
-    "Product page for the Arneg Panama 3 SC vertical open multideck cabinet. Specifications, dimensions, RAL finishes and pre-order details are provided. Supplied and installed across the UK by ILK Technology.",
+    "Brochure page for the Arneg Panama 3 SC vertical open multideck cabinet. Specifications, dimensions, RAL finishes and pre-order details are provided. Supplied and installed across the UK by ILK Technology.",
   inLanguage: "en-GB",
   isPartOf: {
     "@type": "WebSite",
@@ -57,11 +57,12 @@ const webPageSchema = {
     name: "ILK Technology",
     publisher: { "@id": "https://ilktechnology.com/#organization" },
   },
+  // NOTE: changed from Product -> Thing to avoid being classified as a product page
   about: {
-    "@type": "Product",
-    name: "Arneg Panama 3 SC",
+    "@type": "Thing",
+    name: "Panama 3 SC brochure",
     description:
-      "An open-front vertical multideck refrigeration cabinet by Arneg with low-energy fans, manual night blind and LED canopy. Pre-order product with a 10-week lead time.",
+      "Brochure and specification overview for the Arneg Panama 3 SC vertical open multideck cabinet. Not a storefront product listing or offer."
   },
   breadcrumb: { "@id": "https://ilktechnology.com/products/panama-3-sc/#breadcrumb" },
   primaryImageOfPage: {
