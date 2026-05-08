@@ -68,4 +68,19 @@
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
+
+  <!-- Newly added product detail pages -->
+  <url>
+    <loc>https://ilktechnology.com/products/panama-3-sc/</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://ilktechnology.com/products/osaka-3-sc/</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
 </urlset>
