@@ -3,7 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Script from "next/script";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 /* ─────────────────────────────────────────────
    FONTS
@@ -25,10 +25,10 @@ const jakarta = Plus_Jakarta_Sans({
 ───────────────────────────────────────────── */
 const SITE_URL  = "https://ilktechnology.com";
 const SITE_NAME = "ILK Technology";
-const OG_IMAGE  = `${SITE_URL}/og-default.png`; // 1200×630 recommended
+const OG_IMAGE  = `${SITE_URL}/og-default.png`;
 
 /* ─────────────────────────────────────────────
-   VIEWPORT  (separate export — Next.js 14+)
+   VIEWPORT
 ───────────────────────────────────────────── */
 export const viewport: Viewport = {
   width: "device-width",
@@ -38,11 +38,8 @@ export const viewport: Viewport = {
 
 /* ─────────────────────────────────────────────
    ROOT METADATA
-   — pages override individual fields via
-     their own `export const metadata`
 ───────────────────────────────────────────── */
 export const metadata: Metadata = {
-  /* ── Core ── */
   metadataBase: new URL(SITE_URL),
   title: {
     default: "ILK Technology | Commercial Refrigeration & Arneg UK Distribution Partner",
@@ -71,7 +68,6 @@ export const metadata: Metadata = {
     "commercial checkouts shelving",
   ],
 
-  /* ── Canonical & alternates ── */
   alternates: {
     canonical: SITE_URL,
     languages: {
@@ -79,12 +75,10 @@ export const metadata: Metadata = {
     },
   },
 
-  /* ── Authors & publisher ── */
   authors: [{ name: "ILK Technology", url: SITE_URL }],
   creator: "ILK Technology",
   publisher: "ILK Technology",
 
-  /* ── Open Graph ── */
   openGraph: {
     type: "website",
     locale: "en_GB",
@@ -104,10 +98,6 @@ export const metadata: Metadata = {
     ],
   },
 
-  /* ── Twitter / X card ── */
-  
-
-  /* ── Robots ── */
   robots: {
     index: true,
     follow: true,
@@ -122,17 +112,13 @@ export const metadata: Metadata = {
     },
   },
 
-  /* ── Verification (add your codes once you have them) ── */
   verification: {
     google: "REPLACE_WITH_GOOGLE_SEARCH_CONSOLE_CODE",
-    // bing: "REPLACE_WITH_BING_WEBMASTER_CODE",
   },
 
-  /* ── App / PWA basics ── */
   applicationName: SITE_NAME,
   category: "Commercial Refrigeration",
 
-  /* ── Icons ── */
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -147,13 +133,11 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
   },
 
-  /* ── Manifest ── */
   manifest: "/site.webmanifest",
 };
 
 /* ─────────────────────────────────────────────
-   STRUCTURED DATA  (JSON-LD)
-   Organisation + LocalBusiness schema
+   STRUCTURED DATA (JSON-LD)
 ───────────────────────────────────────────── */
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -241,9 +225,8 @@ const organizationSchema = {
     },
   ],
   sameAs: [
-    // Add your social profiles here:
-     "https://www.linkedin.com/company/ilk-technology27/",
-     "https://www.facebook.com/profile.php?id=61570825201141",
+    "https://www.linkedin.com/company/ilk-technology27/",
+    "https://www.facebook.com/profile.php?id=61570825201141",
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
@@ -320,26 +303,27 @@ export default function RootLayout({
       lang="en-GB"
       className={`${inter.variable} ${jakarta.variable} h-full antialiased`}
     >
+      <GoogleTagManager gtmId="AW-18161039363" />
       <head>
-        {/* ── Preconnect to external origins ── */}
+        {/* Preconnect to external origins */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* ── Geo / region meta ── */}
-        <meta name="geo.region"      content="GB" />
-        <meta name="geo.placename"   content="Wembley, London" />
-        <meta name="geo.position" content="51.5654417;-0.3055085" />
-<meta name="ICBM" content="51.5654417, -0.3055085" />
+        {/* Geo / region meta */}
+        <meta name="geo.region"    content="GB" />
+        <meta name="geo.placename" content="Wembley, London" />
+        <meta name="geo.position"  content="51.5654417;-0.3055085" />
+        <meta name="ICBM"          content="51.5654417, -0.3055085" />
 
-        {/* ── DC meta (Dublin Core — extra signals) ── */}
-        <meta name="DC.title"        content="ILK Technology — Commercial Refrigeration & Arneg UK Distribution Partner" />
-        <meta name="DC.description"  content="Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold. 20+ years experience in commercial refrigeration." />
-        <meta name="DC.subject"      content="Commercial Refrigeration, Arneg, Retail Equipment, Cold Rooms" />
-        <meta name="DC.language"     content="en-GB" />
-        <meta name="DC.coverage"     content="United Kingdom" />
-        <meta name="DC.publisher"    content="ILK Technology Ltd" />
+        {/* Dublin Core meta */}
+        <meta name="DC.title"       content="ILK Technology — Commercial Refrigeration & Arneg UK Distribution Partner" />
+        <meta name="DC.description" content="Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold. 20+ years experience in commercial refrigeration." />
+        <meta name="DC.subject"     content="Commercial Refrigeration, Arneg, Retail Equipment, Cold Rooms" />
+        <meta name="DC.language"    content="en-GB" />
+        <meta name="DC.coverage"    content="United Kingdom" />
+        <meta name="DC.publisher"   content="ILK Technology Ltd" />
 
-        {/* ── JSON-LD structured data ── */}
+        {/* JSON-LD structured data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
