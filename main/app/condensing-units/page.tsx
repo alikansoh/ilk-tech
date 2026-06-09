@@ -66,19 +66,16 @@ export default function JEHallPage() {
       const W = container.clientWidth;
       const H = container.clientHeight;
 
-      /* renderer */
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(W, H);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       container.appendChild(renderer.domElement);
 
-      /* scene */
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
       camera.position.set(0, 0.6, 4.8);
 
-      /* lights */
       scene.add(new THREE.AmbientLight(0xffffff, 0.35));
       const key = new THREE.DirectionalLight(0xffffff, 1.1);
       key.position.set(4, 6, 5);
@@ -91,7 +88,6 @@ export default function JEHallPage() {
       rim.position.set(0, -3, -4);
       scene.add(rim);
 
-      /* materials */
       const bodyMat  = new THREE.MeshStandardMaterial({ color: 0x0d1f33, roughness: 0.35, metalness: 0.85 });
       const panelMat = new THREE.MeshStandardMaterial({ color: 0x091828, roughness: 0.4,  metalness: 0.7  });
       const blueMat  = new THREE.MeshStandardMaterial({ color: 0x0072bb, roughness: 0.3,  metalness: 0.6, emissive: 0x0072bb, emissiveIntensity: 0.15 });
@@ -99,49 +95,37 @@ export default function JEHallPage() {
       const fanMat   = new THREE.MeshStandardMaterial({ color: 0x1a3a5c, roughness: 0.3,  metalness: 0.9, side: THREE.DoubleSide });
       const ledMat   = new THREE.MeshStandardMaterial({ color: 0x0072bb, emissive: 0x0072bb, emissiveIntensity: 1.2, roughness: 0.1, metalness: 0 });
 
-      /* ── ROOT GROUP ── */
       const root = new THREE.Group();
       scene.add(root);
 
-      /* main casing */
       const casingGeo = new THREE.BoxGeometry(3.2, 1.6, 1.0);
       const casing = new THREE.Mesh(casingGeo, bodyMat);
       casing.castShadow = true;
       root.add(casing);
 
-      /* front panel recess */
       const frontGeo = new THREE.BoxGeometry(3.0, 1.4, 0.05);
       const front = new THREE.Mesh(frontGeo, panelMat);
       front.position.set(0, 0, 0.53);
       root.add(front);
 
-      /* top accent strip (blue) */
       const topStripGeo = new THREE.BoxGeometry(3.2, 0.06, 1.02);
       const topStrip = new THREE.Mesh(topStripGeo, blueMat);
       topStrip.position.set(0, 0.83, 0);
       root.add(topStrip);
 
-      /* left accent bar */
       const leftBarGeo = new THREE.BoxGeometry(0.06, 1.6, 1.02);
       const leftBar = new THREE.Mesh(leftBarGeo, blueMat);
       leftBar.position.set(-1.63, 0, 0);
       root.add(leftBar);
 
-      /* ── MAKE A FAN (returns group) ── */
       const makeFan = (x: number) => {
         const g = new THREE.Group();
-
-        /* housing ring */
         const ringGeo = new THREE.TorusGeometry(0.52, 0.04, 12, 48);
         const ring = new THREE.Mesh(ringGeo, blueMat);
         g.add(ring);
-
-        /* inner ring */
         const innerGeo = new THREE.TorusGeometry(0.26, 0.025, 12, 32);
         const inner = new THREE.Mesh(innerGeo, darkMat);
         g.add(inner);
-
-        /* blades */
         const bladeGroup = new THREE.Group();
         const bladeGeo = new THREE.BoxGeometry(0.08, 0.32, 0.04);
         for (let i = 0; i < 7; i++) {
@@ -152,13 +136,10 @@ export default function JEHallPage() {
           bladeGroup.add(blade);
         }
         g.add(bladeGroup);
-
-        /* hub */
         const hubGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.08, 20);
         const hub = new THREE.Mesh(hubGeo, darkMat);
         hub.rotation.x = Math.PI / 2;
         g.add(hub);
-
         g.position.set(x, 0, 0.56);
         root.add(g);
         return { g, blades: bladeGroup };
@@ -167,7 +148,6 @@ export default function JEHallPage() {
       const fan1 = makeFan(-0.82);
       const fan2 = makeFan( 0.82);
 
-      /* ── GRILLE BARS (horizontal) ── */
       for (let i = -3; i <= 3; i++) {
         const grilleGeo = new THREE.BoxGeometry(3.0, 0.025, 0.03);
         const grille = new THREE.Mesh(grilleGeo, darkMat);
@@ -175,26 +155,22 @@ export default function JEHallPage() {
         root.add(grille);
       }
 
-      /* ── CONTROL PANEL (right side) ── */
       const cpGeo = new THREE.BoxGeometry(0.35, 1.0, 0.06);
       const cp = new THREE.Mesh(cpGeo, darkMat);
       cp.position.set(1.35, 0, 0.56);
       root.add(cp);
 
-      /* LED indicator */
       const ledGeo = new THREE.SphereGeometry(0.04, 12, 12);
       const led = new THREE.Mesh(ledGeo, ledMat);
       led.position.set(1.35, 0.42, 0.595);
       root.add(led);
 
-      /* small display rect */
       const dispGeo = new THREE.BoxGeometry(0.22, 0.12, 0.015);
       const dispMat = new THREE.MeshStandardMaterial({ color: 0x0a1520, roughness: 0.8, metalness: 0.2 });
       const disp = new THREE.Mesh(dispGeo, dispMat);
       disp.position.set(1.35, 0.18, 0.595);
       root.add(disp);
 
-      /* ── PIPE STUBS (bottom) ── */
       const pipeGeo = new THREE.CylinderGeometry(0.055, 0.055, 0.28, 12);
       const pipeMat = new THREE.MeshStandardMaterial({ color: 0x1a3344, roughness: 0.4, metalness: 0.9 });
       [-1.1, -0.85, 0.85, 1.1].forEach(px => {
@@ -203,7 +179,6 @@ export default function JEHallPage() {
         root.add(pipe);
       });
 
-      /* ── MOUNTING FEET ── */
       const footGeo = new THREE.BoxGeometry(0.5, 0.1, 0.9);
       [-1.1, 1.1].forEach(px => {
         const foot = new THREE.Mesh(footGeo, darkMat);
@@ -211,7 +186,6 @@ export default function JEHallPage() {
         root.add(foot);
       });
 
-      /* ── SHADOW PLANE ── */
       const planeGeo = new THREE.PlaneGeometry(8, 8);
       const planeMat = new THREE.ShadowMaterial({ opacity: 0.18 });
       const plane = new THREE.Mesh(planeGeo, planeMat);
@@ -220,7 +194,6 @@ export default function JEHallPage() {
       plane.receiveShadow = true;
       scene.add(plane);
 
-      /* ── MOUSE INTERACTIVITY ── */
       let mouseX = 0, mouseY = 0;
       const onMouse = (e: MouseEvent) => {
         const rect = container.getBoundingClientRect();
@@ -229,7 +202,6 @@ export default function JEHallPage() {
       };
       container.addEventListener("mousemove", onMouse);
 
-      /* ── SCROLL-BASED ENTRY ── */
       let scrollProgress = 0;
       const onScroll = () => {
         const rect = container.getBoundingClientRect();
@@ -239,34 +211,23 @@ export default function JEHallPage() {
       window.addEventListener("scroll", onScroll, { passive: true });
       onScroll();
 
-      /* ── ANIMATE ── */
       let t = 0;
       const animate = () => {
         if (!running) return;
         animId = requestAnimationFrame(animate);
         t += 0.016;
-
-        /* fans spin */
         fan1.blades.rotation.z += 0.04;
         fan2.blades.rotation.z -= 0.035;
-
-        /* LED pulse */
         ledMat.emissiveIntensity = 0.8 + Math.sin(t * 2.5) * 0.6;
-
-        /* entry: unit rises up as section scrolls in */
         const entryY = -1.5 + scrollProgress * 1.5;
         root.position.y = entryY;
         root.scale.setScalar(0.55 + scrollProgress * 0.45);
-
-        /* idle rotation + mouse tilt */
         root.rotation.y = Math.sin(t * 0.22) * 0.18 + mouseX * 0.12;
         root.rotation.x = -0.08 + mouseY * 0.06;
-
         renderer.render(scene, camera);
       };
       animate();
 
-      /* resize */
       const onResize = () => {
         const nW = container.clientWidth;
         const nH = container.clientHeight;
@@ -301,14 +262,12 @@ export default function JEHallPage() {
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
-        /* hero */
         gsap.from(".jeh-hero-eyebrow", { opacity: 0, x: -20, duration: 0.7, ease: "power3.out", delay: 0.2 });
         gsap.from(".jeh-hero-title",   { opacity: 0, y: 40,  duration: 0.9, ease: "power3.out", delay: 0.35 });
         gsap.from(".jeh-hero-body",    { opacity: 0, y: 24,  duration: 0.8, ease: "power3.out", delay: 0.6 });
         gsap.from(".jeh-hero-actions", { opacity: 0, y: 16,  duration: 0.7, ease: "power3.out", delay: 0.8 });
         gsap.from(".jeh-ac-wrap",      { opacity: 0, x: 60,  duration: 1.0, ease: "power3.out", delay: 0.5 });
 
-        /* hero parallax */
         gsap.to(".jeh-hero-img-wrap", {
           yPercent: 12, ease: "none",
           scrollTrigger: { trigger: ".jeh-hero", start: "top top", end: "bottom top", scrub: true },
@@ -318,12 +277,10 @@ export default function JEHallPage() {
           scrollTrigger: { trigger: ".jeh-hero", start: "45% top", end: "bottom top", scrub: true },
         });
 
-        /* cold-air streams fade in */
         gsap.from(".jeh-air-stream", {
           opacity: 0, stagger: 0.12, duration: 0.6, ease: "power2.out", delay: 1.2,
         });
 
-        /* scroll-triggered sections */
         gsap.from(".jeh-intro-left",  { opacity: 0, x: -36, duration: 0.85, ease: "power3.out", scrollTrigger: { trigger: ".jeh-intro", start: "top 80%" } });
         gsap.from(".jeh-intro-right", { opacity: 0, x:  36, duration: 0.85, ease: "power3.out", scrollTrigger: { trigger: ".jeh-intro", start: "top 80%" } });
 
@@ -379,7 +336,6 @@ export default function JEHallPage() {
           align-items: stretch;
         }
 
-        /* left red accent bar — matches brands page */
         .jeh-hero::before {
           content: '';
           position: absolute;
@@ -389,14 +345,12 @@ export default function JEHallPage() {
           z-index: 4;
         }
 
-        /* split layout */
         .jeh-hero-inner {
           display: grid;
           grid-template-columns: 1fr 1fr;
           width: 100%;
         }
 
-        /* LEFT: text + AC unit */
         .jeh-hero-text-col {
           position: relative;
           z-index: 2;
@@ -487,30 +441,36 @@ export default function JEHallPage() {
         }
         .jeh-btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
 
-        /* AC unit container */
+        /* ── Fan animation sits directly under hero text ── */
         .jeh-ac-wrap {
-          margin-top: 56px;
-          align-self: flex-end;
+          margin-top: 32px;
         }
 
-        /* RIGHT: product photo */
         .jeh-hero-img-col {
           position: relative;
           overflow: hidden;
           min-height: 520px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: ${NAVY};
         }
         .jeh-hero-img-wrap {
           position: absolute;
-          inset: -8% 0 -8% 0;
+          inset: 0;
           width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .jeh-hero-img-wrap img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain !important;
           object-position: center;
+          padding: 24px;
         }
-        /* dark gradient on the left edge of the image */
         .jeh-hero-img-col::before {
           content: '';
           position: absolute;
@@ -519,7 +479,6 @@ export default function JEHallPage() {
           background: linear-gradient(90deg, ${NAVY} 0%, transparent 100%);
           z-index: 2;
         }
-        /* subtle bottom fade */
         .jeh-hero-img-col::after {
           content: '';
           position: absolute;
@@ -529,7 +488,6 @@ export default function JEHallPage() {
           z-index: 2;
         }
 
-        /* ── hero responsive ── */
         @media (max-width: 1020px) {
           .jeh-hero-text-col { padding: 60px 36px 60px 44px; }
         }
@@ -541,8 +499,7 @@ export default function JEHallPage() {
           .jeh-hero-text-col { padding: 48px 28px 52px 32px; }
           .jeh-ac-wrap {
             display: block;
-            margin-top: 36px;
-            align-self: auto;
+            margin-top: 28px;
           }
           .jeh-ac-wrap svg {
             width: 100%;
@@ -571,7 +528,7 @@ export default function JEHallPage() {
           100% { opacity: 0;    transform: translateX(38px); }
         }
 
-        .jeh-fan-blade { animation: fanSpin 1.6s linear infinite; transform-origin: 50% 50%; transform-box: fill-box; }
+        .jeh-fan-blade  { animation: fanSpin 1.6s linear infinite; transform-origin: 50% 50%; transform-box: fill-box; }
         .jeh-fan-blade2 { animation: fanSpin 2.1s linear infinite; transform-origin: 50% 50%; transform-box: fill-box; }
 
         @keyframes fanSpin {
@@ -804,9 +761,9 @@ export default function JEHallPage() {
           padding: 32px 28px;
         }
         .jeh-model-col-head {
-          font-size: 9px;
-          font-weight: 700;
-          letter-spacing: 0.26em;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.28em;
           text-transform: uppercase;
           color: ${BLUE};
           padding-bottom: 14px;
@@ -814,19 +771,20 @@ export default function JEHallPage() {
           margin-bottom: 6px;
         }
         .jeh-model-row {
-          font-size: 11px;
+          font-size: 12px;
           font-family: 'Courier New', Courier, monospace;
-          color: ${MUTED};
-          padding: 6px 0;
-          border-bottom: 1px solid rgba(11,37,64,0.05);
-          letter-spacing: 0.02em;
+          font-weight: 700;
+          color: ${NAVY};
+          padding: 7px 0;
+          border-bottom: 1px solid rgba(11,37,64,0.07);
+          letter-spacing: 0.04em;
           display: flex;
           align-items: center;
           gap: 8px;
           transition: color 0.15s;
         }
         .jeh-model-row:last-child { border-bottom: none; }
-        .jeh-model-row:hover { color: ${NAVY}; }
+        .jeh-model-row:hover { color: ${BLUE}; }
         .jeh-model-row::before {
           content: '';
           display: block;
@@ -1235,7 +1193,7 @@ export default function JEHallPage() {
                 </a>
               </div>
 
-              {/* ── AIR CONDITIONING SVG ANIMATION ── */}
+              {/* ── AIR CONDITIONING SVG ANIMATION — directly under buttons ── */}
               <div className="jeh-ac-wrap">
                 <svg
                   width="340"
@@ -1303,13 +1261,13 @@ export default function JEHallPage() {
                   <rect x="14" y="148" width="20" height="8" rx="2" fill="#091828" stroke="rgba(0,114,187,0.2)" strokeWidth="1"/>
                   <rect x="158" y="148" width="20" height="8" rx="2" fill="#091828" stroke="rgba(0,114,187,0.2)" strokeWidth="1"/>
 
-                  {/* ── ILK label under unit ── */}
+                  {/* ── Label under unit ── */}
                   <text x="96" y="158" fontSize="7" fill="rgba(0,114,187,0.35)" fontWeight="600" fontFamily="monospace" textAnchor="middle" letterSpacing="3">J &amp; E HALL · FUSION</text>
                 </svg>
               </div>
             </div>
 
-            {/* RIGHT — product image */}
+            {/* RIGHT — product image, full/contain */}
             <div className="jeh-hero-img-col">
               <div className="jeh-hero-img-wrap">
                 <Image
@@ -1317,7 +1275,7 @@ export default function JEHallPage() {
                   alt="J & E Hall Fusion condensing unit"
                   fill
                   priority
-                  style={{ objectFit: "cover", objectPosition: "center" }}
+                  style={{ objectFit: "contain", objectPosition: "center", padding: "24px" }}
                 />
               </div>
             </div>
@@ -1343,7 +1301,7 @@ export default function JEHallPage() {
               <p className="jeh-intro-body">
                 J&nbsp;&amp;&nbsp;E Hall has been at the heart of commercial
                 refrigeration since 1785. Their Fusion condensing units are
-                the product of that heritage — precision-built in the UK,
+                the product of that heritage — precision-engineered,
                 tested to the highest standards, and designed to perform
                 in the most demanding environments.
               </p>
@@ -1533,7 +1491,7 @@ export default function JEHallPage() {
               </h3>
               <p className="jeh-cta-left-body">
                 ILK Technology <strong>supplies the full Fusion range</strong> —
-                giving contractors, engineers, and retailers direct access
+                giving engineers and retailers direct access
                 to the right units, the right support, and competitive lead times.
               </p>
               <p className="jeh-cta-left-body" style={{ marginTop: 12 }}>
@@ -1565,8 +1523,8 @@ export default function JEHallPage() {
                   <div className="jeh-cta-stat-lbl">Fusion Models</div>
                 </div>
                 <div>
-                  <div className="jeh-cta-stat-num">UK</div>
-                  <div className="jeh-cta-stat-lbl">Wide Distribution</div>
+                  <div className="jeh-cta-stat-num">F-Gas</div>
+                  <div className="jeh-cta-stat-lbl">Certificate Required</div>
                 </div>
               </div>
             </div>
@@ -1584,7 +1542,7 @@ export default function JEHallPage() {
             </div>
             <div className="jeh-logo-img-wrap">
               <Image
-                src="/logo.jpeg"
+                src="/logo1.webp"
                 alt="J & E Hall logo"
                 width={180}
                 height={72}
