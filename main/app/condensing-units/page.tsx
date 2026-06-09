@@ -487,7 +487,7 @@ export default function JEHallPage() {
         }
         .jeh-btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
 
-        /* AC unit container — sits at the bottom-right of the text column */
+        /* AC unit container */
         .jeh-ac-wrap {
           margin-top: 56px;
           align-self: flex-end;
@@ -510,7 +510,7 @@ export default function JEHallPage() {
           object-fit: cover;
           object-position: center;
         }
-        /* dark gradient on the left edge of the image so it bleeds into the text column */
+        /* dark gradient on the left edge of the image */
         .jeh-hero-img-col::before {
           content: '';
           position: absolute;
@@ -539,16 +539,25 @@ export default function JEHallPage() {
           .jeh-hero-img-col::before { display: none; }
           .jeh-hero-img-col::after { height: 60px; }
           .jeh-hero-text-col { padding: 48px 28px 52px 32px; }
-          .jeh-ac-wrap { display: none; }
+          .jeh-ac-wrap {
+            display: block;
+            margin-top: 36px;
+            align-self: auto;
+          }
+          .jeh-ac-wrap svg {
+            width: 100%;
+            max-width: 340px;
+            height: auto;
+          }
         }
         @media (max-width: 520px) {
           .jeh-hero-img-col { min-height: 240px; }
           .jeh-hero-text-col { padding: 36px 20px 44px 24px; }
           .jeh-hero-title { font-size: clamp(1.9rem, 8vw, 2.8rem); }
+          .jeh-ac-wrap svg { max-width: 280px; }
         }
 
         /* ══ AC UNIT SVG ANIMATION ══ */
-        /* air stream curves — keyframe opacity + translateX */
         .jeh-stream-1 { animation: airFlow 2.8s ease-in-out infinite 0.0s; }
         .jeh-stream-2 { animation: airFlow 2.8s ease-in-out infinite 0.4s; }
         .jeh-stream-3 { animation: airFlow 2.8s ease-in-out infinite 0.8s; }
@@ -647,7 +656,6 @@ export default function JEHallPage() {
         }
         .jeh-intro-body + .jeh-intro-body { margin-top: 14px; }
 
-        /* image 2 in intro right column */
         .jeh-intro-img {
           border-radius: 3px;
           overflow: hidden;
@@ -695,7 +703,6 @@ export default function JEHallPage() {
           padding: 44px 40px;
           position: relative;
         }
-        /* top border coloured accent */
         .jeh-series-card::before {
           content: '';
           position: absolute;
@@ -1205,7 +1212,7 @@ export default function JEHallPage() {
 
             {/* LEFT — copy + AC unit */}
             <div className="jeh-hero-text-col">
-              <p className="jeh-hero-eyebrow">J &amp; E Hall — Now Available</p>
+              <p className="jeh-hero-eyebrow">J &amp; E Hall — Now Supplied by ILK</p>
 
               <h1 className="jeh-hero-title">
                 Fusion Series
@@ -1213,11 +1220,10 @@ export default function JEHallPage() {
               </h1>
 
               <p className="jeh-hero-body">
-                ILK Technology is now the trusted UK supply partner for
-                J&nbsp;&amp;&nbsp;E Hall. The Fusion range covers every
-                commercial refrigeration demand — from compact hybrid
-                units to high-capacity scroll systems, all supporting
-                A1 and A2L refrigerants.
+                ILK Technology now supplies the full J&nbsp;&amp;&nbsp;E Hall
+                Fusion range. From compact hybrid units to high-capacity scroll
+                systems — all supporting A1 and A2L refrigerants, available
+                to order directly through us.
               </p>
 
               <div className="jeh-hero-actions">
@@ -1240,17 +1246,13 @@ export default function JEHallPage() {
                   aria-hidden="true"
                 >
                   {/* ── UNIT BODY ── */}
-                  {/* Main casing */}
                   <rect x="2" y="30" width="188" height="108" rx="6" fill="#0D1F33" stroke="rgba(0,114,187,0.5)" strokeWidth="1.5"/>
-                  {/* front panel recess */}
                   <rect x="10" y="38" width="172" height="92" rx="4" fill="#091828"/>
-                  {/* top highlight edge */}
                   <rect x="2" y="30" width="188" height="6" rx="3" fill="rgba(0,114,187,0.25)"/>
 
                   {/* ── LEFT FAN HOUSING ── */}
                   <circle cx="54" cy="84" r="34" fill="#0B2030" stroke="rgba(0,114,187,0.3)" strokeWidth="1"/>
                   <circle cx="54" cy="84" r="28" fill="none" stroke="rgba(0,114,187,0.15)" strokeWidth="1"/>
-                  {/* fan blades */}
                   <g className="jeh-fan-blade">
                     <ellipse cx="54" cy="62" rx="6" ry="14" fill="rgba(0,114,187,0.55)" transform="rotate(-15 54 84)"/>
                     <ellipse cx="54" cy="62" rx="6" ry="14" fill="rgba(0,114,187,0.55)" transform="rotate(45 54 84)"/>
@@ -1275,11 +1277,8 @@ export default function JEHallPage() {
                   <circle cx="138" cy="84" r="6" fill="#0B2540" stroke="rgba(0,114,187,0.5)" strokeWidth="1"/>
 
                   {/* ── CONTROL PANEL (right side of casing) ── */}
-                  {/* small status LED */}
                   <circle cx="175" cy="46" r="3" fill="#0072BB" className="jeh-temp-blink"/>
-                  {/* model label strip */}
                   <rect x="160" y="52" width="22" height="60" rx="2" fill="#0B2030" stroke="rgba(0,114,187,0.2)" strokeWidth="1"/>
-                  {/* pipe stubs at bottom */}
                   <rect x="24" y="136" width="8" height="14" rx="2" fill="#0D1F33" stroke="rgba(0,114,187,0.3)" strokeWidth="1"/>
                   <rect x="40" y="136" width="8" height="14" rx="2" fill="#0D1F33" stroke="rgba(0,114,187,0.3)" strokeWidth="1"/>
                   <rect x="144" y="136" width="8" height="14" rx="2" fill="#0D1F33" stroke="rgba(0,114,187,0.3)" strokeWidth="1"/>
@@ -1288,22 +1287,16 @@ export default function JEHallPage() {
                   {/* ── REFRIGERANT LABEL ── */}
                   <text x="163" y="68" fontSize="5" fill="rgba(0,114,187,0.7)" fontWeight="600" fontFamily="monospace" transform="rotate(90 163 68)">R448/9A</text>
 
-                  {/* ── AIR FLOW STREAMS (emit from right side) ── */}
-                  {/* Stream paths curve gently right from x=190 */}
+                  {/* ── AIR FLOW STREAMS ── */}
                   <g>
-                    {/* stream 1 — centre */}
                     <path className="jeh-stream-1 jeh-air-stream" d="M192 72 C210 72 218 74 236 72 C252 70 260 72 280 72" stroke="rgba(0,114,187,0.55)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                    {/* stream 2 — above centre */}
                     <path className="jeh-stream-2 jeh-air-stream" d="M192 62 C212 60 220 58 240 57 C258 56 266 58 290 56" stroke="rgba(0,114,187,0.4)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                    {/* stream 3 — top */}
                     <path className="jeh-stream-3 jeh-air-stream" d="M192 52 C214 48 224 44 246 42 C266 40 276 43 308 40" stroke="rgba(0,114,187,0.28)" strokeWidth="1" fill="none" strokeLinecap="round"/>
-                    {/* stream 4 — below centre */}
                     <path className="jeh-stream-4 jeh-air-stream" d="M192 82 C210 84 218 86 238 87 C256 88 264 86 286 88" stroke="rgba(0,114,187,0.4)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                    {/* stream 5 — bottom */}
                     <path className="jeh-stream-5 jeh-air-stream" d="M192 95 C212 99 222 103 244 105 C264 107 274 104 310 107" stroke="rgba(0,114,187,0.25)" strokeWidth="1" fill="none" strokeLinecap="round"/>
                   </g>
 
-                  {/* ── COLD TEMP LABEL (right side, near streams) ── */}
+                  {/* ── COLD TEMP LABEL ── */}
                   <text x="248" y="70" fontSize="10" fill="rgba(0,114,187,0.5)" fontWeight="700" fontFamily="monospace" className="jeh-temp-blink">–18°C</text>
 
                   {/* ── MOUNTING FEET ── */}
@@ -1338,7 +1331,7 @@ export default function JEHallPage() {
           {/* ── INTRO ── */}
           <div className="jeh-section-hd">
             <span className="jeh-section-label">J &amp; E Hall · ILK Technology</span>
-            <span className="jeh-section-accent">Official UK Supply Partner</span>
+            <span className="jeh-section-accent">UK Supplier</span>
           </div>
 
           <div className="jeh-intro">
@@ -1355,8 +1348,8 @@ export default function JEHallPage() {
                 in the most demanding environments.
               </p>
               <p className="jeh-intro-body">
-                As the official UK distributor, ILK Technology gives you
-                direct access to the full Fusion range, with technical
+                As a UK supplier of the Fusion range, ILK Technology gives you
+                direct access to the right units, with technical
                 support and competitive lead times.
               </p>
               <div className="jeh-rule" />
@@ -1529,7 +1522,7 @@ export default function JEHallPage() {
 
           {/* ── CTA ── */}
           <div className="jeh-section-hd">
-            <span className="jeh-section-label">ILK Technology · UK Distributor</span>
+            <span className="jeh-section-label">ILK Technology · UK Supplier</span>
           </div>
 
           <div className="jeh-cta-block">
@@ -1539,10 +1532,9 @@ export default function JEHallPage() {
                 Direct Access to<br />the Full Fusion Range
               </h3>
               <p className="jeh-cta-left-body">
-                ILK Technology is the <strong>official UK supply partner</strong> for
-                J&nbsp;&amp;&nbsp;E Hall — giving contractors, engineers, and
-                retailers direct access to the right units, the right support,
-                and competitive lead times.
+                ILK Technology <strong>supplies the full Fusion range</strong> —
+                giving contractors, engineers, and retailers direct access
+                to the right units, the right support, and competitive lead times.
               </p>
               <p className="jeh-cta-left-body" style={{ marginTop: 12 }}>
                 Whether you need a single replacement unit or a full system
@@ -1578,31 +1570,31 @@ export default function JEHallPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* ── BRAND LOGO BAR ── */}
+          <div className="jeh-logo-bar">
+            <div className="jeh-logo-bar-left">
+              <span className="jeh-logo-bar-label">UK Supplier</span>
+              <p className="jeh-logo-bar-tagline">
+                <strong>ILK Technology</strong> — supplying the full J&nbsp;&amp;&nbsp;E Hall
+                Fusion range, backed by over 130 years of British
+                refrigeration engineering.
+              </p>
             </div>
+            <div className="jeh-logo-img-wrap">
+              <Image
+                src="/logo.jpeg"
+                alt="J & E Hall logo"
+                width={180}
+                height={72}
+                style={{ objectFit: "contain" }}
+              />
+            </div>
+          </div>
 
-{/* ── BRAND LOGO BAR ── */}
-<div className="jeh-logo-bar">
-  <div className="jeh-logo-bar-left">
-    <span className="jeh-logo-bar-label">Authorised UK Supply Partner</span>
-    <p className="jeh-logo-bar-tagline">
-      <strong>ILK Technology</strong> — official distributor for
-      J&nbsp;&amp;&nbsp;E Hall, bringing over 130 years of British
-      refrigeration engineering to your projects.
-    </p>
-  </div>
-  <div className="jeh-logo-img-wrap">
-    <Image
-      src="/logo.jpeg"
-      alt="J & E Hall logo"
-      width={180}
-      height={72}
-      style={{ objectFit: "contain" }}
-    />
-  </div>
-</div>
-
-</div>
-</div>
-</>
-);
+        </div>
+      </div>
+    </>
+  );
 }
