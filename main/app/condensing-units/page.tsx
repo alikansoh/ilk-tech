@@ -1338,7 +1338,7 @@ export default function JEHallPage() {
               <div className="jeh-series-card jeh-series-card--hybrid">
                 <p className="jeh-card-eyebrow">Future-Ready Platform</p>
                 <h3 className="jeh-card-name">Fusion Hybrid</h3>
-                <p className="jeh-card-sub">Small &amp; Medium · Replacement for Reciprocating Models</p>
+                <p className="jeh-card-sub">Tecumseh Compressor</p>
                 <div className="jeh-ref-pills">
                   <span className="jeh-ref-pill jeh-pill-a1">R448/9A · A1</span>
                   <span className="jeh-ref-pill jeh-pill-a2l">A2L Compatible</span>
