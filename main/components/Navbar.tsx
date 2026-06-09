@@ -17,6 +17,7 @@ const navLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
   { name: "ARNEG", href: "/arneg" },
+  { name: "Condensing unites", href: "/condensing-unites" },
 ];
 
 const socials = [
