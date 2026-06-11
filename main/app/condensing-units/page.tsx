@@ -25,15 +25,15 @@ const FUSION_SCROLL_M = [
   "JEHS – 0400 – B3 – M – 1", "JEHS – 0500 – B3 – M – 3",
   "JEHS – 0600 – B3 – M – 3", "JEHS – 0680 – B3 – M – 3",
   "JEHS – 0800 – B4 – M – 3", "JEHS – 1000 – B4 – M – 3",
-  "JEHSDT – 1201 – B5 – M – 3", "JEHS – 1300 – B4 – M – 3",
-  "JEHS – 1500 – B6 – M – 3", "JEHSDT – 1600 – B6 – M3",
+  "JEHSDT – 1201 – B5 – M – 3", "JEHS – 1300 – B4 – ",
+  "JEHS – 1500 – B6 – M – 3", "JEHSDT – 1600 – B6 – M – 3",
 ];
 
 const FUSION_SCROLL_L = [
   "JEHS – 0300 – B2 – L – 3", "JEHS – 0400 – B3 – L – 3",
   "JEHS – 0500 – B3 – L – 3", "JEHS – 0600 – B3 – L – 3",
   "JEHS – 0750 – B4 – L – 3", "JEHS – 0951 – B4 – L – 3 – EVI",
-  "JEHS – 1150 – B4 – L – 3 – EVI", "JEHS – 1400 – B4 – L3 – EVI",
+  "JEHS – 1150 – B4 – L – 3 – EVI", "JEHS – 1400 – B4 –  L – 3– EVI",
 ];
 
 const SCROLL_FEATURES = [
