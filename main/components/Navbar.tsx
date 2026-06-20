@@ -17,6 +17,7 @@ const navLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
   { name: "ARNEG", href: "/arneg" },
+  { name: "True Refrigeration", href: "/truerefrigeration" },
   { name: "Condensing units", href: "/condensing-units" },
 ];
 
@@ -158,18 +159,38 @@ export default function Navbar() {
               const active = isActive(link.href);
               return (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`relative px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
-                    ${link.name === "ARNEG"
-                      ? active ? "text-red-600" : "text-red-500 hover:text-red-600"
-                      : active ? "text-[#001845]" : "text-[#001845]/45 hover:text-[#001845]"
-                    }`}
-                >
-                  {link.name}
-                  <span className={`absolute bottom-0 left-0 h-[2px] bg-red-600 transition-all duration-300
-                    ${active ? "w-full" : "w-0 group-hover/link:w-full"}`} />
-                </Link>
+  key={link.href}
+  href={link.href}
+  className={`relative px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
+    ${
+      link.name === "ARNEG"
+        ? active
+          ? "text-red-600"
+          : "text-red-500 hover:text-red-600"
+        : link.name === "True Refrigeration"
+          ? active
+            ? "text-[#791F52]"
+            : "text-[#791F52]/75 hover:text-[#791F52]"
+          : active
+            ? "text-[#001845]"
+            : "text-[#001845]/45 hover:text-[#001845]"
+    }`}
+>
+  {link.name}
+
+  <span
+    className={`absolute bottom-0 left-0 h-[2px] transition-all duration-300
+      ${
+        link.name === "ARNEG"
+          ? "bg-red-600"
+          : link.name === "True Refrigeration"
+            ? "bg-[#791F52]"
+            : "bg-[#001845]"
+      }
+      ${active ? "w-full" : "w-0 group-hover/link:w-full"}
+    `}
+  />
+</Link>
               );
             })}
 
@@ -347,7 +368,7 @@ export default function Navbar() {
                         setProductsOpen(false);
                       }}
                       className={`flex items-center justify-between border-l-[2px] px-4 py-3.5 text-[12px] font-bold tracking-[0.18em] uppercase transition-all duration-200
-                        ${link.name === "ARNEG"
+                        ${link.name === "ARNEG" || link.name === "True Refrigeration"
                           ? active
                             ? "border-red-600 bg-red-50/50 text-red-600"
                             : "border-transparent text-red-500 hover:border-red-400 hover:bg-red-50/30 hover:text-red-600"
