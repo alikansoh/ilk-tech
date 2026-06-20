@@ -35,7 +35,16 @@ const socials = [
     name: "Instagram",
     href: "https://www.instagram.com/ilktechnology?igsh=MTZpdWtuZW1scXdkOQ%3D%3D&utm_source=qr",
     icon: (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
         <circle cx="12" cy="12" r="4" />
         <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
@@ -61,8 +70,8 @@ const PARTNER_PHRASES = [
   "True Refrigeration Distribution Partner",
 ];
 
-const TYPE_SPEED = 48;    // ms per character typed
-const DELETE_SPEED = 28;  // ms per character deleted
+const TYPE_SPEED = 48; // ms per character typed
+const DELETE_SPEED = 28; // ms per character deleted
 const HOLD_DURATION = 2200; // ms to hold the completed phrase
 
 function useTypingAnimation(phrases: string[]) {
@@ -159,9 +168,9 @@ export default function Navbar() {
               const active = isActive(link.href);
               return (
                 <Link
-  key={link.href}
-  href={link.href}
-  className={`relative px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
     ${
       link.name === "ARNEG"
         ? active
@@ -169,28 +178,28 @@ export default function Navbar() {
           : "text-red-500 hover:text-red-600"
         : link.name === "True Refrigeration"
           ? active
-            ? "text-[#791F52]"
-            : "text-[#791F52]/75 hover:text-[#791F52]"
+            ? "text-[#651641]"
+            : "text-[#791F52]/75 hover:text-[#651641]"
           : active
             ? "text-[#001845]"
             : "text-[#001845]/45 hover:text-[#001845]"
     }`}
->
-  {link.name}
+                >
+                  {link.name}
 
-  <span
-    className={`absolute bottom-0 left-0 h-[2px] transition-all duration-300
+                  <span
+                    className={`absolute bottom-0 left-0 h-[2px] transition-all duration-300
       ${
         link.name === "ARNEG"
           ? "bg-red-600"
           : link.name === "True Refrigeration"
-            ? "bg-[#791F52]"
+            ? "bg-[#651641]"
             : "bg-[#001845]"
       }
       ${active ? "w-full" : "w-0 group-hover/link:w-full"}
     `}
-  />
-</Link>
+                  />
+                </Link>
               );
             })}
 
@@ -201,12 +210,18 @@ export default function Navbar() {
                 ${isProductActive ? "text-[#001845]" : "text-[#001845]/45 hover:text-[#001845]"}`}
               >
                 Products
-                <svg className="h-3 w-3 transition-transform duration-300 group-hover/drop:rotate-180"
-                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-3 w-3 transition-transform duration-300 group-hover/drop:rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
-                <span className={`absolute bottom-0 left-0 h-[2px] bg-red-600 transition-all duration-300
-                  ${isProductActive ? "w-full" : "w-0 group-hover/link:w-full"}`} />
+                <span
+                  className={`absolute bottom-0 left-0 h-[2px] bg-red-600 transition-all duration-300
+                  ${isProductActive ? "w-full" : "w-0 group-hover/link:w-full"}`}
+                />
               </button>
 
               {/* Dropdown panel */}
@@ -243,9 +258,10 @@ export default function Navbar() {
                         >
                           <div
                             className={`flex h-9 w-9 flex-shrink-0 items-center justify-center border transition-all duration-150
-                            ${productActive
-                              ? "border-red-600 bg-red-600 text-white"
-                              : "border-[#001845]/12 bg-transparent text-[#001845]/25 group-hover/item:border-red-600 group-hover/item:text-red-600"
+                            ${
+                              productActive
+                                ? "border-red-600 bg-red-600 text-white"
+                                : "border-[#001845]/12 bg-transparent text-[#001845]/25 group-hover/item:border-red-600 group-hover/item:text-red-600"
                             }`}
                           >
                             <span className="text-[11px] font-black tabular-nums">0{i + 1}</span>
@@ -261,8 +277,14 @@ export default function Navbar() {
 
                           <svg
                             className={`h-3.5 w-3.5 flex-shrink-0 transition-all duration-200
-                              ${productActive ? "text-red-600 translate-x-0" : "text-[#001845]/20 -translate-x-1 group-hover/item:text-red-500 group-hover/item:translate-x-0"}`}
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                              ${
+                                productActive
+                                  ? "text-red-600 translate-x-0"
+                                  : "text-[#001845]/20 -translate-x-1 group-hover/item:text-red-500 group-hover/item:translate-x-0"
+                              }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                           </svg>
@@ -279,14 +301,19 @@ export default function Navbar() {
             <Link
               href="/contact"
               className={`group/cta relative inline-flex items-center gap-2.5 border-[1.5px] px-7 py-2.5 text-[11.5px] font-black tracking-[0.22em] uppercase transition-all duration-300
-                ${isActive("/contact")
-                  ? "border-[#001845] bg-white text-[#001845]"
-                  : "border-[#001845] bg-[#001845] text-white hover:bg-white hover:text-[#001845]"
+                ${
+                  isActive("/contact")
+                    ? "border-[#001845] bg-white text-[#001845]"
+                    : "border-[#001845] bg-[#001845] text-white hover:bg-white hover:text-[#001845]"
                 }`}
             >
               Contact Us
-              <svg className="h-3.5 w-3.5 transition-transform duration-300 group-hover/cta:translate-x-1"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="h-3.5 w-3.5 transition-transform duration-300 group-hover/cta:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
@@ -310,31 +337,35 @@ export default function Navbar() {
       </div>
 
       {/* ── Margin Bar with typing animation ── */}
-      <div className="w-full bg-[#001845] px-6 sm:px-8 lg:px-14 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-0 min-w-0">
-          <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-red-500 whitespace-nowrap">
-            {typedText}
-          </span>
-          {/* blinking cursor */}
-          <span
-            className="ml-[2px] inline-block h-[10px] w-[1.5px] bg-red-500 align-middle"
-            style={{ animation: "navbar-blink 1s step-end infinite" }}
-          />
-        </div>
+      <div className="w-full bg-[#001845] px-6 sm:px-8 lg:px-14 py-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          {/* Typing line */}
+          <div className="flex items-center gap-0 min-w-0">
+            <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-red-500 whitespace-nowrap">
+              {typedText}
+            </span>
+            {/* blinking cursor */}
+            <span
+              className="ml-[2px] inline-block h-[10px] w-[1.5px] bg-red-500 align-middle"
+              style={{ animation: "navbar-blink 1s step-end infinite" }}
+            />
+          </div>
 
-        <div className="flex items-center gap-1">
-          {socials.map((s) => (
-            <Link
-              key={s.name}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.name}
-              className="flex items-center justify-center h-7 w-7 text-[#b0bec5] hover:text-white transition-colors duration-200"
-            >
-              {s.icon}
-            </Link>
-          ))}
+          {/* Social line (right-aligned on mobile + desktop) */}
+          <div className="flex items-center gap-1 self-end sm:self-auto sm:ml-auto">
+            {socials.map((s) => (
+              <Link
+                key={s.name}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.name}
+                className="flex items-center justify-center h-7 w-7 text-[#b0bec5] hover:text-white transition-colors duration-200"
+              >
+                {s.icon}
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Blink keyframe — injected once via a style tag */}
@@ -368,19 +399,32 @@ export default function Navbar() {
                         setProductsOpen(false);
                       }}
                       className={`flex items-center justify-between border-l-[2px] px-4 py-3.5 text-[12px] font-bold tracking-[0.18em] uppercase transition-all duration-200
-                        ${link.name === "ARNEG" || link.name === "True Refrigeration"
-                          ? active
-                            ? "border-red-600 bg-red-50/50 text-red-600"
-                            : "border-transparent text-red-500 hover:border-red-400 hover:bg-red-50/30 hover:text-red-600"
-                          : active
-                            ? "border-red-600 bg-[#001845]/[0.04] text-[#001845]"
-                            : "border-transparent text-[#001845]/50 hover:border-[#001845]/30 hover:bg-[#001845]/[0.02] hover:text-[#001845]"
+                        ${
+                          link.name === "ARNEG"
+                            ? active
+                              ? "border-red-600 bg-red-50/50 text-red-600"
+                              : "border-transparent text-red-500 hover:border-red-400 hover:bg-red-50/30 hover:text-red-600"
+                            : link.name === "True Refrigeration"
+                              ? active
+                                ? "border-[#651641] bg-[#651641]/10 text-[#651641]"
+                                : "border-transparent text-[#791F52] hover:border-[#651641]/40 hover:bg-[#651641]/8 hover:text-[#651641]"
+                              : active
+                                ? "border-red-600 bg-[#001845]/[0.04] text-[#001845]"
+                                : "border-transparent text-[#001845]/50 hover:border-[#001845]/30 hover:bg-[#001845]/[0.02] hover:text-[#001845]"
                         }`}
                     >
                       <span>{link.name}</span>
                       {active && (
-                        <span className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] uppercase text-red-600">
-                          <span className="h-1 w-1 rounded-full bg-red-600 animate-pulse" />
+                        <span
+                          className={`flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] uppercase ${
+                            link.name === "True Refrigeration" ? "text-[#651641]" : "text-red-600"
+                          }`}
+                        >
+                          <span
+                            className={`h-1 w-1 rounded-full animate-pulse ${
+                              link.name === "True Refrigeration" ? "bg-[#651641]" : "bg-red-600"
+                            }`}
+                          />
                           Active
                         </span>
                       )}
@@ -393,9 +437,10 @@ export default function Navbar() {
                   <button
                     onClick={() => setProductsOpen(!productsOpen)}
                     className={`flex w-full items-center justify-between border-l-[2px] px-4 py-3.5 text-[12px] font-bold tracking-[0.18em] uppercase transition-all duration-200
-                      ${isProductActive
-                        ? "border-red-600 bg-[#001845]/[0.04] text-[#001845]"
-                        : "border-transparent text-[#001845]/50 hover:border-[#001845]/30 hover:bg-[#001845]/[0.02] hover:text-[#001845]"
+                      ${
+                        isProductActive
+                          ? "border-red-600 bg-[#001845]/[0.04] text-[#001845]"
+                          : "border-transparent text-[#001845]/50 hover:border-[#001845]/30 hover:bg-[#001845]/[0.02] hover:text-[#001845]"
                       }`}
                   >
                     <span>Products</span>
@@ -489,9 +534,10 @@ export default function Navbar() {
                   href="/contact"
                   onClick={() => setOpen(false)}
                   className={`flex items-center justify-between w-full border-[1.5px] px-5 py-4 text-[12px] font-black tracking-[0.22em] uppercase transition-all duration-200
-                    ${isActive("/contact")
-                      ? "border-[#001845] bg-white text-[#001845]"
-                      : "border-[#001845] bg-[#001845] text-white hover:bg-white hover:text-[#001845]"
+                    ${
+                      isActive("/contact")
+                        ? "border-[#001845] bg-white text-[#001845]"
+                        : "border-[#001845] bg-[#001845] text-white hover:bg-white hover:text-[#001845]"
                     }`}
                 >
                   <span>Contact Us</span>
