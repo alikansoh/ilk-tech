@@ -410,8 +410,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   scene.add(sideR);
 
   /* ── MATERIALS ── */
-  // Cabinet body — brushed stainless: mid roughness so it looks flat/industrial,
-  // NOT a mirror. No shimmer, no colour shift under movement.
   const cabinetMat = new THREE.MeshStandardMaterial({
     color: initialHex,
     roughness: 0.30,
@@ -420,7 +418,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     envMapIntensity: 0.7,
   });
 
-  // Door frames — same recipe, imperceptibly slightly different roughness
   const frameMat = new THREE.MeshStandardMaterial({
     color: initialHex,
     roughness: 0.32,
@@ -429,7 +426,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     envMapIntensity: 0.65,
   });
 
-  // Darker recessed panel areas — always stay dark SS regardless of color change
   const ssDark = new THREE.MeshStandardMaterial({
     color: 0x7a8490,
     roughness: 0.22,
@@ -446,7 +442,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     envMapIntensity: 0.9,
   });
 
-  // Chrome handle bar — polished but not a disco ball; consistent with flat SS body
   const handleBarMat = new THREE.MeshStandardMaterial({
     color: 0xd4d8e0,
     roughness: 0.12,
@@ -507,30 +502,25 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   cabinet.castShadow = true;
   root.add(cabinet);
 
-  // Top cap
   const topCap = new THREE.Mesh(new THREE.BoxGeometry(2.24, 0.06, 1.14), ssDark);
   topCap.position.y = 1.83;
   root.add(topCap);
 
-  // Bottom vent panel
   const ventPan = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.30, 1.1), darkMat);
   ventPan.position.y = -1.95;
   root.add(ventPan);
 
-  // Vent slats
   for (let i = 0; i < 7; i++) {
     const slat = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.016, 0.9), ssDeep);
     slat.position.set(0, -1.95 + i * 0.038 + 0.02, 0);
     root.add(slat);
   }
 
-  // Bottom kick plate
   const kickPlate = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.08, 1.1), ssDark);
   kickPlate.position.y = -1.76;
   root.add(kickPlate);
 
   /* ── DOORS ── */
-  // Cabinet is 2.2 wide — left door center at x=-0.54, right at x=+0.54
   const lDoor = new THREE.Group();
   lDoor.add(new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.18, 0.07), frameMat));
   const lRecess = new THREE.Mesh(new THREE.BoxGeometry(0.86, 2.86, 0.022), ssDark);
@@ -557,30 +547,14 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   rDoor.position.set(0.54, 0.12, 0.59);
   root.add(rDoor);
 
-  // Center divider
   const divider = new THREE.Mesh(new THREE.BoxGeometry(0.05, 3.18, 0.09), ssDark);
   divider.position.set(0, 0.12, 0.585);
   root.add(divider);
 
-  /* ── HANDLES ──
-   *
-   * Each door is 1.04 wide:
-   *   Left door  spans x: −1.06 → −0.02  (center −0.54)
-   *   Right door spans x: +0.02 → +1.06  (center +0.54)
-   *
-   * On a real True reach-in, BOTH handles sit near the CENTER seam so you
-   * can pull both doors open toward you. They are side-by-side, with a small
-   * gap between them at x ≈ ±0.08 from the seam.
-   *
-   * Left  door handle: x = −0.10  (near its right / seam edge)
-   * Right door handle: x = +0.10  (near its left  / seam edge)
-   *
-   * z = front face of door (0.59) + half door depth (0.035) + bracket gap (0.038) ≈ 0.663
-   */
+  /* ── HANDLES ── */
   const makeHandle = (xPos: number): void => {
     const g = new THREE.Group();
 
-    /* Vertical round bar */
     const bar = new THREE.Mesh(
       new THREE.CylinderGeometry(0.028, 0.028, 0.76, 20),
       handleBarMat
@@ -588,7 +562,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     bar.castShadow = true;
     g.add(bar);
 
-    /* End caps */
     const capTop = new THREE.Mesh(new THREE.SphereGeometry(0.028, 14, 14), handleBarMat);
     capTop.position.y = 0.38;
     g.add(capTop);
@@ -597,7 +570,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     capBot.position.y = -0.38;
     g.add(capBot);
 
-    /* Top bracket arm — horizontal cylinder pointing toward the door (−z) */
     const topArm = new THREE.Mesh(
       new THREE.CylinderGeometry(0.013, 0.013, 0.14, 12),
       handleBracketMat
@@ -614,7 +586,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     topDisc.position.set(0.122, 0.33, 0);
     g.add(topDisc);
 
-    /* Bottom bracket arm */
     const botArm = new THREE.Mesh(
       new THREE.CylinderGeometry(0.013, 0.013, 0.14, 12),
       handleBracketMat
@@ -631,16 +602,10 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     botDisc.position.set(0.122, -0.33, 0);
     g.add(botDisc);
 
-    // z: front of door face = 0.59 + door_depth/2(0.035) + small gap(0.038)
     g.position.set(xPos, 0.12, 0.663);
     root.add(g);
   };
 
-  /*
-   * Place the two handles close together at the center seam:
-   *   Left  door: handle near its RIGHT (seam) edge → x = −0.10
-   *   Right door: handle near its LEFT  (seam) edge → x = +0.10
-   */
   makeHandle(-0.10);
   makeHandle(+0.10);
 
@@ -759,7 +724,6 @@ export default function TrueRefrigerationPage() {
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.appendChild(renderer.domElement);
 
-      // ✅ FIX: pass renderer as 2nd arg, initialHex as 3rd arg
       const { scene, camera, cabinetMat, frameMat, root } =
         buildCabinetScene(THREE, renderer, STAINLESS_HEX);
 
@@ -789,13 +753,10 @@ export default function TrueRefrigerationPage() {
         if (!running) return;
         animId = requestAnimationFrame(animate);
 
-        // No pulsing, no wobble — static stainless steel appearance
-        // Only scroll-driven entry and mouse-look remain
         const entryY = -2.0 + scrollProgress * 2.0;
         root.position.y = entryY;
         root.scale.setScalar(0.5 + scrollProgress * 0.5);
 
-        // Gentle mouse-look only — no sine wave oscillation
         root.rotation.y = mouseX * 0.12;
         root.rotation.x = -0.04 + mouseY * 0.04;
 
@@ -910,10 +871,6 @@ export default function TrueRefrigerationPage() {
         });
         gsap.from(".tr-intro-left", {
           opacity: 0, x: -36, duration: 0.85, ease: "power3.out",
-          scrollTrigger: { trigger: ".tr-intro", start: "top 80%" },
-        });
-        gsap.from(".tr-intro-right", {
-          opacity: 0, x: 36, duration: 0.85, ease: "power3.out",
           scrollTrigger: { trigger: ".tr-intro", start: "top 80%" },
         });
         gsap.from(".tr-prod-card", {
@@ -1172,8 +1129,8 @@ export default function TrueRefrigerationPage() {
           letter-spacing: 0.16em; color: ${RED};
         }
 
-        /* ══ INTRO SPLIT ══ */
-        .tr-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+        /* ══ INTRO — now single column, no chart panel ══ */
+        .tr-intro { display: grid; grid-template-columns: 1fr; gap: 0; }
         .tr-intro-eyebrow {
           font-size: 10px; font-weight: 600;
           letter-spacing: 0.26em; text-transform: uppercase;
@@ -1191,7 +1148,6 @@ export default function TrueRefrigerationPage() {
         .tr-intro-body { font-size: 14px; color: #4B5563; line-height: 1.82; }
         .tr-intro-body + .tr-intro-body { margin-top: 14px; }
         .tr-rule { height: 1px; background: ${RED}; margin: 24px 0 0; width: 40px; }
-        @media (max-width: 820px) { .tr-intro { grid-template-columns: 1fr; gap: 36px; } }
 
         /* ══ PRODUCTS GRID ══ */
         .tr-products-grid {
@@ -1378,11 +1334,23 @@ export default function TrueRefrigerationPage() {
 
         /* ══ CUSTOM DESIGN ══ */
         .tr-custom-block { border: 1px solid ${BORDER}; border-radius: 3px; overflow: hidden; }
-        .tr-custom-top { background: ${NAVY}; padding: 52px 52px 44px; position: relative; }
+
+        /* Top dark bar: two columns — swatches left, chart right */
+        .tr-custom-top {
+          background: ${NAVY}; padding: 52px 52px 44px; position: relative;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 48px;
+          align-items: start;
+        }
         .tr-custom-top::before {
           content: ''; position: absolute; left: 0; top: 0; bottom: 0;
           width: 4px; background: ${RED};
         }
+
+        /* Left column inside top bar */
+        .tr-custom-top-left { display: flex; flex-direction: column; }
+
         .tr-custom-eyebrow {
           font-size: 10px; font-weight: 600;
           letter-spacing: 0.26em; text-transform: uppercase;
@@ -1395,7 +1363,7 @@ export default function TrueRefrigerationPage() {
         }
         .tr-custom-body {
           font-size: 14px; color: rgba(255,255,255,0.55);
-          line-height: 1.8; max-width: 600px; margin-bottom: 0;
+          line-height: 1.8; margin-bottom: 0;
         }
         .tr-colour-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; }
         .tr-colour-swatch {
@@ -1416,6 +1384,44 @@ export default function TrueRefrigerationPage() {
           color: rgba(255,255,255,0.45); letter-spacing: 0.1em;
           width: 48px; line-height: 1.2;
         }
+
+        /* Right column inside top bar — the chart */
+        .tr-custom-top-chart {
+          border-radius: 4px;
+          overflow: hidden;
+          border: 1px solid rgba(255,255,255,0.10);
+          background: rgba(255,255,255,0.04);
+          box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+          align-self: center;
+        }
+        .tr-custom-top-chart img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+        .tr-custom-top-chart-caption {
+          padding: 14px 18px 16px;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          background: rgba(255,255,255,0.04);
+        }
+        .tr-custom-top-chart-caption-label {
+          font-size: 8px; font-weight: 700;
+          letter-spacing: 0.24em; text-transform: uppercase;
+          color: ${RED}; display: block; margin-bottom: 3px;
+        }
+        .tr-custom-top-chart-caption-text {
+          font-size: 11px; color: rgba(255,255,255,0.38); line-height: 1.6;
+        }
+
+        @media (max-width: 960px) {
+          .tr-custom-top {
+            grid-template-columns: 1fr;
+            gap: 36px;
+          }
+          .tr-custom-top-chart { max-width: 480px; }
+        }
+
+        /* Bottom white bar: canvas left, copy right */
         .tr-custom-bottom {
           background: #fff; padding: 44px 52px;
           display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
@@ -1650,7 +1656,7 @@ export default function TrueRefrigerationPage() {
         {/* ══════ BODY ══════ */}
         <div className="tr-inner">
 
-          {/* ── INTRO ── */}
+          {/* ── INTRO — now full-width, no chart column ── */}
           <div className="tr-section-hd">
             <span className="tr-section-label">True Refrigeration · Authorised Distributor</span>
             <span className="tr-section-accent">Global Leader</span>
@@ -1854,37 +1860,59 @@ export default function TrueRefrigerationPage() {
           </div>
 
           <div className="tr-custom-block">
+            {/* Dark top bar: swatches left · chart right */}
             <div className="tr-custom-top">
-              <p className="tr-custom-eyebrow">Custom Design</p>
-              <h3 className="tr-custom-title">
-                When colours appear authentic.
-              </h3>
-              <p className="tr-custom-body">
-                Make your refrigeration units stand out. Customise your True
-                products and craft cabinets to match your brand using our range
-                of customisation options. From hardware upgrades to innovative
-                lighting, they provide comprehensive solutions to ensure your
-                refrigeration units meet your brand and operational needs.
-              </p>
+              {/* Left: heading + body + swatches */}
+              <div className="tr-custom-top-left">
+                <p className="tr-custom-eyebrow">Custom Design</p>
+                <h3 className="tr-custom-title">
+                  When colours appear authentic.
+                </h3>
+                <p className="tr-custom-body">
+                  Make your refrigeration units stand out. Customise your True
+                  products and craft cabinets to match your brand using our range
+                  of customisation options. From hardware upgrades to innovative
+                  lighting, they provide comprehensive solutions to ensure your
+                  refrigeration units meet your brand and operational needs.
+                </p>
 
-              <div className="tr-colour-grid">
-                {RAL_COLOURS.map((c) => (
-                  <div
-                    key={c.name}
-                    style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-                  >
+                <div className="tr-colour-grid">
+                  {RAL_COLOURS.map((c) => (
                     <div
-                      className={`tr-colour-swatch ${activeColor.name === c.name ? "tr-colour-swatch--active" : ""}`}
-                      style={{ background: c.hex, border: `2px solid ${c.border}` }}
-                      onClick={() => setActiveColor(c)}
-                      title={c.name}
-                    />
-                    <span className="tr-colour-label">{c.name}</span>
-                  </div>
-                ))}
+                      key={c.name}
+                      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+                    >
+                      <div
+                        className={`tr-colour-swatch ${activeColor.name === c.name ? "tr-colour-swatch--active" : ""}`}
+                        style={{ background: c.hex, border: `2px solid ${c.border}` }}
+                        onClick={() => setActiveColor(c)}
+                        title={c.name}
+                      />
+                      <span className="tr-colour-label">{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: chart.jpeg panel */}
+              <div className="tr-custom-top-chart">
+                <Image
+                  src="/chart.jpeg"
+                  alt="True Refrigeration growth chart"
+                  width={560}
+                  height={560}
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+                <div className="tr-custom-top-chart-caption">
+                  <span className="tr-custom-top-chart-caption-label">Performance</span>
+                  <span className="tr-custom-top-chart-caption-text">
+                    Consistent growth across key markets — reflecting over 80 years of innovation and industry trust.
+                  </span>
+                </div>
               </div>
             </div>
 
+            {/* White bottom bar: canvas left · copy right */}
             <div className="tr-custom-bottom">
               <div className="tr-custom-img">
                 <canvas
@@ -1910,7 +1938,7 @@ export default function TrueRefrigerationPage() {
                   request. Speak to our team about your brand requirements.
                 </p>
                 <a
-                  href="https://www.truerefrigeration.com"
+                  href="https://www.truerefrigeration.co.uk"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="tr-custom-link"

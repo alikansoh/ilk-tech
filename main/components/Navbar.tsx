@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 const products = [
@@ -54,10 +54,82 @@ const socials = [
   },
 ];
 
+/* ── Typing animation phrases ── */
+const PARTNER_PHRASES = [
+  "Arneg Distribution Partner",
+  "True Refrigeration Distribution Partner",
+];
+
+const TYPE_SPEED = 48;    // ms per character typed
+const DELETE_SPEED = 28;  // ms per character deleted
+const HOLD_DURATION = 2200; // ms to hold the completed phrase
+
+function useTypingAnimation(phrases: string[]) {
+  const [displayed, setDisplayed] = useState("");
+
+  // All mutable state lives in a single ref — never touched by React's scheduler
+  const state = useRef({
+    phraseIdx: 0,
+    charIdx: 0,
+    deleting: false,
+    holding: false,
+  });
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    function tick() {
+      const s = state.current;
+      const current = phrases[s.phraseIdx];
+
+      if (s.holding) {
+        // Finished holding — start deleting
+        s.holding = false;
+        s.deleting = true;
+        timer = setTimeout(tick, DELETE_SPEED);
+        return;
+      }
+
+      if (!s.deleting) {
+        // Typing forward
+        if (s.charIdx < current.length) {
+          s.charIdx += 1;
+          setDisplayed(current.slice(0, s.charIdx));
+          timer = setTimeout(tick, TYPE_SPEED);
+        } else {
+          // Finished typing — hold before deleting
+          s.holding = true;
+          timer = setTimeout(tick, HOLD_DURATION);
+        }
+      } else {
+        // Deleting backward
+        if (s.charIdx > 0) {
+          s.charIdx -= 1;
+          setDisplayed(current.slice(0, s.charIdx));
+          timer = setTimeout(tick, DELETE_SPEED);
+        } else {
+          // Finished deleting — advance to next phrase and start typing
+          s.deleting = false;
+          s.phraseIdx = (s.phraseIdx + 1) % phrases.length;
+          timer = setTimeout(tick, TYPE_SPEED);
+        }
+      }
+    }
+
+    timer = setTimeout(tick, TYPE_SPEED);
+    return () => clearTimeout(timer);
+    // phrases is stable (module-level constant) so this dep is safe
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return displayed;
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
   const pathname = usePathname() ?? "";
+  const typedText = useTypingAnimation(PARTNER_PHRASES);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -216,11 +288,19 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Margin Bar */}
+      {/* ── Margin Bar with typing animation ── */}
       <div className="w-full bg-[#001845] px-6 sm:px-8 lg:px-14 py-2 flex items-center justify-between">
-        <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-red-500">
-          Arneg Distribution Partner
-        </p>
+        <div className="flex items-center gap-0 min-w-0">
+          <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-red-500 whitespace-nowrap">
+            {typedText}
+          </span>
+          {/* blinking cursor */}
+          <span
+            className="ml-[2px] inline-block h-[10px] w-[1.5px] bg-red-500 align-middle"
+            style={{ animation: "navbar-blink 1s step-end infinite" }}
+          />
+        </div>
+
         <div className="flex items-center gap-1">
           {socials.map((s) => (
             <Link
@@ -235,6 +315,14 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
+
+        {/* Blink keyframe — injected once via a style tag */}
+        <style>{`
+          @keyframes navbar-blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0; }
+          }
+        `}</style>
       </div>
 
       {/* Mobile Menu */}
@@ -242,7 +330,6 @@ export default function Navbar() {
         <div className="lg:hidden bg-white shadow-[0_16px_48px_rgba(0,24,69,0.12)]">
           <div className="h-[2px] w-full bg-gradient-to-r from-[#001845] via-red-600 to-[#001845]" />
 
-          {/* ↓ KEY CHANGE: fixed max-height + overflow-y-auto makes it scrollable */}
           <div
             className="overflow-y-auto overscroll-contain"
             style={{ maxHeight: "calc(100svh - 84px - 36px)" }}
