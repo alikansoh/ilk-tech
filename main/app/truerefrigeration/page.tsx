@@ -18,6 +18,9 @@ const SILVER = "#8A9BB0";
 const MUTED = "#6B7280";
 const BORDER = "rgba(11,37,64,0.10)";
 
+/* ─── STAINLESS STEEL HEX ─── */
+const STAINLESS_HEX = "#B8BEC7";
+
 /* ─── TYPES ─── */
 interface Product {
   code: string;
@@ -93,24 +96,24 @@ const PRODUCTS: Product[] = [
   },
   {
     code: "TGN-2F-2S",
-    name: "Reach-In Freezer",
+    name: "Upright Freezer",
     img: "/TGN-2F-2S.png",
-    category: "Reach-In",
-    desc: "49″ two-section reach-in freezer. Low-profile top mount compressor, stainless front and sides, adjustable shelving.",
+    category: "Upright",
+    desc: "49″ two-section upright freezer. Low-profile top mount compressor, stainless front and sides, adjustable shelving.",
   },
   {
     code: "GDM-35-HC~FGD01",
     name: "Glass Door Merchandiser",
     img: "/GDM-35-HC~FGD01.png",
-    category: "Display",
+    category: "Upright",
     desc: "35 cu. ft. glass door merchandiser with LED lighting. Designed for high-visibility retail display with energy-efficient hydrocarbon refrigerant.",
   },
   {
     code: "T-23-HC",
-    name: "Reach-In Refrigerator",
+    name: "Upright Refrigerator",
     img: "/T-23-HC.png",
-    category: "Reach-In",
-    desc: "23 cu. ft. single-door reach-in refrigerator. The industry standard for commercial kitchen refrigeration — durable, reliable, and precise.",
+    category: "Upright",
+    desc: "23 cu. ft. single-door Upright refrigerator. The industry standard for commercial kitchen refrigeration — durable, reliable, and precise.",
   },
 ];
 
@@ -124,14 +127,14 @@ const SECTORS: string[] = [
 ];
 
 const RAL_COLOURS: RalColour[] = [
-  { name: "Stainless Steel", hex: "#B0B7C0", border: "#8A9BB0" },
-  { name: "Green", hex: "#4E7B4B", border: "#3A5E38" },
-  { name: "Blue", hex: "#1F4E8C", border: "#163870" },
-  { name: "Pink", hex: "#E8829A", border: "#D0607C" },
-  { name: "Red", hex: "#C8102E", border: "#A00E26" },
-  { name: "Orange", hex: "#E8650A", border: "#C05206" },
-  { name: "Silver", hex: "#D8DCE0", border: "#B0B7C0" },
-  { name: "Black", hex: "#1A1A1A", border: "#0A0A0A" },
+  { name: "Stainless Steel", hex: STAINLESS_HEX, border: "#8A9BB0" },
+  { name: "Green",           hex: "#4E7B4B",      border: "#3A5E38" },
+  { name: "Blue",            hex: "#1F4E8C",      border: "#163870" },
+  { name: "Pink",            hex: "#E8829A",      border: "#D0607C" },
+  { name: "Red",             hex: "#C8102E",      border: "#A00E26" },
+  { name: "Orange",          hex: "#E8650A",      border: "#C05206" },
+  { name: "Silver",          hex: "#D8DCE0",      border: "#B0B7C0" },
+  { name: "Black",           hex: "#1A1A1A",      border: "#0A0A0A" },
 ];
 
 /* ─── COLOUR HELPERS ─── */
@@ -192,16 +195,6 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
   ];
 }
 
-/**
- * Recolour the cabinet pixels in the image.
- *
- * Strategy: detect ALL pixels that belong to the painted cabinet body.
- * The source image uses an orange finish (hue ~0.02–0.16) with good
- * saturation. We also pick up slightly-desaturated edge/shadow variants
- * by loosening the saturation floor and extending the hue window to cover
- * reddish-orange and yellow-orange tones. Truly achromatic pixels
- * (steel / glass reflections) are left alone.
- */
 function recolourCanvas(
   img: HTMLImageElement,
   canvas: HTMLCanvasElement,
@@ -224,24 +217,11 @@ function recolourCanvas(
     const b = data[i + 2];
     const [h, s, l] = rgbToHsl(r, g, b);
 
-    /**
-     * Extended detection window:
-     *  - Hue: 0.0–0.20  (covers red-orange through yellow-orange)
-     *  - Saturation: > 0.20  (catches shadow/edge pixels that lose colour)
-     *  - Lightness: 0.06 – 0.96  (exclude pure black and pure white)
-     *
-     * Also catch wrap-around reds at the top of the hue wheel (> 0.92)
-     * that are actually orange-reds in some JPEG compressions.
-     */
-    const inOrangeHue =
-      (h >= 0.0 && h <= 0.20) || h >= 0.92;
-    const isCabinetPixel =
-      inOrangeHue && s > 0.20 && l > 0.06 && l < 0.96;
+    const inOrangeHue = (h >= 0.0 && h <= 0.20) || h >= 0.92;
+    const isCabinetPixel = inOrangeHue && s > 0.20 && l > 0.06 && l < 0.96;
 
     if (isCabinetPixel) {
-      // Preserve the pixel's own lightness so shadows/highlights survive
       const newS = ts < 0.08 ? ts : Math.min(ts * 1.1, 1);
-      // Map lightness relative to target lightness (anchored at 0.45)
       const lightnessFactor = tl > 0 ? tl / 0.45 : 0;
       const newL = Math.max(0.04, Math.min(0.96, l * (lightnessFactor + 0.15)));
       const [nr, ng, nb] = hslToRgb(th, newS, newL);
@@ -256,7 +236,6 @@ function recolourCanvas(
 /* ─── INQUIRY FORM MODAL ─── */
 function InquiryModal({ product, onClose }: InquiryModalProps) {
   const [submitted, setSubmitted] = useState(false);
-  // FIX: initialise directly from prop — no setState inside useEffect
   const [form, setForm] = useState<InquiryFormState>({
     name: "",
     email: "",
@@ -363,10 +342,7 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
                   }
                 />
               </div>
-              <button
-                type="submit"
-                className="tr-btn-primary tr-btn-full"
-              >
+              <button type="submit" className="tr-btn-primary tr-btn-full">
                 Send Enquiry →
               </button>
             </form>
@@ -377,61 +353,133 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
   );
 }
 
-/* ─── THREE.JS SCENE BUILDER ─── */
+/* ─── THREE.JS SCENE BUILDER — STAINLESS STEEL FRIDGE ─── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildCabinetScene(THREE: any, initialHex: string) {
+function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  camera.position.set(0.4, 0.2, 5.5);
+  camera.position.set(0.5, 0.3, 6.0);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-  const key = new THREE.DirectionalLight(0xffffff, 1.2);
-  key.position.set(5, 8, 6);
+  /* ── ENV MAP ── */
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+
+  const envScene = new THREE.Scene();
+  const envGeo = new THREE.SphereGeometry(10, 32, 16);
+  const envMatTop = new THREE.MeshBasicMaterial({ color: 0xd8e4f0, side: THREE.BackSide });
+  envScene.add(new THREE.Mesh(envGeo, envMatTop));
+  const envLight1 = new THREE.PointLight(0xffffff, 2.0, 30);
+  envLight1.position.set(5, 8, 5);
+  envScene.add(envLight1);
+  const envLight2 = new THREE.PointLight(0xdce8ff, 1.5, 30);
+  envLight2.position.set(-6, 4, 4);
+  envScene.add(envLight2);
+  const envLight3 = new THREE.PointLight(0xffe8d8, 1.0, 30);
+  envLight3.position.set(0, -6, 4);
+  envScene.add(envLight3);
+  const envTexture = pmrem.fromScene(envScene, 0.04).texture;
+  scene.environment = envTexture;
+
+  /* ── SCENE LIGHTS ── */
+  scene.add(new THREE.AmbientLight(0xffffff, 0.28));
+
+  const key = new THREE.DirectionalLight(0xffffff, 1.6);
+  key.position.set(5, 9, 7);
   key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xb0b7c0, 0.5);
-  fill.position.set(-5, 2, 4);
+
+  const fill = new THREE.DirectionalLight(0xdce8f8, 0.7);
+  fill.position.set(-6, 2, 4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xd8dce0, 0.35);
+
+  const rim = new THREE.DirectionalLight(0xffffff, 0.6);
   rim.position.set(0, -4, -5);
   scene.add(rim);
-  const top = new THREE.DirectionalLight(0xffffff, 0.3);
-  top.position.set(0, 10, 2);
-  scene.add(top);
 
+  const topLight = new THREE.DirectionalLight(0xffffff, 0.45);
+  topLight.position.set(0, 12, 2);
+  scene.add(topLight);
+
+  const sideL = new THREE.DirectionalLight(0xc8ddf0, 0.4);
+  sideL.position.set(-9, 0, 3);
+  scene.add(sideL);
+
+  const sideR = new THREE.DirectionalLight(0xfff0e8, 0.3);
+  sideR.position.set(9, 0, 3);
+  scene.add(sideR);
+
+  /* ── MATERIALS ── */
+  // Cabinet body — brushed stainless: mid roughness so it looks flat/industrial,
+  // NOT a mirror. No shimmer, no colour shift under movement.
   const cabinetMat = new THREE.MeshStandardMaterial({
     color: initialHex,
-    roughness: 0.12,
-    metalness: 0.95,
+    roughness: 0.30,
+    metalness: 0.88,
+    envMap: envTexture,
+    envMapIntensity: 0.7,
   });
-  const ssDark = new THREE.MeshStandardMaterial({
-    color: 0x8a9099,
-    roughness: 0.2,
-    metalness: 0.9,
-  });
+
+  // Door frames — same recipe, imperceptibly slightly different roughness
   const frameMat = new THREE.MeshStandardMaterial({
     color: initialHex,
-    roughness: 0.15,
+    roughness: 0.32,
+    metalness: 0.86,
+    envMap: envTexture,
+    envMapIntensity: 0.65,
+  });
+
+  // Darker recessed panel areas — always stay dark SS regardless of color change
+  const ssDark = new THREE.MeshStandardMaterial({
+    color: 0x7a8490,
+    roughness: 0.22,
+    metalness: 0.90,
+    envMap: envTexture,
+    envMapIntensity: 1.2,
+  });
+
+  const ssDeep = new THREE.MeshStandardMaterial({
+    color: 0x60686e,
+    roughness: 0.28,
     metalness: 0.88,
+    envMap: envTexture,
+    envMapIntensity: 0.9,
   });
-  const handleMat = new THREE.MeshStandardMaterial({
-    color: 0x606870,
-    roughness: 0.1,
-    metalness: 1.0,
+
+  // Chrome handle bar — polished but not a disco ball; consistent with flat SS body
+  const handleBarMat = new THREE.MeshStandardMaterial({
+    color: 0xd4d8e0,
+    roughness: 0.12,
+    metalness: 0.96,
+    envMap: envTexture,
+    envMapIntensity: 1.2,
   });
+
+  const handleBracketMat = new THREE.MeshStandardMaterial({
+    color: 0xa8b0bc,
+    roughness: 0.18,
+    metalness: 0.90,
+    envMap: envTexture,
+    envMapIntensity: 1.0,
+  });
+
   const darkMat = new THREE.MeshStandardMaterial({
-    color: 0x1a2530,
-    roughness: 0.6,
-    metalness: 0.4,
+    color: 0x141e28,
+    roughness: 0.7,
+    metalness: 0.3,
   });
+
   const glassMat = new THREE.MeshStandardMaterial({
-    color: 0x8ab8d8,
-    roughness: 0.05,
-    metalness: 0.1,
+    color: 0xb8d8f0,
+    roughness: 0.02,
+    metalness: 0.0,
     transparent: true,
-    opacity: 0.18,
+    opacity: 0.14,
     side: THREE.DoubleSide,
+    envMap: envTexture,
+    envMapIntensity: 0.8,
   });
+
   const ledMat = new THREE.MeshStandardMaterial({
     color: 0x60b8f8,
     emissive: 0x60b8f8,
@@ -439,6 +487,7 @@ function buildCabinetScene(THREE: any, initialHex: string) {
     roughness: 0.1,
     metalness: 0,
   });
+
   const screenMat = new THREE.MeshStandardMaterial({
     color: 0x0a2040,
     roughness: 0.8,
@@ -450,6 +499,7 @@ function buildCabinetScene(THREE: any, initialHex: string) {
   const root = new THREE.Group();
   scene.add(root);
 
+  /* ── CABINET BODY ── */
   const cabinet = new THREE.Mesh(
     new THREE.BoxGeometry(2.2, 3.6, 1.1),
     cabinetMat
@@ -457,118 +507,178 @@ function buildCabinetScene(THREE: any, initialHex: string) {
   cabinet.castShadow = true;
   root.add(cabinet);
 
-  const topBar = new THREE.Mesh(
-    new THREE.BoxGeometry(2.2, 0.12, 1.1),
-    ssDark
-  );
-  topBar.position.y = 1.86;
-  root.add(topBar);
+  // Top cap
+  const topCap = new THREE.Mesh(new THREE.BoxGeometry(2.24, 0.06, 1.14), ssDark);
+  topCap.position.y = 1.83;
+  root.add(topCap);
 
-  const ventPan = new THREE.Mesh(
-    new THREE.BoxGeometry(2.2, 0.26, 1.1),
-    darkMat
-  );
-  ventPan.position.y = -1.93;
+  // Bottom vent panel
+  const ventPan = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.30, 1.1), darkMat);
+  ventPan.position.y = -1.95;
   root.add(ventPan);
 
-  for (let i = 0; i < 6; i++) {
-    const slat = new THREE.Mesh(
-      new THREE.BoxGeometry(1.8, 0.018, 0.85),
-      ssDark
-    );
-    slat.position.set(0, -1.93 + i * 0.036 + 0.018, 0);
+  // Vent slats
+  for (let i = 0; i < 7; i++) {
+    const slat = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.016, 0.9), ssDeep);
+    slat.position.set(0, -1.95 + i * 0.038 + 0.02, 0);
     root.add(slat);
   }
 
+  // Bottom kick plate
+  const kickPlate = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.08, 1.1), ssDark);
+  kickPlate.position.y = -1.76;
+  root.add(kickPlate);
+
+  /* ── DOORS ── */
+  // Cabinet is 2.2 wide — left door center at x=-0.54, right at x=+0.54
   const lDoor = new THREE.Group();
-  lDoor.add(
-    new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.1, 0.06), frameMat)
-  );
-  const lRecess = new THREE.Mesh(
-    new THREE.BoxGeometry(0.88, 2.8, 0.025),
-    ssDark
-  );
-  lRecess.position.z = 0.02;
+  lDoor.add(new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.18, 0.07), frameMat));
+  const lRecess = new THREE.Mesh(new THREE.BoxGeometry(0.86, 2.86, 0.022), ssDark);
+  lRecess.position.z = 0.024;
   lDoor.add(lRecess);
-  lDoor.position.set(-0.54, 0.14, 0.58);
+  for (let i = 0; i < 4; i++) {
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.008, 0.012), ssDeep);
+    stripe.position.set(0, -1.2 + i * 0.8, 0.032);
+    lDoor.add(stripe);
+  }
+  lDoor.position.set(-0.54, 0.12, 0.59);
   root.add(lDoor);
 
   const rDoor = new THREE.Group();
-  rDoor.add(
-    new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.1, 0.06), frameMat)
-  );
-  const rRecess = new THREE.Mesh(
-    new THREE.BoxGeometry(0.88, 2.8, 0.025),
-    ssDark
-  );
-  rRecess.position.z = 0.02;
+  rDoor.add(new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.18, 0.07), frameMat));
+  const rRecess = new THREE.Mesh(new THREE.BoxGeometry(0.86, 2.86, 0.022), ssDark);
+  rRecess.position.z = 0.024;
   rDoor.add(rRecess);
-  rDoor.position.set(0.54, 0.14, 0.58);
+  for (let i = 0; i < 4; i++) {
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.008, 0.012), ssDeep);
+    stripe.position.set(0, -1.2 + i * 0.8, 0.032);
+    rDoor.add(stripe);
+  }
+  rDoor.position.set(0.54, 0.12, 0.59);
   root.add(rDoor);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const makeHandle = (x: number): void => {
-    const g = new THREE.Group();
-    g.add(
-      new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.65, 0.055), handleMat)
-    );
-    ([-0.3, 0.3] as number[]).forEach((y) => {
-      const brk = new THREE.Mesh(
-        new THREE.BoxGeometry(0.055, 0.055, 0.12),
-        ssDark
-      );
-      brk.position.set(0, y, 0.04);
-      g.add(brk);
-    });
-    g.position.set(x, 0.1, 0.66);
-    root.add(g);
-  };
-  makeHandle(-0.04);
-  makeHandle(1.1);
-
-  const divider = new THREE.Mesh(
-    new THREE.BoxGeometry(0.04, 3.1, 0.08),
-    ssDark
-  );
-  divider.position.set(0, 0.14, 0.58);
+  // Center divider
+  const divider = new THREE.Mesh(new THREE.BoxGeometry(0.05, 3.18, 0.09), ssDark);
+  divider.position.set(0, 0.12, 0.585);
   root.add(divider);
 
-  const dispBase = new THREE.Mesh(
-    new THREE.BoxGeometry(0.38, 0.12, 0.04),
-    darkMat
-  );
-  dispBase.position.set(0.82, 1.72, 0.58);
+  /* ── HANDLES ──
+   *
+   * Each door is 1.04 wide:
+   *   Left door  spans x: −1.06 → −0.02  (center −0.54)
+   *   Right door spans x: +0.02 → +1.06  (center +0.54)
+   *
+   * On a real True reach-in, BOTH handles sit near the CENTER seam so you
+   * can pull both doors open toward you. They are side-by-side, with a small
+   * gap between them at x ≈ ±0.08 from the seam.
+   *
+   * Left  door handle: x = −0.10  (near its right / seam edge)
+   * Right door handle: x = +0.10  (near its left  / seam edge)
+   *
+   * z = front face of door (0.59) + half door depth (0.035) + bracket gap (0.038) ≈ 0.663
+   */
+  const makeHandle = (xPos: number): void => {
+    const g = new THREE.Group();
+
+    /* Vertical round bar */
+    const bar = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.028, 0.028, 0.76, 20),
+      handleBarMat
+    );
+    bar.castShadow = true;
+    g.add(bar);
+
+    /* End caps */
+    const capTop = new THREE.Mesh(new THREE.SphereGeometry(0.028, 14, 14), handleBarMat);
+    capTop.position.y = 0.38;
+    g.add(capTop);
+
+    const capBot = new THREE.Mesh(new THREE.SphereGeometry(0.028, 14, 14), handleBarMat);
+    capBot.position.y = -0.38;
+    g.add(capBot);
+
+    /* Top bracket arm — horizontal cylinder pointing toward the door (−z) */
+    const topArm = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.013, 0.013, 0.14, 12),
+      handleBracketMat
+    );
+    topArm.rotation.z = Math.PI / 2;
+    topArm.position.set(0.05, 0.33, 0);
+    g.add(topArm);
+
+    const topDisc = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.024, 0.024, 0.016, 14),
+      handleBracketMat
+    );
+    topDisc.rotation.z = Math.PI / 2;
+    topDisc.position.set(0.122, 0.33, 0);
+    g.add(topDisc);
+
+    /* Bottom bracket arm */
+    const botArm = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.013, 0.013, 0.14, 12),
+      handleBracketMat
+    );
+    botArm.rotation.z = Math.PI / 2;
+    botArm.position.set(0.05, -0.33, 0);
+    g.add(botArm);
+
+    const botDisc = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.024, 0.024, 0.016, 14),
+      handleBracketMat
+    );
+    botDisc.rotation.z = Math.PI / 2;
+    botDisc.position.set(0.122, -0.33, 0);
+    g.add(botDisc);
+
+    // z: front of door face = 0.59 + door_depth/2(0.035) + small gap(0.038)
+    g.position.set(xPos, 0.12, 0.663);
+    root.add(g);
+  };
+
+  /*
+   * Place the two handles close together at the center seam:
+   *   Left  door: handle near its RIGHT (seam) edge → x = −0.10
+   *   Right door: handle near its LEFT  (seam) edge → x = +0.10
+   */
+  makeHandle(-0.10);
+  makeHandle(+0.10);
+
+  /* ── DIGITAL DISPLAY ── */
+  const dispBase = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.13, 0.045), darkMat);
+  dispBase.position.set(0.75, 1.70, 0.585);
   root.add(dispBase);
 
-  const screen = new THREE.Mesh(
-    new THREE.BoxGeometry(0.28, 0.07, 0.02),
-    screenMat
-  );
-  screen.position.set(0.82, 1.72, 0.61);
+  const screen = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.075, 0.02), screenMat);
+  screen.position.set(0.75, 1.70, 0.612);
   root.add(screen);
 
-  const ledStrip = new THREE.Mesh(
-    new THREE.BoxGeometry(0.18, 0.028, 0.01),
-    ledMat
-  );
-  ledStrip.position.set(0.82, 1.72, 0.625);
+  const ledStrip = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.026, 0.01), ledMat);
+  ledStrip.position.set(0.75, 1.70, 0.625);
   root.add(ledStrip);
 
-  const logoPan = new THREE.Mesh(
-    new THREE.BoxGeometry(0.55, 0.09, 0.012),
-    ssDark
-  );
-  logoPan.position.set(-0.54, -1.52, 0.58);
+  /* ── LOGO PANEL ── */
+  const logoPan = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.10, 0.013), ssDark);
+  logoPan.position.set(-0.54, -1.52, 0.59);
   root.add(logoPan);
 
-  ([-0.04, 1.1] as number[]).forEach((x) => {
-    const lockGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.06, 12);
-    const lock = new THREE.Mesh(lockGeo, handleMat);
+  /* ── DOOR LOCKS ── */
+  [{ x: -0.54 + 0.32 }, { x: 0.54 - 0.32 }].forEach(({ x }) => {
+    const lockGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.065, 14);
+    const lock = new THREE.Mesh(lockGeo, handleBarMat);
     lock.rotation.x = Math.PI / 2;
-    lock.position.set(x - 0.32, 1.42, 0.62);
+    lock.position.set(x, 1.42, 0.63);
     root.add(lock);
+    const lockRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.030, 0.008, 8, 16),
+      handleBracketMat
+    );
+    lockRing.rotation.x = Math.PI / 2;
+    lockRing.position.set(x, 1.42, 0.625);
+    root.add(lockRing);
   });
 
+  /* ── CASTORS ── */
   const castorPositions: [number, number, number][] = [
     [-0.85, -1, 0.35],
     [0.85, -1, 0.35],
@@ -576,42 +686,36 @@ function buildCabinetScene(THREE: any, initialHex: string) {
     [0.85, -1, -0.35],
   ];
   castorPositions.forEach(([cx, cy, cz]) => {
-    const stem = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.05, 0.05, 0.22, 10),
-      darkMat
-    );
-    stem.position.set(cx, cy - 0.8, cz);
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.048, 0.24, 10), ssDark);
+    stem.position.set(cx, cy - 0.82, cz);
     root.add(stem);
-    const wheel = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.065, 0.065, 0.06, 16),
-      ssDark
-    );
+    const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.068, 0.065, 16), darkMat);
     wheel.rotation.x = Math.PI / 2;
-    wheel.position.set(cx, cy - 1.0, cz);
+    wheel.position.set(cx, cy - 1.02, cz);
     root.add(wheel);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.07, 12), ssDark);
+    hub.rotation.x = Math.PI / 2;
+    hub.position.set(cx, cy - 1.02, cz);
+    root.add(hub);
   });
 
-  const glassL = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.08, 1.8),
-    glassMat
-  );
-  glassL.position.set(-0.78, 0.14, 0.595);
+  /* ── GLASS STRIP DETAIL ── */
+  const glassL = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 1.9), glassMat);
+  glassL.position.set(-0.80, 0.12, 0.596);
   root.add(glassL);
-  const glassR = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.08, 1.8),
-    glassMat
-  );
-  glassR.position.set(0.32, 0.14, 0.595);
+  const glassR = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 1.9), glassMat);
+  glassR.position.set(0.34, 0.12, 0.596);
   root.add(glassR);
 
-  const plane = new THREE.Mesh(
+  /* ── GROUND SHADOW ── */
+  const groundPlane = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
-    new THREE.ShadowMaterial({ opacity: 0.14 })
+    new THREE.ShadowMaterial({ opacity: 0.16 })
   );
-  plane.rotation.x = -Math.PI / 2;
-  plane.position.y = -2.0;
-  plane.receiveShadow = true;
-  scene.add(plane);
+  groundPlane.rotation.x = -Math.PI / 2;
+  groundPlane.position.y = -2.05;
+  groundPlane.receiveShadow = true;
+  scene.add(groundPlane);
 
   return { scene, camera, cabinetMat, frameMat, ledMat, screenMat, root };
 }
@@ -625,9 +729,7 @@ export default function TrueRefrigerationPage() {
 
   const [carouselIdx, setCarouselIdx] = useState<number>(0);
   const [activeColor, setActiveColor] = useState<RalColour>(RAL_COLOURS[0]);
-  const [enquiryProduct, setEnquiryProduct] = useState<EnquiryTarget | null>(
-    null
-  );
+  const [enquiryProduct, setEnquiryProduct] = useState<EnquiryTarget | null>(null);
 
   /* ─── AUTO-CAROUSEL ─── */
   useEffect(() => {
@@ -654,10 +756,12 @@ export default function TrueRefrigerationPage() {
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.appendChild(renderer.domElement);
 
-      const { scene, camera, cabinetMat, frameMat, ledMat, screenMat, root } =
-        buildCabinetScene(THREE, RAL_COLOURS[0].hex);
+      // ✅ FIX: pass renderer as 2nd arg, initialHex as 3rd arg
+      const { scene, camera, cabinetMat, frameMat, root } =
+        buildCabinetScene(THREE, renderer, STAINLESS_HEX);
 
       heroMatsRef.current = { cabinet: cabinetMat, frame: frameMat };
 
@@ -681,20 +785,18 @@ export default function TrueRefrigerationPage() {
       window.addEventListener("scroll", onScroll, { passive: true });
       onScroll();
 
-      let t = 0;
       const animate = () => {
         if (!running) return;
         animId = requestAnimationFrame(animate);
-        t += 0.016;
 
-        ledMat.emissiveIntensity = 0.7 + Math.sin(t * 1.8) * 0.4;
-        screenMat.emissiveIntensity = 0.18 + Math.sin(t * 1.2) * 0.1;
-
+        // No pulsing, no wobble — static stainless steel appearance
+        // Only scroll-driven entry and mouse-look remain
         const entryY = -2.0 + scrollProgress * 2.0;
         root.position.y = entryY;
         root.scale.setScalar(0.5 + scrollProgress * 0.5);
 
-        root.rotation.y = Math.sin(t * 0.18) * 0.14 + mouseX * 0.1;
+        // Gentle mouse-look only — no sine wave oscillation
+        root.rotation.y = mouseX * 0.12;
         root.rotation.x = -0.04 + mouseY * 0.04;
 
         camera.aspect = container.clientWidth / container.clientHeight;
@@ -729,7 +831,7 @@ export default function TrueRefrigerationPage() {
       if (running) {
         cleanup = fn;
       } else {
-        fn(); // already unmounted, clean up immediately
+        fn();
       }
     });
 
@@ -737,7 +839,7 @@ export default function TrueRefrigerationPage() {
       running = false;
       cleanup?.();
     };
-  }, []); // intentionally empty — only run once on mount
+  }, []);
 
   /* ─── Sync hero 3D cabinet colour ─── */
   useEffect(() => {
@@ -746,7 +848,6 @@ export default function TrueRefrigerationPage() {
   }, [activeColor]);
 
   /* ─── Canvas pixel recolouring ─── */
-  // Stable callback so it doesn't recreate on every render
   const applyRecolour = useCallback(
     (img: HTMLImageElement) => {
       const canvas = colourCanvasRef.current;
@@ -788,119 +889,52 @@ export default function TrueRefrigerationPage() {
 
       ctx = gsap.context(() => {
         gsap.from(".tr-hero-eyebrow", {
-          opacity: 0,
-          x: -20,
-          duration: 0.7,
-          ease: "power3.out",
-          delay: 0.2,
+          opacity: 0, x: -20, duration: 0.7, ease: "power3.out", delay: 0.2,
         });
         gsap.from(".tr-hero-title", {
-          opacity: 0,
-          y: 40,
-          duration: 0.9,
-          ease: "power3.out",
-          delay: 0.35,
+          opacity: 0, y: 40, duration: 0.9, ease: "power3.out", delay: 0.35,
         });
         gsap.from(".tr-hero-body", {
-          opacity: 0,
-          y: 24,
-          duration: 0.8,
-          ease: "power3.out",
-          delay: 0.6,
+          opacity: 0, y: 24, duration: 0.8, ease: "power3.out", delay: 0.6,
         });
         gsap.from(".tr-hero-actions", {
-          opacity: 0,
-          y: 16,
-          duration: 0.7,
-          ease: "power3.out",
-          delay: 0.8,
+          opacity: 0, y: 16, duration: 0.7, ease: "power3.out", delay: 0.8,
         });
-
         gsap.to(".tr-hero-img-wrap", {
-          yPercent: 12,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".tr-hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
+          yPercent: 12, ease: "none",
+          scrollTrigger: { trigger: ".tr-hero", start: "top top", end: "bottom top", scrub: true },
         });
         gsap.to(".tr-hero-text-col", {
-          opacity: 0,
-          y: -30,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".tr-hero",
-            start: "45% top",
-            end: "bottom top",
-            scrub: true,
-          },
+          opacity: 0, y: -30, ease: "none",
+          scrollTrigger: { trigger: ".tr-hero", start: "45% top", end: "bottom top", scrub: true },
         });
-
         gsap.from(".tr-intro-left", {
-          opacity: 0,
-          x: -36,
-          duration: 0.85,
-          ease: "power3.out",
+          opacity: 0, x: -36, duration: 0.85, ease: "power3.out",
           scrollTrigger: { trigger: ".tr-intro", start: "top 80%" },
         });
         gsap.from(".tr-intro-right", {
-          opacity: 0,
-          x: 36,
-          duration: 0.85,
-          ease: "power3.out",
+          opacity: 0, x: 36, duration: 0.85, ease: "power3.out",
           scrollTrigger: { trigger: ".tr-intro", start: "top 80%" },
         });
-
         gsap.from(".tr-prod-card", {
-          opacity: 0,
-          y: 44,
-          stagger: 0.1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".tr-products-grid",
-            start: "top 82%",
-          },
+          opacity: 0, y: 44, stagger: 0.1, duration: 0.8, ease: "power3.out",
+          scrollTrigger: { trigger: ".tr-products-grid", start: "top 82%" },
         });
-
         gsap.from(".tr-warranty-block", {
-          opacity: 0,
-          y: 36,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".tr-warranty-block",
-            start: "top 82%",
-          },
+          opacity: 0, y: 36, duration: 0.9, ease: "power3.out",
+          scrollTrigger: { trigger: ".tr-warranty-block", start: "top 82%" },
         });
-
         gsap.from(".tr-custom-block", {
-          opacity: 0,
-          y: 36,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".tr-custom-block",
-            start: "top 82%",
-          },
+          opacity: 0, y: 36, duration: 0.9, ease: "power3.out",
+          scrollTrigger: { trigger: ".tr-custom-block", start: "top 82%" },
         });
-
         gsap.from(".tr-cta-block", {
-          opacity: 0,
-          y: 36,
-          duration: 0.9,
-          ease: "power3.out",
+          opacity: 0, y: 36, duration: 0.9, ease: "power3.out",
           scrollTrigger: { trigger: ".tr-cta-block", start: "top 82%" },
         });
-
         gsap.utils.toArray(".tr-rule").forEach((el: unknown) => {
           gsap.from(el as Element, {
-            scaleX: 0,
-            transformOrigin: "left",
-            duration: 0.7,
-            ease: "power2.out",
+            scaleX: 0, transformOrigin: "left", duration: 0.7, ease: "power2.out",
             scrollTrigger: { trigger: el as Element, start: "top 88%" },
           });
         });
@@ -910,8 +944,6 @@ export default function TrueRefrigerationPage() {
     return () => ctx?.revert();
   }, []);
 
-  /* ─── UNUSED IMPORT REMOVAL ─── */
-  // CSSProperties is used implicitly via JSX style props — kept for clarity
   void (undefined as unknown as CSSProperties);
 
   return (
@@ -999,12 +1031,8 @@ export default function TrueRefrigerationPage() {
           font-size: 22px; color: ${RED};
           margin: 0 auto 20px;
         }
-        .tr-modal-success h3 {
-          font-size: 1.3rem; font-weight: 800; color: ${NAVY}; margin-bottom: 12px;
-        }
-        .tr-modal-success p {
-          font-size: 14px; color: ${MUTED}; line-height: 1.7; margin-bottom: 28px;
-        }
+        .tr-modal-success h3 { font-size: 1.3rem; font-weight: 800; color: ${NAVY}; margin-bottom: 12px; }
+        .tr-modal-success p { font-size: 14px; color: ${MUTED}; line-height: 1.7; margin-bottom: 28px; }
         @media (max-width: 580px) {
           .tr-form-row { grid-template-columns: 1fr; }
           .tr-modal-hd, .tr-modal-form { padding-left: 22px; padding-right: 22px; }
@@ -1209,8 +1237,13 @@ export default function TrueRefrigerationPage() {
         .tr-prod-code {
           font-family: 'Courier New', monospace;
           font-size: 10px; font-weight: 700;
-          color: rgba(11,37,64,0.4);
+          color: ${NAVY};
           letter-spacing: 0.06em; margin-bottom: 12px;
+          background: rgba(11,37,64,0.07);
+          display: inline-block;
+          padding: 3px 8px;
+          border-radius: 2px;
+          border-left: 2px solid ${RED};
         }
         .tr-prod-enquire {
           display: inline-flex; align-items: center; gap: 6px;
@@ -1221,6 +1254,21 @@ export default function TrueRefrigerationPage() {
           padding: 0; transition: gap 0.15s;
         }
         .tr-prod-enquire:hover { gap: 10px; }
+        .tr-prod-grid-footer {
+          display: flex; align-items: center; justify-content: flex-end;
+          margin-top: 18px;
+        }
+        .tr-prod-discover-all {
+          display: inline-flex; align-items: center; gap: 7px;
+          font-size: 10px; font-weight: 700;
+          letter-spacing: 0.18em; text-transform: uppercase;
+          color: ${MUTED}; text-decoration: none;
+          border: 1.5px solid ${BORDER};
+          padding: 10px 20px; border-radius: 2px;
+          transition: color 0.15s, border-color 0.15s;
+        }
+        .tr-prod-discover-all:hover { color: ${NAVY}; border-color: rgba(11,37,64,0.3); }
+        .tr-prod-discover-all svg { flex-shrink: 0; }
         @media (max-width: 1060px) { .tr-products-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 720px)  { .tr-products-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 440px)  { .tr-products-grid { grid-template-columns: 1fr; } }
@@ -1546,10 +1594,9 @@ export default function TrueRefrigerationPage() {
         {/* ══════ HERO ══════ */}
         <section className="tr-hero">
           <div className="tr-hero-inner">
-            {/* LEFT — copy */}
             <div className="tr-hero-text-col">
               <p className="tr-hero-eyebrow">
-                Authorised Distributor · True Refrigeration
+                True Refrigeration Distribution Partner
               </p>
               <h1 className="tr-hero-title">
                 True Refrigeration
@@ -1571,27 +1618,21 @@ export default function TrueRefrigerationPage() {
                   View Products
                 </a>
               </div>
-              {/* SECTOR TICKER */}
               <div className="tr-hero-sector">
                 <span className="tr-sector-label">Working with</span>
                 <div className="tr-sector-ticker-wrap">
                   <div
                     className="tr-sector-ticker"
-                    style={{
-                      transform: `translateY(-${carouselIdx * 24}px)`,
-                    }}
+                    style={{ transform: `translateY(-${carouselIdx * 24}px)` }}
                   >
                     {[...SECTORS, SECTORS[0]].map((s, i) => (
-                      <div key={i} className="tr-sector-item">
-                        {s}
-                      </div>
+                      <div key={i} className="tr-sector-item">{s}</div>
                     ))}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* RIGHT — hero product image */}
             <div className="tr-hero-img-col">
               <div className="tr-hero-img-wrap">
                 <Image
@@ -1599,11 +1640,7 @@ export default function TrueRefrigerationPage() {
                   alt="True Refrigeration commercial unit"
                   fill
                   priority
-                  style={{
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    padding: "32px",
-                  }}
+                  style={{ objectFit: "contain", objectPosition: "center", padding: "32px" }}
                 />
               </div>
             </div>
@@ -1615,15 +1652,13 @@ export default function TrueRefrigerationPage() {
 
           {/* ── INTRO ── */}
           <div className="tr-section-hd">
-            <span className="tr-section-label">
-              True Refrigeration · Authorised Distributor
-            </span>
+            <span className="tr-section-label">True Refrigeration · Authorised Distributor</span>
             <span className="tr-section-accent">Global Leader</span>
           </div>
 
           <div className="tr-intro">
             <div className="tr-intro-left">
-              <p className="tr-intro-eyebrow">Our Story</p>
+              <p className="tr-intro-eyebrow">their Story</p>
               <h2 className="tr-intro-title">
                 80 Years of American Refrigeration Excellence
               </h2>
@@ -1688,11 +1723,7 @@ export default function TrueRefrigerationPage() {
                       src={p.img}
                       alt={p.name}
                       fill
-                      style={{
-                        objectFit: "contain",
-                        objectPosition: "center",
-                        background: "#000",
-                      }}
+                      style={{ objectFit: "contain", objectPosition: "center", background: "#000" }}
                     />
                   </div>
                   <div className="tr-prod-body">
@@ -1709,6 +1740,20 @@ export default function TrueRefrigerationPage() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="tr-prod-grid-footer">
+              <a
+                href="https://truerefrigeration.co.uk"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tr-prod-discover-all"
+              >
+                <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
+                  <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Discover the Full Range on TrueRef
+              </a>
             </div>
           </div>
 
@@ -1822,27 +1867,15 @@ export default function TrueRefrigerationPage() {
                 refrigeration units meet your brand and operational needs.
               </p>
 
-              {/* RAL COLOUR SWATCHES */}
               <div className="tr-colour-grid">
                 {RAL_COLOURS.map((c) => (
                   <div
                     key={c.name}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
+                    style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                   >
                     <div
-                      className={`tr-colour-swatch ${
-                        activeColor.name === c.name
-                          ? "tr-colour-swatch--active"
-                          : ""
-                      }`}
-                      style={{
-                        background: c.hex,
-                        border: `2px solid ${c.border}`,
-                      }}
+                      className={`tr-colour-swatch ${activeColor.name === c.name ? "tr-colour-swatch--active" : ""}`}
+                      style={{ background: c.hex, border: `2px solid ${c.border}` }}
                       onClick={() => setActiveColor(c)}
                       title={c.name}
                     />
@@ -1853,16 +1886,10 @@ export default function TrueRefrigerationPage() {
             </div>
 
             <div className="tr-custom-bottom">
-              {/* LEFT — canvas with live cabinet pixel recolouring */}
               <div className="tr-custom-img">
                 <canvas
                   ref={colourCanvasRef}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "block",
-                    borderRadius: 3,
-                  }}
+                  style={{ width: "100%", height: "100%", display: "block", borderRadius: 3 }}
                 />
                 <div className="tr-custom-img-overlay">
                   <span
@@ -1883,12 +1910,12 @@ export default function TrueRefrigerationPage() {
                   request. Speak to our team about your brand requirements.
                 </p>
                 <a
-                  href="https://www.truemfg.com"
+                  href="https://www.truerefrigeration.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="tr-custom-link"
                 >
-                  Visit True&apos;s Website for More Details →
+                  Discover the Full Range on TrueRef →
                 </a>
               </div>
             </div>
@@ -1896,9 +1923,7 @@ export default function TrueRefrigerationPage() {
 
           {/* ── CTA ── */}
           <div className="tr-section-hd tr-spacer">
-            <span className="tr-section-label">
-              Authorised Distributor · UK
-            </span>
+            <span className="tr-section-label">Authorised Distributor · UK</span>
           </div>
 
           <div className="tr-cta-block">
@@ -1925,14 +1950,16 @@ export default function TrueRefrigerationPage() {
             <div className="tr-cta-right">
               <div className="tr-cta-right-rule" />
               <h3 className="tr-cta-right-title">
-                Ready to Specify
+                Speak to the Team
                 <br />
-                True Refrigeration?
+                at ILK Technology
               </h3>
               <p className="tr-cta-right-body">
-                Send us your requirements — model codes, site conditions, or
-                custom finish preferences — and we&apos;ll come back with
-                pricing and technical guidance.
+                Send your requirements to{" "}
+                <strong style={{ color: "rgba(255,255,255,0.75)" }}>ILK Technology</strong>{" "}
+                — model codes, site conditions, or custom finish preferences —
+                and we&apos;ll come back with pricing, availability, and
+                technical guidance within one business day.
               </p>
               <button
                 className="tr-btn-primary"
@@ -1965,9 +1992,7 @@ export default function TrueRefrigerationPage() {
           {/* ── BRAND LOGO BAR ── */}
           <div className="tr-logo-bar" style={{ marginTop: 2 }}>
             <div className="tr-logo-bar-left">
-              <span className="tr-logo-bar-label">
-                Authorised UK Distributor
-              </span>
+              <span className="tr-logo-bar-label">Authorised UK Distributor</span>
               <p className="tr-logo-bar-tagline">
                 <strong>Authorised distributor of True Refrigeration</strong>{" "}
                 — supplying the full range of commercial refrigeration and
