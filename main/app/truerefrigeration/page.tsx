@@ -1417,7 +1417,6 @@ export default function TrueRefrigerationPage() {
           /* Let the image fill available space without exceeding the cap */
           flex: 1;
           min-height: 0;
-          object-fit: cover;
           object-position: center top;
         }
         .tr-custom-top-chart-caption {
@@ -1927,7 +1926,7 @@ export default function TrueRefrigerationPage() {
                   src="/chart.jpeg"
                   alt="True Refrigeration growth chart"
                   width={560}
-                  height={420}
+                  height={450}
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
                 <div className="tr-custom-top-chart-caption">
