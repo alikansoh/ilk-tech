@@ -1129,7 +1129,7 @@ export default function TrueRefrigerationPage() {
           letter-spacing: 0.16em; color: ${RED};
         }
 
-        /* ══ INTRO — now single column, no chart panel ══ */
+        /* ══ INTRO ══ */
         .tr-intro { display: grid; grid-template-columns: 1fr; gap: 0; }
         .tr-intro-eyebrow {
           font-size: 10px; font-weight: 600;
@@ -1335,21 +1335,32 @@ export default function TrueRefrigerationPage() {
         /* ══ CUSTOM DESIGN ══ */
         .tr-custom-block { border: 1px solid ${BORDER}; border-radius: 3px; overflow: hidden; }
 
-        /* Top dark bar: two columns — swatches left, chart right */
+        /*
+         * FIX: Top dark bar uses align-items: stretch so both columns
+         * are equal height, and the left column uses space-between
+         * to push swatches flush to where the chart bottom sits.
+         */
         .tr-custom-top {
           background: ${NAVY}; padding: 52px 52px 44px; position: relative;
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 48px;
-          align-items: start;
+          align-items: stretch;   /* ← was: align-items: start */
         }
         .tr-custom-top::before {
           content: ''; position: absolute; left: 0; top: 0; bottom: 0;
           width: 4px; background: ${RED};
         }
 
-        /* Left column inside top bar */
-        .tr-custom-top-left { display: flex; flex-direction: column; }
+        /* Left column: space-between pushes swatches to bottom of column */
+        .tr-custom-top-left {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;  /* ← key fix */
+        }
+
+        /* Group heading+body together at the top */
+        .tr-custom-top-left-text { display: flex; flex-direction: column; }
 
         .tr-custom-eyebrow {
           font-size: 10px; font-weight: 600;
@@ -1365,7 +1376,9 @@ export default function TrueRefrigerationPage() {
           font-size: 14px; color: rgba(255,255,255,0.55);
           line-height: 1.8; margin-bottom: 0;
         }
-        .tr-colour-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; }
+
+        /* Swatches sit at the bottom of the left column — no extra margin-top needed */
+        .tr-colour-grid { display: flex; gap: 10px; flex-wrap: wrap; }
         .tr-colour-swatch {
           width: 48px; height: 48px; border-radius: 4px; cursor: pointer;
           transition: transform 0.18s, box-shadow 0.18s;
@@ -1385,7 +1398,7 @@ export default function TrueRefrigerationPage() {
           width: 48px; line-height: 1.2;
         }
 
-        /* Right column inside top bar — the chart */
+        /* Right column — chart panel, constrained so it doesn't balloon the row height */
         .tr-custom-top-chart {
           border-radius: 4px;
           overflow: hidden;
@@ -1393,13 +1406,22 @@ export default function TrueRefrigerationPage() {
           background: rgba(255,255,255,0.04);
           box-shadow: 0 8px 40px rgba(0,0,0,0.25);
           align-self: center;
+          /* Cap the chart height so it matches the left column's natural content height */
+          max-height: 420px;
+          display: flex;
+          flex-direction: column;
         }
         .tr-custom-top-chart img {
           display: block;
           width: 100%;
-          height: auto;
+          /* Let the image fill available space without exceeding the cap */
+          flex: 1;
+          min-height: 0;
+          object-fit: cover;
+          object-position: center top;
         }
         .tr-custom-top-chart-caption {
+          flex-shrink: 0;
           padding: 14px 18px 16px;
           border-top: 1px solid rgba(255,255,255,0.08);
           background: rgba(255,255,255,0.04);
@@ -1418,10 +1440,11 @@ export default function TrueRefrigerationPage() {
             grid-template-columns: 1fr;
             gap: 36px;
           }
-          .tr-custom-top-chart { max-width: 480px; }
+          .tr-custom-top-left { justify-content: flex-start; gap: 28px; }
+          .tr-custom-top-chart { max-height: none; max-width: 480px; }
         }
 
-        /* Bottom white bar: canvas left, copy right */
+        /* Bottom white bar */
         .tr-custom-bottom {
           background: #fff; padding: 44px 52px;
           display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
@@ -1656,7 +1679,7 @@ export default function TrueRefrigerationPage() {
         {/* ══════ BODY ══════ */}
         <div className="tr-inner">
 
-          {/* ── INTRO — now full-width, no chart column ── */}
+          {/* ── INTRO ── */}
           <div className="tr-section-hd">
             <span className="tr-section-label">True Refrigeration · Authorised Distributor</span>
             <span className="tr-section-accent">Global Leader</span>
@@ -1860,22 +1883,26 @@ export default function TrueRefrigerationPage() {
           </div>
 
           <div className="tr-custom-block">
-            {/* Dark top bar: swatches left · chart right */}
+            {/* Dark top bar */}
             <div className="tr-custom-top">
-              {/* Left: heading + body + swatches */}
-              <div className="tr-custom-top-left">
-                <p className="tr-custom-eyebrow">Custom Design</p>
-                <h3 className="tr-custom-title">
-                  When colours appear authentic.
-                </h3>
-                <p className="tr-custom-body">
-                  Make your refrigeration units stand out. Customise your True
-                  products and craft cabinets to match your brand using our range
-                  of customisation options. From hardware upgrades to innovative
-                  lighting, they provide comprehensive solutions to ensure your
-                  refrigeration units meet your brand and operational needs.
-                </p>
 
+              {/* Left: heading+body grouped at top, swatches pushed to bottom */}
+              <div className="tr-custom-top-left">
+                <div className="tr-custom-top-left-text">
+                  <p className="tr-custom-eyebrow">Custom Design</p>
+                  <h3 className="tr-custom-title">
+                    When colours appear authentic.
+                  </h3>
+                  <p className="tr-custom-body">
+                    Make your refrigeration units stand out. Customise your True
+                    products and craft cabinets to match your brand using our range
+                    of customisation options. From hardware upgrades to innovative
+                    lighting, they provide comprehensive solutions to ensure your
+                    refrigeration units meet your brand and operational needs.
+                  </p>
+                </div>
+
+                {/* Swatches — naturally aligned to bottom via space-between */}
                 <div className="tr-colour-grid">
                   {RAL_COLOURS.map((c) => (
                     <div
@@ -1894,13 +1921,13 @@ export default function TrueRefrigerationPage() {
                 </div>
               </div>
 
-              {/* Right: chart.jpeg panel */}
+              {/* Right: chart constrained to 420px max-height */}
               <div className="tr-custom-top-chart">
                 <Image
                   src="/chart.jpeg"
                   alt="True Refrigeration growth chart"
                   width={560}
-                  height={560}
+                  height={420}
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
                 <div className="tr-custom-top-chart-caption">
@@ -1912,7 +1939,7 @@ export default function TrueRefrigerationPage() {
               </div>
             </div>
 
-            {/* White bottom bar: canvas left · copy right */}
+            {/* White bottom bar */}
             <div className="tr-custom-bottom">
               <div className="tr-custom-img">
                 <canvas
