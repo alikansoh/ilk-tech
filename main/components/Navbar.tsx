@@ -11,6 +11,8 @@ const products = [
   { name: "Osaka 3 SC", href: "/products/osaka-3-sc" },
   { name: "Panama 3", href: "/products/panama-3", colorClass: "text-[#293133]" },
   { name: "Panama 3 SC", href: "/products/panama-3-sc" },
+  { name: "Bar Refrigeration", href: "/products/bar-refrigeration" },
+  { name: "Bar Refrigeration 1", href: "/products/bar-refrigeration-1" },
 ];
 
 const navLinks = [
@@ -70,14 +72,13 @@ const PARTNER_PHRASES = [
   "True Refrigeration Distribution Partner",
 ];
 
-const TYPE_SPEED = 48; // ms per character typed
-const DELETE_SPEED = 28; // ms per character deleted
-const HOLD_DURATION = 2200; // ms to hold the completed phrase
+const TYPE_SPEED = 48;
+const DELETE_SPEED = 28;
+const HOLD_DURATION = 2200;
 
 function useTypingAnimation(phrases: string[]) {
   const [displayed, setDisplayed] = useState("");
 
-  // All mutable state lives in a single ref — never touched by React's scheduler
   const state = useRef({
     phraseIdx: 0,
     charIdx: 0,
@@ -93,7 +94,6 @@ function useTypingAnimation(phrases: string[]) {
       const current = phrases[s.phraseIdx];
 
       if (s.holding) {
-        // Finished holding — start deleting
         s.holding = false;
         s.deleting = true;
         timer = setTimeout(tick, DELETE_SPEED);
@@ -101,24 +101,20 @@ function useTypingAnimation(phrases: string[]) {
       }
 
       if (!s.deleting) {
-        // Typing forward
         if (s.charIdx < current.length) {
           s.charIdx += 1;
           setDisplayed(current.slice(0, s.charIdx));
           timer = setTimeout(tick, TYPE_SPEED);
         } else {
-          // Finished typing — hold before deleting
           s.holding = true;
           timer = setTimeout(tick, HOLD_DURATION);
         }
       } else {
-        // Deleting backward
         if (s.charIdx > 0) {
           s.charIdx -= 1;
           setDisplayed(current.slice(0, s.charIdx));
           timer = setTimeout(tick, DELETE_SPEED);
         } else {
-          // Finished deleting — advance to next phrase and start typing
           s.deleting = false;
           s.phraseIdx = (s.phraseIdx + 1) % phrases.length;
           timer = setTimeout(tick, TYPE_SPEED);
@@ -128,7 +124,6 @@ function useTypingAnimation(phrases: string[]) {
 
     timer = setTimeout(tick, TYPE_SPEED);
     return () => clearTimeout(timer);
-    // phrases is stable (module-level constant) so this dep is safe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -171,33 +166,32 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={`relative px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
-    ${
-      link.name === "ARNEG"
-        ? active
-          ? "text-red-600"
-          : "text-red-500 hover:text-red-600"
-        : link.name === "True Refrigeration"
-          ? active
-            ? "text-[#651641]"
-            : "text-[#791F52]/75 hover:text-[#651641]"
-          : active
-            ? "text-[#001845]"
-            : "text-[#001845]/45 hover:text-[#001845]"
-    }`}
+                    ${
+                      link.name === "ARNEG"
+                        ? active
+                          ? "text-red-600"
+                          : "text-red-500 hover:text-red-600"
+                        : link.name === "True Refrigeration"
+                          ? active
+                            ? "text-[#651641]"
+                            : "text-[#791F52]/75 hover:text-[#651641]"
+                          : active
+                            ? "text-[#001845]"
+                            : "text-[#001845]/45 hover:text-[#001845]"
+                    }`}
                 >
                   {link.name}
-
                   <span
                     className={`absolute bottom-0 left-0 h-[2px] transition-all duration-300
-      ${
-        link.name === "ARNEG"
-          ? "bg-red-600"
-          : link.name === "True Refrigeration"
-            ? "bg-[#651641]"
-            : "bg-[#001845]"
-      }
-      ${active ? "w-full" : "w-0 group-hover/link:w-full"}
-    `}
+                      ${
+                        link.name === "ARNEG"
+                          ? "bg-red-600"
+                          : link.name === "True Refrigeration"
+                            ? "bg-[#651641]"
+                            : "bg-[#001845]"
+                      }
+                      ${active ? "w-full" : "w-0 group-hover/link:w-full"}
+                    `}
                   />
                 </Link>
               );
@@ -207,7 +201,7 @@ export default function Navbar() {
             <div className="group/drop relative">
               <button
                 className={`relative flex items-center gap-1.5 px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
-                ${isProductActive ? "text-[#001845]" : "text-[#001845]/45 hover:text-[#001845]"}`}
+                  ${isProductActive ? "text-[#001845]" : "text-[#001845]/45 hover:text-[#001845]"}`}
               >
                 Products
                 <svg
@@ -220,12 +214,12 @@ export default function Navbar() {
                 </svg>
                 <span
                   className={`absolute bottom-0 left-0 h-[2px] bg-red-600 transition-all duration-300
-                  ${isProductActive ? "w-full" : "w-0 group-hover/link:w-full"}`}
+                    ${isProductActive ? "w-full" : "w-0 group-hover/link:w-full"}`}
                 />
               </button>
 
-              {/* Dropdown panel */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-0 w-[280px] opacity-0 invisible translate-y-2 group-hover/drop:opacity-100 group-hover/drop:visible group-hover/drop:translate-y-0 transition-all duration-200 ease-out">
+              {/* Dropdown panel — wider to fit 7 items comfortably */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-0 w-[300px] opacity-0 invisible translate-y-2 group-hover/drop:opacity-100 group-hover/drop:visible group-hover/drop:translate-y-0 transition-all duration-200 ease-out">
                 <div className="flex justify-center">
                   <div className="h-2 w-4 overflow-hidden">
                     <div className="mx-auto h-3 w-3 rotate-45 border-l border-t border-[#001845]/10 bg-[#001845] translate-y-1.5" />
@@ -246,9 +240,14 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  <div className="divide-y divide-[#001845]/6">
+                  {/* Scrollable list so the dropdown doesn't overflow the viewport */}
+                  <div className="divide-y divide-[#001845]/6 max-h-[420px] overflow-y-auto">
                     {products.map((p, i) => {
                       const productActive = isProductPath(p.href);
+                      /* Give the two new bar refrigeration entries a teal accent */
+                      const isBarFridge =
+                        p.href === "/product/bar-refrigeration" ||
+                        p.href === "/product/bar-refregeration-1";
                       return (
                         <Link
                           key={p.href}
@@ -258,19 +257,34 @@ export default function Navbar() {
                         >
                           <div
                             className={`flex h-9 w-9 flex-shrink-0 items-center justify-center border transition-all duration-150
-                            ${
-                              productActive
-                                ? "border-red-600 bg-red-600 text-white"
-                                : "border-[#001845]/12 bg-transparent text-[#001845]/25 group-hover/item:border-red-600 group-hover/item:text-red-600"
-                            }`}
+                              ${
+                                productActive
+                                  ? isBarFridge
+                                    ? "border-[#651641] bg-[#651641] text-white"
+                                    : "border-red-600 bg-red-600 text-white"
+                                  : isBarFridge
+                                    ? "border-[#001845]/12 bg-transparent text-[#001845]/25 group-hover/item:border-[#651641] group-hover/item:text-[#651641]"
+                                    : "border-[#001845]/12 bg-transparent text-[#001845]/25 group-hover/item:border-red-600 group-hover/item:text-red-600"
+                              }`}
                           >
-                            <span className="text-[11px] font-black tabular-nums">0{i + 1}</span>
+                            <span className="text-[11px] font-black tabular-nums">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
                           </div>
 
                           <p
                             className={`flex-1 text-[13px] font-bold tracking-wide transition-colors duration-150
-                            ${p.colorClass ?? (productActive ? "text-[#001845]" : "text-[#001845]/70 group-hover/item:text-[#001845]")}
-                            `}
+                              ${
+                                p.colorClass
+                                  ? p.colorClass
+                                  : productActive
+                                    ? isBarFridge
+                                      ? "text-[#651641]"
+                                      : "text-[#001845]"
+                                    : isBarFridge
+                                      ? "text-[#001845]/70 group-hover/item:text-[#651641]"
+                                      : "text-[#001845]/70 group-hover/item:text-[#001845]"
+                              }`}
                           >
                             {p.name}
                           </p>
@@ -279,8 +293,12 @@ export default function Navbar() {
                             className={`h-3.5 w-3.5 flex-shrink-0 transition-all duration-200
                               ${
                                 productActive
-                                  ? "text-red-600 translate-x-0"
-                                  : "text-[#001845]/20 -translate-x-1 group-hover/item:text-red-500 group-hover/item:translate-x-0"
+                                  ? isBarFridge
+                                    ? "text-[#651641] translate-x-0"
+                                    : "text-red-600 translate-x-0"
+                                  : isBarFridge
+                                    ? "text-[#001845]/20 -translate-x-1 group-hover/item:text-[#651641] group-hover/item:translate-x-0"
+                                    : "text-[#001845]/20 -translate-x-1 group-hover/item:text-red-500 group-hover/item:translate-x-0"
                               }`}
                             fill="none"
                             stroke="currentColor"
@@ -339,19 +357,16 @@ export default function Navbar() {
       {/* ── Margin Bar with typing animation ── */}
       <div className="w-full bg-[#001845] px-6 sm:px-8 lg:px-14 py-2">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          {/* Typing line */}
           <div className="flex items-center gap-0 min-w-0">
             <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-red-500 whitespace-nowrap">
               {typedText}
             </span>
-            {/* blinking cursor */}
             <span
               className="ml-[2px] inline-block h-[10px] w-[1.5px] bg-red-500 align-middle"
               style={{ animation: "navbar-blink 1s step-end infinite" }}
             />
           </div>
 
-          {/* Social line (right-aligned on mobile + desktop) */}
           <div className="flex items-center gap-1 self-end sm:self-auto sm:ml-auto">
             {socials.map((s) => (
               <Link
@@ -368,7 +383,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Blink keyframe — injected once via a style tag */}
         <style>{`
           @keyframes navbar-blink {
             0%, 100% { opacity: 1; }
@@ -377,7 +391,7 @@ export default function Navbar() {
         `}</style>
       </div>
 
-      {/* Mobile Menu */}
+      {/* ════════════════ Mobile Menu ════════════════ */}
       {open && (
         <div className="lg:hidden bg-white shadow-[0_16px_48px_rgba(0,24,69,0.12)]">
           <div className="h-[2px] w-full bg-gradient-to-r from-[#001845] via-red-600 to-[#001845]" />
@@ -471,6 +485,9 @@ export default function Navbar() {
                       <div className="divide-y divide-[#001845]/6">
                         {products.map((p, i) => {
                           const productActive = isProductPath(p.href);
+                          const isBarFridge =
+                            p.href === "/product/bar-refrigeration" ||
+                            p.href === "/product/bar-refregeration-1";
                           return (
                             <Link
                               key={p.href}
@@ -481,19 +498,43 @@ export default function Navbar() {
                             >
                               <div
                                 className={`flex h-8 w-8 flex-shrink-0 items-center justify-center border transition-all
-                                ${productActive ? "border-red-600 bg-red-600 text-white" : "border-[#001845]/12 text-[#001845]/25"}`}
+                                  ${
+                                    productActive
+                                      ? isBarFridge
+                                        ? "border-[#651641] bg-[#651641] text-white"
+                                        : "border-red-600 bg-red-600 text-white"
+                                      : "border-[#001845]/12 text-[#001845]/25"
+                                  }`}
                               >
-                                <span className="text-[10px] font-black">0{i + 1}</span>
+                                <span className="text-[10px] font-black">
+                                  {String(i + 1).padStart(2, "0")}
+                                </span>
                               </div>
                               <p
                                 className={`flex-1 text-[12px] font-bold tracking-wide
-                                ${p.colorClass ?? (productActive ? "text-[#001845]" : "text-[#001845]/65")}`}
+                                  ${
+                                    p.colorClass
+                                      ? p.colorClass
+                                      : productActive
+                                        ? isBarFridge
+                                          ? "text-[#651641]"
+                                          : "text-[#001845]"
+                                        : isBarFridge
+                                          ? "text-[#001845]/65 group-hover:text-[#651641]"
+                                          : "text-[#001845]/65"
+                                  }`}
                               >
                                 {p.name}
                               </p>
                               {productActive && (
-                                <span className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] uppercase text-red-600 flex-shrink-0">
-                                  <span className="h-1 w-1 rounded-full bg-red-600 animate-pulse" />
+                                <span
+                                  className={`flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] uppercase flex-shrink-0
+                                    ${isBarFridge ? "text-[#651641]" : "text-red-600"}`}
+                                >
+                                  <span
+                                    className={`h-1 w-1 rounded-full animate-pulse
+                                      ${isBarFridge ? "bg-[#651641]" : "bg-red-600"}`}
+                                  />
                                   Active
                                 </span>
                               )}
