@@ -190,6 +190,13 @@ export default function AboutPage() {
         .logo-squares { opacity: 0.9; }
         .hero-stats { display: flex; flex-direction: column; gap: 16px; }
 
+        /* ── What We Do internal divider ── */
+        .s2-internal-divider {
+          height: 1px;
+          background: linear-gradient(to right, transparent, #E2E8F0 20%, #E2E8F0 80%, transparent);
+          margin: 0 0 80px;
+        }
+
         /* ─── Enhanced Value Cards ─── */
         .values-grid {
           display: grid;
@@ -285,6 +292,7 @@ export default function AboutPage() {
           .two-col-img-first { order: -1; }
           .logo-squares { transform: scale(0.65); transform-origin: top right; }
           .hero-pad .hero-inner > .hero-stats { margin-top: 40px !important; border-left: none; padding-left: 0; }
+          .s2-internal-divider { margin: 0 0 56px; }
         }
         @media (max-width: 640px) {
           .values-grid { grid-template-columns: 1fr; gap: 16px; }
@@ -299,6 +307,7 @@ export default function AboutPage() {
           .hero-pad .hero-inner > .hero-stats { margin-top: 28px !important; border-left: none; padding-left: 0; }
           .vc-top { padding: 28px 24px 0; }
           .vc-bottom { padding: 20px 24px 28px; }
+          .s2-internal-divider { margin: 0 0 40px; }
         }
       `}</style>
 
@@ -404,40 +413,89 @@ export default function AboutPage() {
 
         {/* SECTION 2 — WHAT WE DO */}
         <section style={{ borderBottom: "1px solid #E2E8F0" }}>
-          <div className="section-pad two-col" ref={section2Ref}>
-            <div className="s2-item two-col-img-first" style={{ position: "relative" }}>
-              <div style={{ position: "relative", zIndex: 1 }}>
-                <div className="img-natural parallax-img">
-                  <Image src="/about-3.png" alt="Arneg refrigeration cabinets" width={800} height={500} quality={90} style={{ width: "100%", height: "auto", objectFit: "contain" }} />
-                </div>
-                <div style={{ height: 3, background: PRIMARY }} />
-              </div>
-            </div>
-            <div className="s2-item">
-              <SectionTag number="02" label="What We Do" />
-              <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.6rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#0F1F3D", marginBottom: 20 }}>
-                Trusted distributor of world-class refrigeration brands.
-              </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 15, lineHeight: 1.85, color: "#64748B" }}>
-                <p>As a trusted distribution partner of Arneg, we offer an extensive selection of Arneg cabinets crafted to leave a positive, lasting impression on our customers.</p>
-                <p>We also offer products from our trusted partners — bespoke, available for quotation and tailored to your specific needs.</p>
-              </div>
-              <div className="brands-row" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 24 }}>
-                {BRANDS.map((b, idx) => (
-                  <div key={b} style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${idx % 2 === 0 ? PRIMARY_SOFT : LOGO_GRAY + "33"}`, padding: "7px 14px", background: "#ffffff" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 5px)", gap: 2 }}>
-                      {[1, 0, 0, 1].map((v, i) => (
-                        <div key={i} style={{ width: 5, height: 5, background: v ? (i % 2 === 0 ? PRIMARY : LOGO_GRAY) : "transparent" }} />
-                      ))}
-                    </div>
-                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#64748B" }}>{b}</span>
+          <div className="section-pad" ref={section2Ref}>
+
+            {/* ── Row 1: Arneg ── */}
+            <div className="two-col" style={{ marginBottom: 80 }}>
+              <div className="s2-item two-col-img-first" style={{ position: "relative" }}>
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div className="img-natural parallax-img">
+                    <Image src="/about-3.png" alt="Arneg refrigeration cabinets" width={800} height={500} quality={90} style={{ width: "100%", height: "auto", objectFit: "contain" }} />
                   </div>
-                ))}
+                  <div style={{ height: 3, background: PRIMARY }} />
+                </div>
               </div>
-              <Link href="/arneg" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 24, fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: ACCENT, textDecoration: "none", borderBottom: `1px solid ${PRIMARY}`, paddingBottom: 3 }}>
-                Visit Arneg Partners Page →
-              </Link>
+              <div className="s2-item">
+                <SectionTag number="02" label="What We Do" />
+                <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.6rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#0F1F3D", marginBottom: 20 }}>
+                  Trusted distributor of world-class refrigeration brands.
+                </h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 15, lineHeight: 1.85, color: "#64748B" }}>
+                  <p>As a trusted distribution partner of Arneg, we offer an extensive selection of Arneg cabinets crafted to leave a positive, lasting impression on our customers.</p>
+                  <p>We also offer products from our trusted partners — bespoke, available for quotation and tailored to your specific needs.</p>
+                </div>
+                <div className="brands-row" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 24 }}>
+                  {BRANDS.map((b, idx) => (
+                    <div key={b} style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${idx % 2 === 0 ? PRIMARY_SOFT : LOGO_GRAY + "33"}`, padding: "7px 14px", background: "#ffffff" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 5px)", gap: 2 }}>
+                        {[1, 0, 0, 1].map((v, i) => (
+                          <div key={i} style={{ width: 5, height: 5, background: v ? (i % 2 === 0 ? PRIMARY : LOGO_GRAY) : "transparent" }} />
+                        ))}
+                      </div>
+                      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#64748B" }}>{b}</span>
+                    </div>
+                  ))}
+                </div>
+                <Link href="/arneg" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 24, fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: ACCENT, textDecoration: "none", borderBottom: `1px solid ${PRIMARY}`, paddingBottom: 3 }}>
+                  Visit Arneg Partners Page →
+                </Link>
+              </div>
             </div>
+
+            {/* ── Internal divider ── */}
+            <div className="s2-item s2-internal-divider" />
+
+            {/* ── Row 2: True Refrigeration ── */}
+            <div className="two-col">
+              <div className="s2-item">
+                <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.6rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#0F1F3D", marginBottom: 20 }}>
+                  Catering &amp; food service solutions you can rely on.
+                </h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 15, lineHeight: 1.85, color: "#64748B" }}>
+                  <p>As a trusted distribution partner of <span style={{ color: "#912963" }}>True</span> Refrigeration, we provide an extensive selection of products for the catering industry, food services, fast food outlets, restaurants, and bars.</p>
+                  <p>Additionally, we offer customised products available for quotation, designed specifically to meet your unique needs.</p>
+                </div>
+                <a
+                  href="https://truerefrigeration.co.uk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginTop: 24,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#912963",
+                    textDecoration: "none",
+                    borderBottom: "1px solid #912963",
+                    paddingBottom: 3,
+                  }}                >
+                  Visit  True Refrigeration →
+                </a>
+              </div>
+              <div className="s2-item" style={{ position: "relative" }}>
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div className="img-natural parallax-img">
+                    <Image src="/trueabout.jpeg" alt="True Refrigeration products" width={800} height={500} quality={90} style={{ width: "100%", height: "auto", objectFit: "contain" }} />
+                  </div>
+                  <div style={{ height: 3, background: PRIMARY }} />
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 

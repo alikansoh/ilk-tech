@@ -367,7 +367,10 @@ export default function HeroSection() {
             <p className="text-[14px] sm:text-[18px] lg:text-[20px] leading-[1.7] sm:leading-[1.9] text-white/60 font-light">
               <span className="text-white font-semibold">ILK Technology</span> —
               Commercial Refrigeration Supplier and{" "}
-              <span className="text-red-500 font-semibold">Arneg</span>{" "}
+              <span className="text-red-500 font-semibold">Arneg</span>{" "} 
+              and 
+              <span className="text-[#b3357a] font-semibold"> True</span>{" "}
+
               Distribution Partner here in the UK.
             </p>
           </div>

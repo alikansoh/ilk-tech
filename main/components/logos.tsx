@@ -8,6 +8,11 @@ const logos = [
   { src: "/logo2.png", alt: "Shelving and Check-outs", label: "Shelving & Check-outs" },
   { src: "/logo3.png", alt: "Commercial Refrigeration", label: "Commercial Refrigeration -plug in System" },
   { src: "/logo4.png", alt: "Cold Rooms & High-Speed Doors", label: "Cold Rooms, Isothermal & High-Speed Doors" },
+  {
+    src: "/True_Refrigeration_Logo_Silver_RGB.png",
+    alt: "True Refrigeration",
+    label: "True Refrigeration - Commercial Refrigeration"
+  },  
 ];
 
 export default function LogoTicker() {

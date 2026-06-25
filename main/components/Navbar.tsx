@@ -133,8 +133,28 @@ function useTypingAnimation(phrases: string[]) {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
+  // Desktop dropdown: track both hover and click-toggle states
+  const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname() ?? "";
   const typedText = useTypingAnimation(PARTNER_PHRASES);
+
+  // Combined open state: open if hovering OR click-toggled
+  const dropdownVisible = desktopDropdownOpen || isHovering;
+
+  // Close desktop dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDesktopDropdownOpen(false);
+      }
+    }
+    if (desktopDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [desktopDropdownOpen]);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -197,15 +217,21 @@ export default function Navbar() {
               );
             })}
 
-            {/* Products Dropdown */}
-            <div className="group/drop relative">
+            {/* Products Dropdown — click OR hover */}
+            <div
+              ref={dropdownRef}
+              className="relative"
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
               <button
+                onClick={() => setDesktopDropdownOpen((prev) => !prev)}
                 className={`relative flex items-center gap-1.5 px-5 py-[30px] text-[12px] font-bold tracking-[0.18em] uppercase transition-colors duration-200 group/link
                   ${isProductActive ? "text-[#001845]" : "text-[#001845]/45 hover:text-[#001845]"}`}
               >
                 Products
                 <svg
-                  className="h-3 w-3 transition-transform duration-300 group-hover/drop:rotate-180"
+                  className={`h-3 w-3 transition-transform duration-300 ${dropdownVisible ? "rotate-180" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -214,12 +240,15 @@ export default function Navbar() {
                 </svg>
                 <span
                   className={`absolute bottom-0 left-0 h-[2px] bg-red-600 transition-all duration-300
-                    ${isProductActive ? "w-full" : "w-0 group-hover/link:w-full"}`}
+                    ${isProductActive || dropdownVisible ? "w-full" : "w-0 group-hover/link:w-full"}`}
                 />
               </button>
 
-              {/* Dropdown panel — wider to fit 7 items comfortably */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-0 w-[300px] opacity-0 invisible translate-y-2 group-hover/drop:opacity-100 group-hover/drop:visible group-hover/drop:translate-y-0 transition-all duration-200 ease-out">
+              {/* Dropdown panel */}
+              <div
+                className={`absolute left-1/2 -translate-x-1/2 top-full mt-0 w-[300px] transition-all duration-200 ease-out
+                  ${dropdownVisible ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}
+              >
                 <div className="flex justify-center">
                   <div className="h-2 w-4 overflow-hidden">
                     <div className="mx-auto h-3 w-3 rotate-45 border-l border-t border-[#001845]/10 bg-[#001845] translate-y-1.5" />
@@ -240,18 +269,18 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  {/* Scrollable list so the dropdown doesn't overflow the viewport */}
+                  {/* Scrollable list */}
                   <div className="divide-y divide-[#001845]/6 max-h-[420px] overflow-y-auto">
                     {products.map((p, i) => {
                       const productActive = isProductPath(p.href);
-                      /* Give the two new bar refrigeration entries a teal accent */
                       const isBarFridge =
-                        p.href === "/product/bar-refrigeration" ||
-                        p.href === "/product/bar-refregeration-1";
+                        p.href === "/products/bar-refrigeration" ||
+                        p.href === "/products/bar-refrigeration-1";
                       return (
                         <Link
                           key={p.href}
                           href={p.href}
+                          onClick={() => setDesktopDropdownOpen(false)}
                           className={`group/item flex items-center gap-4 px-6 py-3.5 transition-all duration-150
                             ${productActive ? "bg-[#001845]/[0.03]" : "hover:bg-[#001845]/[0.025]"}`}
                         >
@@ -486,8 +515,8 @@ export default function Navbar() {
                         {products.map((p, i) => {
                           const productActive = isProductPath(p.href);
                           const isBarFridge =
-                            p.href === "/product/bar-refrigeration" ||
-                            p.href === "/product/bar-refregeration-1";
+                            p.href === "/products/bar-refrigeration" ||
+                            p.href === "/products/bar-refrigeration-1";
                           return (
                             <Link
                               key={p.href}
