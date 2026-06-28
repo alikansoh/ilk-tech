@@ -6,7 +6,6 @@ import {
   useEffect,
   useRef,
   useState,
-  useCallback,
   type CSSProperties,
   type FormEvent,
 } from "react";
@@ -36,6 +35,7 @@ interface RalColour {
   name: string;
   hex: string;
   border: string;
+  img: string; // ← cabinet image filename
 }
 
 interface InquiryFormState {
@@ -126,114 +126,19 @@ const SECTORS: string[] = [
   "Catering",
 ];
 
+/* ─── RAL COLOURS — each maps to a pre-rendered cabinet image ─── */
 const RAL_COLOURS: RalColour[] = [
-  { name: "Stainless Steel", hex: STAINLESS_HEX, border: "#8A9BB0" },
-  { name: "Green",           hex: "#4E7B4B",      border: "#3A5E38" },
-  { name: "Blue",            hex: "#1F4E8C",      border: "#163870" },
-  { name: "Pink",            hex: "#E8829A",      border: "#D0607C" },
-  { name: "Red",             hex: "#C8102E",      border: "#A00E26" },
-  { name: "Orange",          hex: "#E8650A",      border: "#C05206" },
-  { name: "Silver",          hex: "#D8DCE0",      border: "#B0B7C0" },
-  { name: "Black",           hex: "#1A1A1A",      border: "#0A0A0A" },
+  { name: "Stainless Steel", hex: STAINLESS_HEX, border: "#8A9BB0", img: "/true-custom.jpeg" },
+  { name: "Green",           hex: "#4E7B4B",      border: "#3A5E38",  img: "/cabinet-green.png"    },
+  { name: "Blue",            hex: "#1F4E8C",      border: "#163870",  img: "/cabinet-blue.png"     },
+  { name: "Pink",            hex: "#E8829A",      border: "#D0607C",  img: "/cabinet-pink.png"     },
+  { name: "Red",             hex: "#C8102E",      border: "#A00E26",  img: "/cabinet-red.png"      },
+  { name: "Orange",          hex: "#E8650A",      border: "#C05206",  img: "/cabinet-orange.png"   },
+  { name: "Silver",          hex: "#D8DCE0",      border: "#B0B7C0",  img: "/cabinet-silver.png"   },
+  { name: "Black",           hex: "#1A1A1A",      border: "#0A0A0A",  img: "/cabinet-black.png"    },
 ];
 
-/* ─── COLOUR HELPERS ─── */
-function hexToRgb(hex: string): [number, number, number] {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return [r, g, b];
-}
-
-function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
-  const rn = r / 255;
-  const gn = g / 255;
-  const bn = b / 255;
-  const max = Math.max(rn, gn, bn);
-  const min = Math.min(rn, gn, bn);
-  let h = 0;
-  let s = 0;
-  const l = (max + min) / 2;
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case rn:
-        h = ((gn - bn) / d + (gn < bn ? 6 : 0)) / 6;
-        break;
-      case gn:
-        h = ((bn - rn) / d + 2) / 6;
-        break;
-      case bn:
-        h = ((rn - gn) / d + 4) / 6;
-        break;
-    }
-  }
-  return [h, s, l];
-}
-
-function hslToRgb(h: number, s: number, l: number): [number, number, number] {
-  if (s === 0) {
-    const v = Math.round(l * 255);
-    return [v, v, v];
-  }
-  const hue2rgb = (p: number, q: number, t: number): number => {
-    let tt = t;
-    if (tt < 0) tt += 1;
-    if (tt > 1) tt -= 1;
-    if (tt < 1 / 6) return p + (q - p) * 6 * tt;
-    if (tt < 1 / 2) return q;
-    if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6;
-    return p;
-  };
-  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  const p = 2 * l - q;
-  return [
-    Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
-    Math.round(hue2rgb(p, q, h) * 255),
-    Math.round(hue2rgb(p, q, h - 1 / 3) * 255),
-  ];
-}
-
-function recolourCanvas(
-  img: HTMLImageElement,
-  canvas: HTMLCanvasElement,
-  targetHex: string
-): void {
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  ctx.drawImage(img, 0, 0);
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-
-  const [tr, tg, tb] = hexToRgb(targetHex);
-  const [th, ts, tl] = rgbToHsl(tr, tg, tb);
-
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
-    const [h, s, l] = rgbToHsl(r, g, b);
-
-    const inOrangeHue = (h >= 0.0 && h <= 0.20) || h >= 0.92;
-    const isCabinetPixel = inOrangeHue && s > 0.20 && l > 0.06 && l < 0.96;
-
-    if (isCabinetPixel) {
-      const newS = ts < 0.08 ? ts : Math.min(ts * 1.1, 1);
-      const lightnessFactor = tl > 0 ? tl / 0.45 : 0;
-      const newL = Math.max(0.04, Math.min(0.96, l * (lightnessFactor + 0.15)));
-      const [nr, ng, nb] = hslToRgb(th, newS, newL);
-      data[i] = nr;
-      data[i + 1] = ng;
-      data[i + 2] = nb;
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
-}
-
-/* ─── INQUIRY FORM MODAL ─── */
+/* ─── INQUIRY MODAL ─── */
 function InquiryModal({ product, onClose }: InquiryModalProps) {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState<InquiryFormState>({
@@ -689,8 +594,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
 export default function TrueRefrigerationPage() {
   const heroThreeRef = useRef<HTMLDivElement>(null);
   const heroMatsRef = useRef<CabinetMaterials>({});
-  const colourCanvasRef = useRef<HTMLCanvasElement>(null);
-  const sourceImageRef = useRef<HTMLImageElement | null>(null);
 
   const [carouselIdx, setCarouselIdx] = useState<number>(0);
   const [activeColor, setActiveColor] = useState<RalColour>(RAL_COLOURS[0]);
@@ -807,34 +710,6 @@ export default function TrueRefrigerationPage() {
     heroMatsRef.current.cabinet?.color.set(activeColor.hex);
     heroMatsRef.current.frame?.color.set(activeColor.hex);
   }, [activeColor]);
-
-  /* ─── Canvas pixel recolouring ─── */
-  const applyRecolour = useCallback(
-    (img: HTMLImageElement) => {
-      const canvas = colourCanvasRef.current;
-      if (!canvas) return;
-      recolourCanvas(img, canvas, activeColor.hex);
-    },
-    [activeColor]
-  );
-
-  useEffect(() => {
-    const canvas = colourCanvasRef.current;
-    if (!canvas) return;
-
-    if (sourceImageRef.current) {
-      applyRecolour(sourceImageRef.current);
-      return;
-    }
-
-    const img = new window.Image();
-    img.crossOrigin = "anonymous";
-    img.src = "/true-custom.png";
-    img.onload = () => {
-      sourceImageRef.current = img;
-      applyRecolour(img);
-    };
-  }, [applyRecolour]);
 
   /* ─── GSAP SCROLL ANIMATIONS ─── */
   useEffect(() => {
@@ -1053,6 +928,51 @@ export default function TrueRefrigerationPage() {
           transition: border-color 0.18s, color 0.18s;
         }
         .tr-btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+        /* ── Hero warranty badge — large logo version ── */
+        .tr-hero-warranty-badge {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          margin-top: 40px;
+          padding-top: 32px;
+          border-top: 1px solid rgba(255,255,255,0.10);
+        }
+        .tr-hero-warranty-logo {
+          flex-shrink: 0;
+          position: relative;
+          width: 140px;
+          height: 140px;
+        }
+        .tr-hero-warranty-text {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .tr-hero-warranty-num {
+          font-size: 2.6rem;
+          font-weight: 900;
+          letter-spacing: -0.05em;
+          color: #fff;
+          line-height: 1;
+        }
+        .tr-hero-warranty-num span { color: ${RED}; }
+        .tr-hero-warranty-lbl {
+          font-size: 9px;
+          font-weight: 600;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.40);
+          line-height: 1.6;
+        }
+        @media (max-width: 1020px) {
+          .tr-hero-warranty-logo { width: 110px; height: 110px; }
+        }
+        @media (max-width: 520px) {
+          .tr-hero-warranty-logo { width: 90px; height: 90px; }
+          .tr-hero-warranty-num { font-size: 2rem; }
+        }
+
         .tr-hero-img-col {
           position: relative; overflow: hidden; min-height: 520px;
           display: flex; align-items: center; justify-content: center;
@@ -1171,7 +1091,7 @@ export default function TrueRefrigerationPage() {
         .tr-prod-card:hover::before { transform: scaleX(1); }
         .tr-prod-img {
           position: relative; aspect-ratio: 4/3;
-          background: #000; overflow: hidden;
+          background: transparent; overflow: hidden;
         }
         .tr-prod-img img { transition: transform 0.4s ease; }
         .tr-prod-card:hover .tr-prod-img img { transform: scale(1.04); }
@@ -1323,43 +1243,43 @@ export default function TrueRefrigerationPage() {
         .tr-warranty-badge-text { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); line-height: 1.5; }
         .tr-warranty-badge-text strong { color: #fff; display: block; }
         .tr-warranty-right {
-          background: #fafafa; padding: 52px 44px;
+          background: #fafafa; padding: 44px 44px;
           display: flex; align-items: center; justify-content: center;
         }
-        .tr-warranty-img-wrap { position: relative; width: 100%; max-width: 260px; aspect-ratio: 4/3; }
+        /* ── BIGGER warranty logo: increased from 260px to 360px max-width ── */
+        .tr-warranty-img-wrap {
+          position: relative; width: 100%; max-width: 360px;
+        }
+        .tr-warranty-img-wrap img {
+          width: 100%; height: auto; display: block;
+        }
         @media (max-width: 820px) {
           .tr-warranty-block { grid-template-columns: 1fr; }
           .tr-warranty-left, .tr-warranty-right { padding: 36px 24px; }
+          .tr-warranty-img-wrap { max-width: 260px; }
         }
 
         /* ══ CUSTOM DESIGN ══ */
         .tr-custom-block { border: 1px solid ${BORDER}; border-radius: 3px; overflow: hidden; }
 
-        /*
-         * FIX: Top dark bar uses align-items: stretch so both columns
-         * are equal height, and the left column uses space-between
-         * to push swatches flush to where the chart bottom sits.
-         */
         .tr-custom-top {
           background: ${NAVY}; padding: 52px 52px 44px; position: relative;
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 48px;
-          align-items: stretch;   /* ← was: align-items: start */
+          align-items: stretch;
         }
         .tr-custom-top::before {
           content: ''; position: absolute; left: 0; top: 0; bottom: 0;
           width: 4px; background: ${RED};
         }
 
-        /* Left column: space-between pushes swatches to bottom of column */
         .tr-custom-top-left {
           display: flex;
           flex-direction: column;
-          justify-content: space-between;  /* ← key fix */
+          justify-content: space-between;
         }
 
-        /* Group heading+body together at the top */
         .tr-custom-top-left-text { display: flex; flex-direction: column; }
 
         .tr-custom-eyebrow {
@@ -1377,7 +1297,6 @@ export default function TrueRefrigerationPage() {
           line-height: 1.8; margin-bottom: 0;
         }
 
-        /* Swatches sit at the bottom of the left column — no extra margin-top needed */
         .tr-colour-grid { display: flex; gap: 10px; flex-wrap: wrap; }
         .tr-colour-swatch {
           width: 48px; height: 48px; border-radius: 4px; cursor: pointer;
@@ -1398,7 +1317,6 @@ export default function TrueRefrigerationPage() {
           width: 48px; line-height: 1.2;
         }
 
-        /* Right column — chart panel, constrained so it doesn't balloon the row height */
         .tr-custom-top-chart {
           border-radius: 4px;
           overflow: hidden;
@@ -1406,7 +1324,6 @@ export default function TrueRefrigerationPage() {
           background: rgba(255,255,255,0.04);
           box-shadow: 0 8px 40px rgba(0,0,0,0.25);
           align-self: center;
-          /* Cap the chart height so it matches the left column's natural content height */
           max-height: 420px;
           display: flex;
           flex-direction: column;
@@ -1414,7 +1331,6 @@ export default function TrueRefrigerationPage() {
         .tr-custom-top-chart img {
           display: block;
           width: 100%;
-          /* Let the image fill available space without exceeding the cap */
           flex: 1;
           min-height: 0;
           object-position: center top;
@@ -1443,15 +1359,16 @@ export default function TrueRefrigerationPage() {
           .tr-custom-top-chart { max-height: none; max-width: 480px; }
         }
 
-        /* Bottom white bar */
         .tr-custom-bottom {
           background: #fff; padding: 44px 52px;
           display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
         }
+
+        /* ── Cabinet image swap panel ── */
         .tr-custom-img {
           position: relative; aspect-ratio: 4/3;
           border-radius: 3px; overflow: hidden;
-          border: 1px solid ${BORDER}; background: #111;
+          background: transparent;
         }
         .tr-custom-img-overlay {
           position: absolute; bottom: 14px; left: 16px; z-index: 2; pointer-events: none;
@@ -1607,6 +1524,16 @@ export default function TrueRefrigerationPage() {
         }
 
         .tr-spacer { margin-top: 0; }
+
+        /* ── Cabinet image fade transition ── */
+        .tr-cabinet-img {
+          position: absolute; inset: 0;
+          width: 100%; height: 100%;
+          object-fit: contain;
+          object-position: center;
+          padding: 16px;
+          transition: opacity 0.35s ease;
+        }
       `}</style>
 
       {/* ── INQUIRY MODAL ── */}
@@ -1646,6 +1573,28 @@ export default function TrueRefrigerationPage() {
                   View Products
                 </a>
               </div>
+
+              {/* ── 7-Year Warranty Badge in hero — logo-first, large ── */}
+              <div className="tr-hero-warranty-badge">
+                <div className="tr-hero-warranty-logo">
+                  <Image
+                    src="/warranty-7yr.png"
+                    alt="7 Year Warranty"
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </div>
+                <div className="tr-hero-warranty-text">
+                  <div className="tr-hero-warranty-num">
+                    7<span>yr</span>
+                  </div>
+                  <div className="tr-hero-warranty-lbl">
+                    Parts, Compressor &amp; Labour<br />
+                    UK · Europe · Ireland
+                  </div>
+                </div>
+              </div>
+
               <div className="tr-hero-sector">
                 <span className="tr-sector-label">Working with</span>
                 <div className="tr-sector-ticker-wrap">
@@ -1708,6 +1657,52 @@ export default function TrueRefrigerationPage() {
             </div>
           </div>
 
+          {/* ══ WARRANTY — moved up before sectors/products ══ */}
+          <div className="tr-section-hd">
+            <span className="tr-section-label">Peace of Mind</span>
+            <span className="tr-section-accent">7 Years</span>
+          </div>
+
+          <div className="tr-warranty-block">
+            <div className="tr-warranty-left">
+              <p className="tr-warranty-eyebrow">Coverage</p>
+              <h3 className="tr-warranty-title">
+                Extended 7-Year
+                <br />
+                Warranty Included
+              </h3>
+              <p className="tr-warranty-body">
+                Enjoy peace of mind with our extended 7-year warranty—covering
+                parts, labour, and compressors across Europe, the UK, and
+                Ireland. At True Refrigeration, they craft durable, efficient,
+                and reliable equipment that lasts, so you can focus on serving
+                your customers. Choose True for a lasting investment in quality
+                and performance.
+              </p>
+              <div className="tr-warranty-badge">
+                <div className="tr-warranty-num">
+                  7<span>yr</span>
+                </div>
+                <div className="tr-warranty-badge-text">
+                  <strong>Parts, Compressor &amp; Labour</strong>
+                  UK, Europe &amp; Ireland · Full Coverage
+                </div>
+              </div>
+            </div>
+            <div className="tr-warranty-right">
+              {/* Bigger logo — now uses natural img sizing up to 360px */}
+              <div className="tr-warranty-img-wrap">
+                <Image
+                  src="/warranty-7yr.png"
+                  alt="7 Year Warranty — Parts, Compressor & Labour"
+                  width={720}
+                  height={720}
+                  style={{ width: "100%", height: "auto", objectFit: "contain", display: "block" }}
+                />
+              </div>
+            </div>
+          </div>
+
           {/* ── WORKING WITH SECTORS ── */}
           <div className="tr-section-hd">
             <span className="tr-section-label">Industries</span>
@@ -1751,7 +1746,7 @@ export default function TrueRefrigerationPage() {
                       src={p.img}
                       alt={p.name}
                       fill
-                      style={{ objectFit: "contain", objectPosition: "center", background: "#000" }}
+                      style={{ objectFit: "contain", objectPosition: "center" }}
                     />
                   </div>
                   <div className="tr-prod-body">
@@ -1831,50 +1826,6 @@ export default function TrueRefrigerationPage() {
             </div>
           </div>
 
-          {/* ── WARRANTY ── */}
-          <div className="tr-section-hd tr-spacer">
-            <span className="tr-section-label">Peace of Mind</span>
-            <span className="tr-section-accent">7 Years</span>
-          </div>
-
-          <div className="tr-warranty-block">
-            <div className="tr-warranty-left">
-              <p className="tr-warranty-eyebrow">Coverage</p>
-              <h3 className="tr-warranty-title">
-                Extended 7-Year
-                <br />
-                Warranty Included
-              </h3>
-              <p className="tr-warranty-body">
-                Enjoy peace of mind with our extended 7-year warranty—covering
-                parts, labour, and compressors across Europe, the UK, and
-                Ireland. At True Refrigeration, they craft durable, efficient,
-                and reliable equipment that lasts, so you can focus on serving
-                your customers. Choose True for a lasting investment in quality
-                and performance.
-              </p>
-              <div className="tr-warranty-badge">
-                <div className="tr-warranty-num">
-                  7<span>yr</span>
-                </div>
-                <div className="tr-warranty-badge-text">
-                  <strong>Parts, Compressor &amp; Labour</strong>
-                  UK, Europe &amp; Ireland · Full Coverage
-                </div>
-              </div>
-            </div>
-            <div className="tr-warranty-right">
-              <div className="tr-warranty-img-wrap">
-                <Image
-                  src="/warranty-7yr.png"
-                  alt="7 Year Warranty — Parts, Compressor & Labour"
-                  fill
-                  style={{ objectFit: "contain" }}
-                />
-              </div>
-            </div>
-          </div>
-
           {/* ── CUSTOM DESIGN ── */}
           <div className="tr-section-hd tr-spacer">
             <span className="tr-section-label">Bespoke Finishes</span>
@@ -1938,13 +1889,20 @@ export default function TrueRefrigerationPage() {
               </div>
             </div>
 
-            {/* White bottom bar */}
+            {/* White bottom bar — cabinet image swaps based on activeColor.img */}
             <div className="tr-custom-bottom">
               <div className="tr-custom-img">
-                <canvas
-                  ref={colourCanvasRef}
-                  style={{ width: "100%", height: "100%", display: "block", borderRadius: 3 }}
-                />
+                {/* Render all images; show only the active one for smooth crossfade */}
+                {RAL_COLOURS.map((c) => (
+                  <Image
+                    key={c.name}
+                    src={c.img}
+                    alt={`Cabinet in ${c.name}`}
+                    fill
+                    className="tr-cabinet-img"
+                    style={{ opacity: activeColor.name === c.name ? 1 : 0 }}
+                  />
+                ))}
                 <div className="tr-custom-img-overlay">
                   <span
                     className="tr-custom-colour-pill"
