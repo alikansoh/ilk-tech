@@ -35,7 +35,7 @@ interface RalColour {
   name: string;
   hex: string;
   border: string;
-  img: string; // ← cabinet image filename
+  img: string;
 }
 
 interface InquiryFormState {
@@ -126,7 +126,7 @@ const SECTORS: string[] = [
   "Catering",
 ];
 
-/* ─── RAL COLOURS — each maps to a pre-rendered cabinet image ─── */
+/* ─── RAL COLOURS ─── */
 const RAL_COLOURS: RalColour[] = [
   { name: "Stainless Steel", hex: STAINLESS_HEX, border: "#8A9BB0", img: "/true-custom.jpeg" },
   { name: "Green",           hex: "#4E7B4B",      border: "#3A5E38",  img: "/cabinet-green.png"    },
@@ -258,14 +258,13 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
   );
 }
 
-/* ─── THREE.JS SCENE BUILDER — STAINLESS STEEL FRIDGE ─── */
+/* ─── THREE.JS SCENE BUILDER ─── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
   camera.position.set(0.5, 0.3, 6.0);
 
-  /* ── ENV MAP ── */
   const pmrem = new THREE.PMREMGenerator(renderer);
   pmrem.compileEquirectangularShader();
 
@@ -285,7 +284,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   const envTexture = pmrem.fromScene(envScene, 0.04).texture;
   scene.environment = envTexture;
 
-  /* ── SCENE LIGHTS ── */
   scene.add(new THREE.AmbientLight(0xffffff, 0.28));
 
   const key = new THREE.DirectionalLight(0xffffff, 1.6);
@@ -314,7 +312,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   sideR.position.set(9, 0, 3);
   scene.add(sideR);
 
-  /* ── MATERIALS ── */
   const cabinetMat = new THREE.MeshStandardMaterial({
     color: initialHex,
     roughness: 0.30,
@@ -399,7 +396,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   const root = new THREE.Group();
   scene.add(root);
 
-  /* ── CABINET BODY ── */
   const cabinet = new THREE.Mesh(
     new THREE.BoxGeometry(2.2, 3.6, 1.1),
     cabinetMat
@@ -425,7 +421,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   kickPlate.position.y = -1.76;
   root.add(kickPlate);
 
-  /* ── DOORS ── */
   const lDoor = new THREE.Group();
   lDoor.add(new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.18, 0.07), frameMat));
   const lRecess = new THREE.Mesh(new THREE.BoxGeometry(0.86, 2.86, 0.022), ssDark);
@@ -456,7 +451,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   divider.position.set(0, 0.12, 0.585);
   root.add(divider);
 
-  /* ── HANDLES ── */
   const makeHandle = (xPos: number): void => {
     const g = new THREE.Group();
 
@@ -514,7 +508,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   makeHandle(-0.10);
   makeHandle(+0.10);
 
-  /* ── DIGITAL DISPLAY ── */
   const dispBase = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.13, 0.045), darkMat);
   dispBase.position.set(0.75, 1.70, 0.585);
   root.add(dispBase);
@@ -527,12 +520,10 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   ledStrip.position.set(0.75, 1.70, 0.625);
   root.add(ledStrip);
 
-  /* ── LOGO PANEL ── */
   const logoPan = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.10, 0.013), ssDark);
   logoPan.position.set(-0.54, -1.52, 0.59);
   root.add(logoPan);
 
-  /* ── DOOR LOCKS ── */
   [{ x: -0.54 + 0.32 }, { x: 0.54 - 0.32 }].forEach(({ x }) => {
     const lockGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.065, 14);
     const lock = new THREE.Mesh(lockGeo, handleBarMat);
@@ -548,7 +539,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     root.add(lockRing);
   });
 
-  /* ── CASTORS ── */
   const castorPositions: [number, number, number][] = [
     [-0.85, -1, 0.35],
     [0.85, -1, 0.35],
@@ -569,7 +559,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     root.add(hub);
   });
 
-  /* ── GLASS STRIP DETAIL ── */
   const glassL = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 1.9), glassMat);
   glassL.position.set(-0.80, 0.12, 0.596);
   root.add(glassL);
@@ -577,7 +566,6 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   glassR.position.set(0.34, 0.12, 0.596);
   root.add(glassR);
 
-  /* ── GROUND SHADOW ── */
   const groundPlane = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
     new THREE.ShadowMaterial({ opacity: 0.16 })
@@ -599,7 +587,6 @@ export default function TrueRefrigerationPage() {
   const [activeColor, setActiveColor] = useState<RalColour>(RAL_COLOURS[0]);
   const [enquiryProduct, setEnquiryProduct] = useState<EnquiryTarget | null>(null);
 
-  /* ─── AUTO-CAROUSEL ─── */
   useEffect(() => {
     const t = setInterval(() => {
       setCarouselIdx((i) => (i + 1) % SECTORS.length);
@@ -607,7 +594,6 @@ export default function TrueRefrigerationPage() {
     return () => clearInterval(t);
   }, []);
 
-  /* ─── THREE.JS — HERO 3D ─── */
   useEffect(() => {
     const container = heroThreeRef.current;
     if (!container) return;
@@ -705,13 +691,11 @@ export default function TrueRefrigerationPage() {
     };
   }, []);
 
-  /* ─── Sync hero 3D cabinet colour ─── */
   useEffect(() => {
     heroMatsRef.current.cabinet?.color.set(activeColor.hex);
     heroMatsRef.current.frame?.color.set(activeColor.hex);
   }, [activeColor]);
 
-  /* ─── GSAP SCROLL ANIMATIONS ─── */
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let ctx: { revert: () => void } | undefined;
@@ -929,30 +913,31 @@ export default function TrueRefrigerationPage() {
         }
         .tr-btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
 
-        /* ── Hero warranty badge — large logo version ── */
+        /* ══ HERO WARRANTY BADGE — full-width strip at bottom of text col ══ */
         .tr-hero-warranty-badge {
           display: flex;
           align-items: center;
-          gap: 20px;
-          margin-top: 40px;
-          padding-top: 32px;
+          gap: 36px;
+          margin-top: 44px;
+          padding-top: 36px;
           border-top: 1px solid rgba(255,255,255,0.10);
         }
+        /* Large warranty logo — 340px on desktop, scales down gracefully */
         .tr-hero-warranty-logo {
           flex-shrink: 0;
           position: relative;
-          width: 140px;
-          height: 140px;
+          width: 340px;
+          height: 340px;
         }
         .tr-hero-warranty-text {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 6px;
         }
         .tr-hero-warranty-num {
-          font-size: 2.6rem;
+          font-size: 3.8rem;
           font-weight: 900;
-          letter-spacing: -0.05em;
+          letter-spacing: -0.06em;
           color: #fff;
           line-height: 1;
         }
@@ -965,12 +950,22 @@ export default function TrueRefrigerationPage() {
           color: rgba(255,255,255,0.40);
           line-height: 1.6;
         }
+        @media (max-width: 1200px) {
+          .tr-hero-warranty-logo { width: 280px; height: 280px; }
+          .tr-hero-warranty-num { font-size: 3rem; }
+        }
         @media (max-width: 1020px) {
-          .tr-hero-warranty-logo { width: 110px; height: 110px; }
+          .tr-hero-warranty-logo { width: 220px; height: 220px; }
+          .tr-hero-warranty-num { font-size: 2.4rem; }
+        }
+        @media (max-width: 820px) {
+          .tr-hero-warranty-logo { width: 180px; height: 180px; }
+          .tr-hero-warranty-num { font-size: 2rem; }
         }
         @media (max-width: 520px) {
-          .tr-hero-warranty-logo { width: 90px; height: 90px; }
-          .tr-hero-warranty-num { font-size: 2rem; }
+          .tr-hero-warranty-logo { width: 140px; height: 140px; }
+          .tr-hero-warranty-num { font-size: 1.7rem; }
+          .tr-hero-warranty-badge { gap: 20px; }
         }
 
         .tr-hero-img-col {
@@ -1246,9 +1241,8 @@ export default function TrueRefrigerationPage() {
           background: #fafafa; padding: 44px 44px;
           display: flex; align-items: center; justify-content: center;
         }
-        /* ── BIGGER warranty logo: increased from 260px to 360px max-width ── */
         .tr-warranty-img-wrap {
-          position: relative; width: 100%; max-width: 360px;
+          position: relative; width: 100%; max-width: 520px;
         }
         .tr-warranty-img-wrap img {
           width: 100%; height: auto; display: block;
@@ -1256,7 +1250,7 @@ export default function TrueRefrigerationPage() {
         @media (max-width: 820px) {
           .tr-warranty-block { grid-template-columns: 1fr; }
           .tr-warranty-left, .tr-warranty-right { padding: 36px 24px; }
-          .tr-warranty-img-wrap { max-width: 260px; }
+          .tr-warranty-img-wrap { max-width: 340px; }
         }
 
         /* ══ CUSTOM DESIGN ══ */
@@ -1350,38 +1344,66 @@ export default function TrueRefrigerationPage() {
           font-size: 11px; color: rgba(255,255,255,0.38); line-height: 1.6;
         }
 
+        /* ── On desktop: left col has text+swatches, right col has chart ── */
+        /* ── On mobile: text → colour image → swatches → chart ── */
         @media (max-width: 960px) {
           .tr-custom-top {
             grid-template-columns: 1fr;
-            gap: 36px;
+            gap: 0;
+            padding: 36px 24px;
           }
-          .tr-custom-top-left { justify-content: flex-start; gap: 28px; }
-          .tr-custom-top-chart { max-height: none; max-width: 480px; }
+          .tr-custom-top-left {
+            justify-content: flex-start;
+            gap: 0;
+          }
+          /* Reorder on mobile: text first, then colour image, then swatches, then chart */
+          .tr-custom-top-left-text { order: 1; margin-bottom: 28px; }
+          .tr-custom-colour-grid-wrap { order: 3; margin-bottom: 0; }
+          .tr-custom-top-chart { order: 4; max-height: none; max-width: 100%; margin-top: 32px; }
+          /* Colour image panel injected between text and swatches on mobile */
+          .tr-custom-mobile-img { order: 2; display: block !important; margin-bottom: 28px; }
+        }
+        @media (min-width: 961px) {
+          .tr-custom-mobile-img { display: none !important; }
         }
 
+        /* ── Bottom section: full-bleed cabinet image, no white border ── */
         .tr-custom-bottom {
-          background: #fff; padding: 44px 52px;
-          display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
+          background: #fff;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0;
+          align-items: stretch;
         }
 
-        /* ── Cabinet image swap panel ── */
+        /* Cabinet image: full-bleed, tall, no padding, no border-radius */
         .tr-custom-img {
-          position: relative; aspect-ratio: 4/3;
-          border-radius: 3px; overflow: hidden;
-          background: transparent;
+          position: relative;
+          /* Portrait ratio — tall and impactful */
+          aspect-ratio: 3 / 4;
+          min-height: 560px;
+          overflow: hidden;
+          background: #f4f4f4;
         }
         .tr-custom-img-overlay {
-          position: absolute; bottom: 14px; left: 16px; z-index: 2; pointer-events: none;
+          position: absolute; bottom: 20px; left: 20px; z-index: 2; pointer-events: none;
         }
         .tr-custom-colour-pill {
           font-size: 9px; font-weight: 700;
           letter-spacing: 0.16em; text-transform: uppercase;
-          color: #fff; padding: 5px 14px; border-radius: 20px;
+          color: #fff; padding: 6px 16px; border-radius: 20px;
           backdrop-filter: blur(6px);
           border: 1px solid rgba(255,255,255,0.3);
           transition: background 0.3s; display: inline-block;
         }
-        .tr-custom-copy { padding-top: 8px; }
+
+        /* Copy col: padding, vertically centred */
+        .tr-custom-copy {
+          padding: 52px 52px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
         .tr-custom-copy h4 {
           font-size: 1.15rem; font-weight: 800;
           letter-spacing: -0.03em; color: ${NAVY}; margin-bottom: 12px;
@@ -1394,9 +1416,20 @@ export default function TrueRefrigerationPage() {
           color: ${RED}; text-decoration: none; transition: gap 0.15s;
         }
         .tr-custom-link:hover { gap: 12px; }
+
         @media (max-width: 820px) {
-          .tr-custom-top, .tr-custom-bottom { padding: 36px 24px; }
-          .tr-custom-bottom { grid-template-columns: 1fr; gap: 28px; }
+          .tr-custom-bottom { grid-template-columns: 1fr; }
+          .tr-custom-img { min-height: 400px; aspect-ratio: 4/3; }
+          .tr-custom-copy { padding: 36px 24px; }
+        }
+
+        /* Cabinet image fade transition */
+        .tr-cabinet-img {
+          position: absolute; inset: 0;
+          width: 100%; height: 100%;
+          object-fit: cover;
+          object-position: center;
+          transition: opacity 0.35s ease;
         }
 
         /* ══ SECTOR STRIP ══ */
@@ -1524,19 +1557,8 @@ export default function TrueRefrigerationPage() {
         }
 
         .tr-spacer { margin-top: 0; }
-
-        /* ── Cabinet image fade transition ── */
-        .tr-cabinet-img {
-          position: absolute; inset: 0;
-          width: 100%; height: 100%;
-          object-fit: contain;
-          object-position: center;
-          padding: 16px;
-          transition: opacity 0.35s ease;
-        }
       `}</style>
 
-      {/* ── INQUIRY MODAL ── */}
       {enquiryProduct && (
         <InquiryModal
           product={enquiryProduct}
@@ -1574,7 +1596,7 @@ export default function TrueRefrigerationPage() {
                 </a>
               </div>
 
-              {/* ── 7-Year Warranty Badge in hero — logo-first, large ── */}
+              {/* ── 7-Year Warranty Badge — large logo with text alongside ── */}
               <div className="tr-hero-warranty-badge">
                 <div className="tr-hero-warranty-logo">
                   <Image
@@ -1657,7 +1679,7 @@ export default function TrueRefrigerationPage() {
             </div>
           </div>
 
-          {/* ══ WARRANTY — moved up before sectors/products ══ */}
+          {/* ══ WARRANTY ══ */}
           <div className="tr-section-hd">
             <span className="tr-section-label">Peace of Mind</span>
             <span className="tr-section-accent">7 Years</span>
@@ -1690,7 +1712,6 @@ export default function TrueRefrigerationPage() {
               </div>
             </div>
             <div className="tr-warranty-right">
-              {/* Bigger logo — now uses natural img sizing up to 360px */}
               <div className="tr-warranty-img-wrap">
                 <Image
                   src="/warranty-7yr.png"
@@ -1833,11 +1854,10 @@ export default function TrueRefrigerationPage() {
           </div>
 
           <div className="tr-custom-block">
-            {/* Dark top bar */}
+            {/* ── Dark top: text + swatches on left, chart on right ── */}
             <div className="tr-custom-top">
-
-              {/* Left: heading+body grouped at top, swatches pushed to bottom */}
               <div className="tr-custom-top-left">
+                {/* Text */}
                 <div className="tr-custom-top-left-text">
                   <p className="tr-custom-eyebrow">Custom Design</p>
                   <h3 className="tr-custom-title">
@@ -1852,26 +1872,83 @@ export default function TrueRefrigerationPage() {
                   </p>
                 </div>
 
-                {/* Swatches — naturally aligned to bottom via space-between */}
-                <div className="tr-colour-grid">
+                {/* Mobile-only: colour image preview between text and swatches */}
+                <div
+                  className="tr-custom-mobile-img"
+                  style={{
+                    display: "none",
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "4/3",
+                    borderRadius: "4px",
+                    overflow: "hidden",
+                    border: "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
                   {RAL_COLOURS.map((c) => (
-                    <div
+                    <Image
                       key={c.name}
-                      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-                    >
-                      <div
-                        className={`tr-colour-swatch ${activeColor.name === c.name ? "tr-colour-swatch--active" : ""}`}
-                        style={{ background: c.hex, border: `2px solid ${c.border}` }}
-                        onClick={() => setActiveColor(c)}
-                        title={c.name}
-                      />
-                      <span className="tr-colour-label">{c.name}</span>
-                    </div>
+                      src={c.img}
+                      alt={`Cabinet in ${c.name}`}
+                      fill
+                      style={{
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        opacity: activeColor.name === c.name ? 1 : 0,
+                        transition: "opacity 0.35s ease",
+                      }}
+                    />
                   ))}
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 14,
+                      left: 16,
+                      zIndex: 2,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "9px",
+                        fontWeight: 700,
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                        color: "#fff",
+                        padding: "5px 14px",
+                        borderRadius: "20px",
+                        backdropFilter: "blur(6px)",
+                        border: "1px solid rgba(255,255,255,0.3)",
+                        background: `${activeColor.hex}cc`,
+                        display: "inline-block",
+                      }}
+                    >
+                      {activeColor.name}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Colour swatches */}
+                <div className="tr-custom-colour-grid-wrap" style={{ marginTop: 28 }}>
+                  <div className="tr-colour-grid">
+                    {RAL_COLOURS.map((c) => (
+                      <div
+                        key={c.name}
+                        style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+                      >
+                        <div
+                          className={`tr-colour-swatch ${activeColor.name === c.name ? "tr-colour-swatch--active" : ""}`}
+                          style={{ background: c.hex, border: `2px solid ${c.border}` }}
+                          onClick={() => setActiveColor(c)}
+                          title={c.name}
+                        />
+                        <span className="tr-colour-label">{c.name}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Right: chart constrained to 420px max-height */}
+              {/* Chart — right column on desktop, bottom on mobile */}
               <div className="tr-custom-top-chart">
                 <Image
                   src="/chart.jpeg"
@@ -1889,10 +1966,10 @@ export default function TrueRefrigerationPage() {
               </div>
             </div>
 
-            {/* White bottom bar — cabinet image swaps based on activeColor.img */}
+            {/* ── White bottom: full-bleed cabinet image + copy ── */}
             <div className="tr-custom-bottom">
+              {/* Full-bleed cabinet image — no padding, no gap, edge-to-edge */}
               <div className="tr-custom-img">
-                {/* Render all images; show only the active one for smooth crossfade */}
                 {RAL_COLOURS.map((c) => (
                   <Image
                     key={c.name}
