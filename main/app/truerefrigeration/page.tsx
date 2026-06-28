@@ -16,6 +16,8 @@ const RED = "#C8102E";
 const SILVER = "#8A9BB0";
 const MUTED = "#6B7280";
 const BORDER = "rgba(11,37,64,0.10)";
+const ACCENT       = "#741C4D";
+const ACCENT_HOVER = "#9B2566";
 
 /* ─── STAINLESS STEEL HEX ─── */
 const STAINLESS_HEX = "#B8BEC7";
@@ -263,6 +265,7 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
 function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+
   camera.position.set(0.5, 0.3, 6.0);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -1129,15 +1132,40 @@ export default function TrueRefrigerationPage() {
           display: flex; align-items: center; justify-content: flex-end;
           margin-top: 18px;
         }
-        .tr-prod-discover-all {
-          display: inline-flex; align-items: center; gap: 7px;
-          font-size: 10px; font-weight: 700;
-          letter-spacing: 0.18em; text-transform: uppercase;
-          color: ${MUTED}; text-decoration: none;
-          border: 1.5px solid ${BORDER};
-          padding: 10px 20px; border-radius: 2px;
-          transition: color 0.15s, border-color 0.15s;
-        }
+       .tr-prod-discover-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  color: #ffffff;
+  background: ${ACCENT};          /* fill it with your accent/brand colour */
+  border: 2px solid ${ACCENT};
+  padding: 12px 28px;
+  border-radius: 3px;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: background 0.2s, border-color 0.2s,
+              box-shadow 0.2s, transform 0.15s;
+}
+
+.tr-prod-discover-all:hover,
+.tr-prod-discover-all:focus-visible {
+  background: ${ACCENT_HOVER};    /* slightly lighter/darker shade */
+  border-color: ${ACCENT_HOVER};
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.26);
+  transform: translateY(-2px);    /* subtle lift on hover */
+}
+
+.tr-prod-discover-all:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
         .tr-prod-discover-all:hover { color: ${NAVY}; border-color: rgba(11,37,64,0.3); }
         .tr-prod-discover-all svg { flex-shrink: 0; }
         @media (max-width: 1060px) { .tr-products-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -1600,7 +1628,7 @@ export default function TrueRefrigerationPage() {
               <div className="tr-hero-warranty-badge">
                 <div className="tr-hero-warranty-logo">
                   <Image
-                    src="/warranty-7yr.png"
+                    src="/year.png"
                     alt="7 Year Warranty"
                     fill
                     style={{ objectFit: "contain" }}
