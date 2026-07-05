@@ -262,6 +262,7 @@ export default function JEHallPage() {
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
+        gsap.from(".jeh-hero-logo",   { opacity: 0, y: -12, duration: 0.6, ease: "power3.out", delay: 0.05 });
         gsap.from(".jeh-hero-eyebrow", { opacity: 0, x: -20, duration: 0.7, ease: "power3.out", delay: 0.2 });
         gsap.from(".jeh-hero-title",   { opacity: 0, y: 40,  duration: 0.9, ease: "power3.out", delay: 0.35 });
         gsap.from(".jeh-hero-body",    { opacity: 0, y: 24,  duration: 0.8, ease: "power3.out", delay: 0.6 });
@@ -358,6 +359,21 @@ export default function JEHallPage() {
           flex-direction: column;
           justify-content: center;
           padding: 80px 64px 80px 72px;
+        }
+
+        /* ── LOGO in hero ── */
+        .jeh-hero-logo {
+          margin-bottom: 28px;
+          display: flex;
+          align-items: center;
+        }
+        .jeh-hero-logo-badge {
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 4px;
+          padding: 10px 18px;
+          display: inline-flex;
+          align-items: center;
         }
 
         .jeh-hero-eyebrow {
@@ -1168,8 +1184,22 @@ export default function JEHallPage() {
         <section className="jeh-hero">
           <div className="jeh-hero-inner">
 
-            {/* LEFT — copy + AC unit */}
+            {/* LEFT — logo + copy + AC unit */}
             <div className="jeh-hero-text-col">
+
+              {/* ── LOGO — added above eyebrow ── */}
+              <div className="jeh-hero-logo">
+                <div className="jeh-hero-logo-badge">
+                  <Image
+                    src="/logo1.webp"
+                    alt="J & E Hall logo"
+                    width={140}
+                    height={56}
+                    style={{ objectFit: "contain", display: "block" }}
+                  />
+                </div>
+              </div>
+
               <p className="jeh-hero-eyebrow">J &amp; E Hall — Now Supplied by ILK</p>
 
               <h1 className="jeh-hero-title">
@@ -1542,7 +1572,7 @@ export default function JEHallPage() {
             </div>
             <div className="jeh-logo-img-wrap">
               <Image
-                src="/logo1.webp"
+                src="/j&E.jpeg"
                 alt="J & E Hall logo"
                 width={180}
                 height={72}
