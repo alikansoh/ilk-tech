@@ -13,7 +13,7 @@ const logos = [
     alt: "True Refrigeration",
     label: "True Refrigeration - Commercial Refrigeration"
   },  
-  {src:"/j&e.jpeg", alt:"J&E Hall", label:"J&E Hall - Commercial Refrigeration"},
+  {src:"/j&E.jpeg", alt:"J&E Hall", label:"J&E Hall - Commercial Refrigeration"},
 ];
 
 export default function LogoTicker() {
