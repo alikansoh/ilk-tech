@@ -649,11 +649,8 @@ export default function ArnegWorks() {
         .aw-video-wrap {
           position: relative;
           z-index: 1;
-          border-radius: 22px;
           overflow: hidden;
-          aspect-ratio: 16 / 8.2;
           background: #0d1117;
-          isolation: isolate;
           max-width: 640px;
           margin: 0 auto;
           padding: 2px;
@@ -679,22 +676,20 @@ export default function ArnegWorks() {
         .aw-video-inner {
           position: relative;
           width: 100%;
-          height: 100%;
-          border-radius: 20px;
           overflow: hidden;
         }
 
         .aw-video-el {
-          position: absolute;
-          inset: 0;
+          display: block;
           width: 100%;
-          height: 100%;
-          object-fit: cover;
+          height: auto;
+          object-fit: contain;
         }
 
         .aw-video-fallback {
-          position: absolute;
-          inset: 0;
+          position: relative;
+          width: 100%;
+          min-height: 320px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -755,8 +750,32 @@ export default function ArnegWorks() {
           box-shadow: 0 0 8px rgba(220,38,38,0.8);
         }
 
+        .aw-video-caption {
+          text-align: center;
+          margin-top: 24px;
+        }
+
+        .aw-video-caption-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(24px, 3vw, 34px);
+          letter-spacing: 0.03em;
+          color: #f8f4ef;
+          margin: 0;
+          line-height: 1.1;
+        }
+
+        .aw-video-caption-location {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: #dc2626;
+          margin: 8px 0 0;
+        }
+
         @media (max-width: 640px) {
-          .aw-video-wrap { aspect-ratio: 4 / 3.2; max-width: 100%; }
+          .aw-video-wrap { max-width: 100%; }
         }
 
         @media (max-width: 1100px) {
@@ -906,6 +925,11 @@ export default function ArnegWorks() {
                   </div>
                 )}
               </div>
+            </div>
+
+            <div className="aw-video-caption">
+              <p className="aw-video-caption-title">Milland Store &amp; Cafe</p>
+              <p className="aw-video-caption-location">Liphook</p>
             </div>
           </div>
         </div>
