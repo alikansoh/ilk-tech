@@ -7,6 +7,7 @@ import HowItWorks from "@/components/HowItsWork";
 import ArnegProducts from "@/components/ProductDesc";
 import CaseStudies from "@/components/CaseStudies";
 import Reviews from "@/components/Reviews";
+import OurCustomers from "@/components/ourCustomers";
 import Faqs from "@/components/Faqs";
 import type { Metadata } from "next";
 
@@ -61,6 +62,8 @@ export default function Home() {
         <HowItWorks />
         <CaseStudies />
         <Reviews />
+        <OurCustomers />
+
         <Faqs />
         
 
