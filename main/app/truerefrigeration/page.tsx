@@ -1444,103 +1444,158 @@ export default function TrueRefrigerationPage() {
           .tr-custom-mobile-img { display: none !important; }
         }
 
-        /* ── Bottom section: boxed colour photo card (left) + copy (right) ── */
-        .tr-custom-bottom {
-          background: #fff;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0;
-          align-items: stretch;
-        }
-
-        /* ── Boxed colour photo card — mirrors the chart box styling above ── */
-        .tr-custom-photo-wrap {
-          background: #fafafa;
-          padding: 48px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .tr-custom-photo-box {
-          width: 100%;
-          max-width: 440px;
-          border-radius: 6px;
-          overflow: hidden;
+        /* ── One unified card: reusable "beautiful box" for the cabinet photo + caption,
+           used standalone (mobile preview) and inside the bottom split card below ── */
+        .tr-card-standalone {
           border: 1px solid ${BORDER};
+          border-radius: 10px;
+          overflow: hidden;
           background: #fff;
-          box-shadow: 0 12px 48px rgba(11,37,64,0.16);
+          box-shadow: 0 12px 40px rgba(11,37,64,0.14);
+        }
+        .tr-card-media {
+          position: relative;
           display: flex;
           flex-direction: column;
-          transition: box-shadow 0.25s;
+          background: #f4f4f4;
         }
-        .tr-custom-photo-frame {
+        .tr-card-media-frame {
           position: relative;
-          aspect-ratio: 3 / 4;
+          flex: 1;
+          min-height: 240px;
           overflow: hidden;
           background: #f4f4f4;
         }
-        .tr-custom-photo-caption {
+        .tr-card-media-caption {
           display: flex;
           align-items: center;
-          gap: 14px;
-          padding: 18px 22px 20px;
+          gap: 12px;
+          padding: 16px 20px;
           border-top: 1px solid ${BORDER};
           background: #fff;
         }
-        .tr-custom-photo-swatch-dot {
-          width: 32px; height: 32px; border-radius: 50%;
+        .tr-card-swatch-dot {
+          width: 30px; height: 30px; border-radius: 50%;
           flex-shrink: 0;
           box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
           transition: background 0.3s, border-color 0.3s;
         }
-        .tr-custom-photo-caption-text {
-          display: flex; flex-direction: column; gap: 3px; min-width: 0;
-        }
-        .tr-custom-photo-caption-label {
+        .tr-card-caption-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+        .tr-card-caption-label {
           font-size: 8px; font-weight: 700;
-          letter-spacing: 0.22em; text-transform: uppercase;
-          color: ${RED};
+          letter-spacing: 0.22em; text-transform: uppercase; color: ${RED};
         }
-        .tr-custom-photo-caption-name {
-          font-size: 14px; font-weight: 800;
-          letter-spacing: -0.01em; color: ${NAVY};
-        }
-        .tr-custom-photo-caption-desc {
-          font-size: 11px; color: ${MUTED}; line-height: 1.5;
-        }
+        .tr-card-caption-name { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; color: ${NAVY}; }
+        .tr-card-caption-desc { font-size: 11px; color: ${MUTED}; line-height: 1.5; }
 
-        /* Copy col: padding, vertically centred */
-        .tr-custom-copy {
-          padding: 52px 52px;
+        /* ── Bottom section: ONE unified card (image + copy together, no double boxing) ── */
+        .tr-custom-bottom {
+          background: #f4f5f7;
+          padding: 48px;
           display: flex;
-          flex-direction: column;
           justify-content: center;
         }
+        .tr-custom-card {
+          position: relative;
+          width: 100%;
+          max-width: 760px;
+          display: grid;
+          grid-template-columns: 1fr;
+          background: #fff;
+          border: 1px solid rgba(11,37,64,0.08);
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 6px 16px rgba(11,37,64,0.06), 0 28px 64px rgba(11,37,64,0.16);
+          transition: box-shadow 0.35s ease, transform 0.35s ease;
+        }
+        .tr-custom-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 24px rgba(11,37,64,0.08), 0 40px 80px rgba(11,37,64,0.20);
+        }
+        .tr-custom-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, var(--tr-accent, ${RED}), var(--tr-accent-soft, #E8506A), var(--tr-accent, ${RED}));
+          z-index: 3;
+          transition: background 0.35s ease;
+        }
+        .tr-custom-card .tr-card-media-frame {
+          min-height: 460px;
+        }
+        .tr-custom-card .tr-card-media-frame::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(11,37,64,0) 60%, rgba(11,37,64,0.10) 100%);
+          pointer-events: none;
+        }
+        .tr-custom-card .tr-cabinet-img {
+          transition: transform 0.6s ease;
+        }
+        .tr-custom-card:hover .tr-cabinet-img {
+          transform: scale(1.035);
+        }
+
+        /* Caption strip — richer, with a ring around the swatch */
+        .tr-custom-card .tr-card-media-caption {
+          padding: 20px 26px;
+          gap: 16px;
+          background: linear-gradient(180deg, #ffffff, #fbfbfc);
+        }
+        .tr-custom-card .tr-card-swatch-dot {
+          width: 38px; height: 38px;
+          box-shadow: 0 0 0 4px #fff, 0 0 0 5px ${BORDER}, 0 4px 10px rgba(11,37,64,0.18);
+        }
+        .tr-custom-card .tr-card-caption-label { letter-spacing: 0.26em; }
+        .tr-custom-card .tr-card-caption-name { font-size: 15px; }
+
+        /* Copy section: sits below the big image, comfortable padding */
+        .tr-custom-copy {
+          position: relative;
+          padding: 8px 44px 44px;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+        }
         .tr-custom-copy h4 {
-          font-size: 1.15rem; font-weight: 800;
+          font-size: 1.2rem; font-weight: 800;
           letter-spacing: -0.03em; color: ${NAVY}; margin-bottom: 12px;
         }
-        .tr-custom-copy p { font-size: 14px; color: ${MUTED}; line-height: 1.8; margin-bottom: 20px; }
+        .tr-custom-copy p { font-size: 14px; color: ${MUTED}; line-height: 1.8; margin-bottom: 22px; }
         .tr-custom-link {
-          display: inline-flex; align-items: center; gap: 8px;
+          display: inline-flex; align-items: center; gap: 9px;
           font-size: 10px; font-weight: 700;
           letter-spacing: 0.2em; text-transform: uppercase;
-          color: ${RED}; text-decoration: none; transition: gap 0.15s;
+          color: #fff; text-decoration: none;
+          background: ${RED};
+          border: 1.5px solid ${RED};
+          padding: 13px 24px;
+          border-radius: 3px;
+          width: fit-content;
+          box-shadow: 0 6px 18px rgba(200,16,46,0.22);
+          transition: gap 0.15s, background 0.2s, box-shadow 0.2s, transform 0.15s;
         }
-        .tr-custom-link:hover { gap: 12px; }
+        .tr-custom-link:hover {
+          gap: 13px;
+          background: #a50e25;
+          box-shadow: 0 10px 24px rgba(200,16,46,0.3);
+          transform: translateY(-1px);
+        }
 
         @media (max-width: 820px) {
-          .tr-custom-bottom { grid-template-columns: 1fr; }
-          .tr-custom-photo-wrap { padding: 28px 24px; }
-          .tr-custom-photo-box { max-width: 100%; }
-          .tr-custom-copy { padding: 36px 24px; }
+          .tr-custom-bottom { padding: 24px; }
+          .tr-custom-card .tr-card-media-frame { min-height: 260px; }
+          .tr-custom-copy { padding: 28px 24px 32px; }
         }
 
-        /* Cabinet image fade transition */
+        /* Cabinet image fade transition — object-fit: contain so the full
+           kitchen photo is always visible, never cropped */
         .tr-cabinet-img {
           position: absolute; inset: 0;
           width: 100%; height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           object-position: center;
           transition: opacity 0.35s ease;
         }
@@ -1985,13 +2040,10 @@ export default function TrueRefrigerationPage() {
                   </p>
                 </div>
 
-                {/* Mobile-only: boxed colour photo preview between text and swatches */}
+                {/* Mobile-only: single boxed colour photo preview between text and swatches */}
                 <div className="tr-custom-mobile-img">
-                  <div className="tr-custom-photo-box">
-                    <div
-                      className="tr-custom-photo-frame"
-                      style={{ aspectRatio: "4/3" }}
-                    >
+                  <div className="tr-card-standalone">
+                    <div className="tr-card-media-frame">
                       {RAL_COLOURS.map((c) => (
                         <Image
                           key={c.name}
@@ -2003,24 +2055,18 @@ export default function TrueRefrigerationPage() {
                         />
                       ))}
                     </div>
-                    <div className="tr-custom-photo-caption">
+                    <div className="tr-card-media-caption">
                       <div
-                        className="tr-custom-photo-swatch-dot"
+                        className="tr-card-swatch-dot"
                         style={{
                           background: activeColor.hex,
                           border: `2px solid ${activeColor.border}`,
                         }}
                       />
-                      <div className="tr-custom-photo-caption-text">
-                        <span className="tr-custom-photo-caption-label">
-                          Selected Finish
-                        </span>
-                        <span className="tr-custom-photo-caption-name">
-                          {activeColor.name}
-                        </span>
-                        <span className="tr-custom-photo-caption-desc">
-                          {activeColor.description}
-                        </span>
+                      <div className="tr-card-caption-text">
+                        <span className="tr-card-caption-label">Selected Finish</span>
+                        <span className="tr-card-caption-name">{activeColor.name}</span>
+                        <span className="tr-card-caption-desc">{activeColor.description}</span>
                       </div>
                     </div>
                   </div>
@@ -2065,12 +2111,19 @@ export default function TrueRefrigerationPage() {
               </div>
             </div>
 
-            {/* ── White bottom: boxed colour photo card + copy ── */}
+            {/* ── ONE unified card: cabinet photo + copy, no nested double-boxing ── */}
             <div className="tr-custom-bottom">
-              {/* Boxed cabinet photo card — image + caption panel, echoes the chart box above */}
-              <div className="tr-custom-photo-wrap">
-                <div className="tr-custom-photo-box">
-                  <div className="tr-custom-photo-frame">
+              <div
+                className="tr-custom-card"
+                style={
+                  {
+                    "--tr-accent": activeColor.hex,
+                    "--tr-accent-soft": activeColor.border,
+                  } as unknown as CSSProperties
+                }
+              >
+                <div className="tr-card-media">
+                  <div className="tr-card-media-frame">
                     {RAL_COLOURS.map((c) => (
                       <Image
                         key={c.name}
@@ -2082,45 +2135,39 @@ export default function TrueRefrigerationPage() {
                       />
                     ))}
                   </div>
-                  <div className="tr-custom-photo-caption">
+                  <div className="tr-card-media-caption">
                     <div
-                      className="tr-custom-photo-swatch-dot"
+                      className="tr-card-swatch-dot"
                       style={{
                         background: activeColor.hex,
                         border: `2px solid ${activeColor.border}`,
                       }}
                     />
-                    <div className="tr-custom-photo-caption-text">
-                      <span className="tr-custom-photo-caption-label">
-                        Selected Finish
-                      </span>
-                      <span className="tr-custom-photo-caption-name">
-                        {activeColor.name}
-                      </span>
-                      <span className="tr-custom-photo-caption-desc">
-                        {activeColor.description}
-                      </span>
+                    <div className="tr-card-caption-text">
+                      <span className="tr-card-caption-label">Selected Finish</span>
+                      <span className="tr-card-caption-name">{activeColor.name}</span>
+                      <span className="tr-card-caption-desc">{activeColor.description}</span>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="tr-custom-copy">
-                <div className="tr-rule" style={{ marginBottom: 20 }} />
-                <h4>Your Brand. Your Unit.</h4>
-                <p>
-                  Select from stainless steel, green, blue, pink, red, orange,
-                  silver, or black finishes. Custom RAL colours available on
-                  request. Speak to our team about your brand requirements.
-                </p>
-                <a
-                  href="https://www.truerefrigeration.co.uk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tr-custom-link"
-                >
-                  Discover the Full Range on TrueRef →
-                </a>
+                <div className="tr-custom-copy">
+                  <div className="tr-rule" style={{ marginBottom: 18 }} />
+                  <h4>Your Brand. Your Unit.</h4>
+                  <p>
+                    Select from stainless steel, green, blue, pink, red, orange,
+                    silver, or black finishes. Custom RAL colours available on
+                    request. Speak to our team about your brand requirements.
+                  </p>
+                  <a
+                    href="https://www.truerefrigeration.co.uk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tr-custom-link"
+                  >
+                    Discover the Full Range on TrueRef →
+                  </a>
+                </div>
               </div>
             </div>
           </div>
