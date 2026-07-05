@@ -1191,7 +1191,7 @@ export default function JEHallPage() {
               <div className="jeh-hero-logo">
                 <div className="jeh-hero-logo-badge">
                   <Image
-                    src="/logo1.webp"
+                    src="/j&E.jpeg"
                     alt="J & E Hall logo"
                     width={140}
                     height={56}
@@ -1572,7 +1572,7 @@ export default function JEHallPage() {
             </div>
             <div className="jeh-logo-img-wrap">
               <Image
-                src="/j&E.jpeg"
+                src="/logo1.webp"
                 alt="J & E Hall logo"
                 width={180}
                 height={72}
