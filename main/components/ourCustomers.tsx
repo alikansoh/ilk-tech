@@ -13,6 +13,7 @@ const customers = [
   { src: "/costcutter.png", alt: "Costcutter", label: "Costcutter" },
   {src:"/asda.webp", alt:"Asda Express", label:"Asda Express"},
   { src: "/bp.png", alt: "BP petrol station.", label: "BP petrol station." },
+  {src:"spar.jpeg", alt:"Spar", label:"Spar"},
 ];
 
 export default function OurCustomers() {
