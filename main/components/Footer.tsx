@@ -8,6 +8,8 @@ const products = [
   { name: "Osaka 3 SC", href: "/products/osaka-3-sc" },
   { name: "Panama 3", href: "/products/panama-3" },
   { name: "Panama 3 SC", href: "/products/panama-3-sc" },
+  { name: "Bar Refrigeration", href: "/products/bar-refrigeration" },
+  { name: "Bar Refrigeration 1", href: "/products/bar-refrigeration-1" },
 ];
 
 const navLinks = [

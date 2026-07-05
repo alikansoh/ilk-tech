@@ -38,6 +38,7 @@ interface RalColour {
   hex: string;
   border: string;
   img: string;
+  description: string;
 }
 
 interface InquiryFormState {
@@ -130,14 +131,62 @@ const SECTORS: string[] = [
 
 /* ─── RAL COLOURS ─── */
 const RAL_COLOURS: RalColour[] = [
-  { name: "Stainless Steel", hex: STAINLESS_HEX, border: "#8A9BB0", img: "/true-custom.jpeg" },
-  { name: "Green",           hex: "#4E7B4B",      border: "#3A5E38",  img: "/cabinet-green.png"    },
-  { name: "Blue",            hex: "#1F4E8C",      border: "#163870",  img: "/cabinet-blue.png"     },
-  { name: "Pink",            hex: "#E8829A",      border: "#D0607C",  img: "/cabinet-pink.png"     },
-  { name: "Red",             hex: "#C8102E",      border: "#A00E26",  img: "/cabinet-red.png"      },
-  { name: "Orange",          hex: "#E8650A",      border: "#C05206",  img: "/cabinet-orange.png"   },
-  { name: "Silver",          hex: "#D8DCE0",      border: "#B0B7C0",  img: "/cabinet-silver.png"   },
-  { name: "Black",           hex: "#1A1A1A",      border: "#0A0A0A",  img: "/cabinet-black.png"    },
+  {
+    name: "Stainless Steel",
+    hex: STAINLESS_HEX,
+    border: "#8A9BB0",
+    img: "/true-custom.jpeg",
+    description: "The industry standard finish — brushed, durable, and timeless.",
+  },
+  {
+    name: "Green",
+    hex: "#4E7B4B",
+    border: "#3A5E38",
+    img: "/cabinet-green.png",
+    description: "A bold, natural tone for standout brand presence.",
+  },
+  {
+    name: "Blue",
+    hex: "#1F4E8C",
+    border: "#163870",
+    img: "/cabinet-blue.png",
+    description: "Cool and confident — a modern fit for contemporary kitchens.",
+  },
+  {
+    name: "Pink",
+    hex: "#E8829A",
+    border: "#D0607C",
+    img: "/cabinet-pink.png",
+    description: "A distinctive, vibrant finish for boutique concepts.",
+  },
+  {
+    name: "Red",
+    hex: "#C8102E",
+    border: "#A00E26",
+    img: "/cabinet-red.png",
+    description: "High-impact colour matched to bold brand identities.",
+  },
+  {
+    name: "Orange",
+    hex: "#E8650A",
+    border: "#C05206",
+    img: "/cabinet-orange.png",
+    description: "Warm and energetic — suited to fast-casual concepts.",
+  },
+  {
+    name: "Silver",
+    hex: "#D8DCE0",
+    border: "#B0B7C0",
+    img: "/cabinet-silver.png",
+    description: "Sleek and understated, with a premium finish.",
+  },
+  {
+    name: "Black",
+    hex: "#1A1A1A",
+    border: "#0A0A0A",
+    img: "/cabinet-black.png",
+    description: "Sophisticated matte-inspired tone for premium branding.",
+  },
 ];
 
 /* ─── INQUIRY MODAL ─── */
@@ -1395,7 +1444,7 @@ export default function TrueRefrigerationPage() {
           .tr-custom-mobile-img { display: none !important; }
         }
 
-        /* ── Bottom section: full-bleed cabinet image, no white border ── */
+        /* ── Bottom section: boxed colour photo card (left) + copy (right) ── */
         .tr-custom-bottom {
           background: #fff;
           display: grid;
@@ -1404,25 +1453,60 @@ export default function TrueRefrigerationPage() {
           align-items: stretch;
         }
 
-        /* Cabinet image: full-bleed, tall, no padding, no border-radius */
-        .tr-custom-img {
+        /* ── Boxed colour photo card — mirrors the chart box styling above ── */
+        .tr-custom-photo-wrap {
+          background: #fafafa;
+          padding: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .tr-custom-photo-box {
+          width: 100%;
+          max-width: 440px;
+          border-radius: 6px;
+          overflow: hidden;
+          border: 1px solid ${BORDER};
+          background: #fff;
+          box-shadow: 0 12px 48px rgba(11,37,64,0.16);
+          display: flex;
+          flex-direction: column;
+          transition: box-shadow 0.25s;
+        }
+        .tr-custom-photo-frame {
           position: relative;
-          /* Portrait ratio — tall and impactful */
           aspect-ratio: 3 / 4;
-          min-height: 560px;
           overflow: hidden;
           background: #f4f4f4;
         }
-        .tr-custom-img-overlay {
-          position: absolute; bottom: 20px; left: 20px; z-index: 2; pointer-events: none;
+        .tr-custom-photo-caption {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 18px 22px 20px;
+          border-top: 1px solid ${BORDER};
+          background: #fff;
         }
-        .tr-custom-colour-pill {
-          font-size: 9px; font-weight: 700;
-          letter-spacing: 0.16em; text-transform: uppercase;
-          color: #fff; padding: 6px 16px; border-radius: 20px;
-          backdrop-filter: blur(6px);
-          border: 1px solid rgba(255,255,255,0.3);
-          transition: background 0.3s; display: inline-block;
+        .tr-custom-photo-swatch-dot {
+          width: 32px; height: 32px; border-radius: 50%;
+          flex-shrink: 0;
+          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+          transition: background 0.3s, border-color 0.3s;
+        }
+        .tr-custom-photo-caption-text {
+          display: flex; flex-direction: column; gap: 3px; min-width: 0;
+        }
+        .tr-custom-photo-caption-label {
+          font-size: 8px; font-weight: 700;
+          letter-spacing: 0.22em; text-transform: uppercase;
+          color: ${RED};
+        }
+        .tr-custom-photo-caption-name {
+          font-size: 14px; font-weight: 800;
+          letter-spacing: -0.01em; color: ${NAVY};
+        }
+        .tr-custom-photo-caption-desc {
+          font-size: 11px; color: ${MUTED}; line-height: 1.5;
         }
 
         /* Copy col: padding, vertically centred */
@@ -1447,7 +1531,8 @@ export default function TrueRefrigerationPage() {
 
         @media (max-width: 820px) {
           .tr-custom-bottom { grid-template-columns: 1fr; }
-          .tr-custom-img { min-height: 400px; aspect-ratio: 4/3; }
+          .tr-custom-photo-wrap { padding: 28px 24px; }
+          .tr-custom-photo-box { max-width: 100%; }
           .tr-custom-copy { padding: 36px 24px; }
         }
 
@@ -1900,58 +1985,44 @@ export default function TrueRefrigerationPage() {
                   </p>
                 </div>
 
-                {/* Mobile-only: colour image preview between text and swatches */}
-                <div
-                  className="tr-custom-mobile-img"
-                  style={{
-                    display: "none",
-                    position: "relative",
-                    width: "100%",
-                    aspectRatio: "4/3",
-                    borderRadius: "4px",
-                    overflow: "hidden",
-                    border: "1px solid rgba(255,255,255,0.10)",
-                  }}
-                >
-                  {RAL_COLOURS.map((c) => (
-                    <Image
-                      key={c.name}
-                      src={c.img}
-                      alt={`Cabinet in ${c.name}`}
-                      fill
-                      style={{
-                        objectFit: "cover",
-                        objectPosition: "center",
-                        opacity: activeColor.name === c.name ? 1 : 0,
-                        transition: "opacity 0.35s ease",
-                      }}
-                    />
-                  ))}
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: 14,
-                      left: 16,
-                      zIndex: 2,
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "9px",
-                        fontWeight: 700,
-                        letterSpacing: "0.16em",
-                        textTransform: "uppercase",
-                        color: "#fff",
-                        padding: "5px 14px",
-                        borderRadius: "20px",
-                        backdropFilter: "blur(6px)",
-                        border: "1px solid rgba(255,255,255,0.3)",
-                        background: `${activeColor.hex}cc`,
-                        display: "inline-block",
-                      }}
+                {/* Mobile-only: boxed colour photo preview between text and swatches */}
+                <div className="tr-custom-mobile-img">
+                  <div className="tr-custom-photo-box">
+                    <div
+                      className="tr-custom-photo-frame"
+                      style={{ aspectRatio: "4/3" }}
                     >
-                      {activeColor.name}
-                    </span>
+                      {RAL_COLOURS.map((c) => (
+                        <Image
+                          key={c.name}
+                          src={c.img}
+                          alt={`Cabinet in ${c.name}`}
+                          fill
+                          className="tr-cabinet-img"
+                          style={{ opacity: activeColor.name === c.name ? 1 : 0 }}
+                        />
+                      ))}
+                    </div>
+                    <div className="tr-custom-photo-caption">
+                      <div
+                        className="tr-custom-photo-swatch-dot"
+                        style={{
+                          background: activeColor.hex,
+                          border: `2px solid ${activeColor.border}`,
+                        }}
+                      />
+                      <div className="tr-custom-photo-caption-text">
+                        <span className="tr-custom-photo-caption-label">
+                          Selected Finish
+                        </span>
+                        <span className="tr-custom-photo-caption-name">
+                          {activeColor.name}
+                        </span>
+                        <span className="tr-custom-photo-caption-desc">
+                          {activeColor.description}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1994,27 +2065,43 @@ export default function TrueRefrigerationPage() {
               </div>
             </div>
 
-            {/* ── White bottom: full-bleed cabinet image + copy ── */}
+            {/* ── White bottom: boxed colour photo card + copy ── */}
             <div className="tr-custom-bottom">
-              {/* Full-bleed cabinet image — no padding, no gap, edge-to-edge */}
-              <div className="tr-custom-img">
-                {RAL_COLOURS.map((c) => (
-                  <Image
-                    key={c.name}
-                    src={c.img}
-                    alt={`Cabinet in ${c.name}`}
-                    fill
-                    className="tr-cabinet-img"
-                    style={{ opacity: activeColor.name === c.name ? 1 : 0 }}
-                  />
-                ))}
-                <div className="tr-custom-img-overlay">
-                  <span
-                    className="tr-custom-colour-pill"
-                    style={{ background: `${activeColor.hex}cc` }}
-                  >
-                    {activeColor.name}
-                  </span>
+              {/* Boxed cabinet photo card — image + caption panel, echoes the chart box above */}
+              <div className="tr-custom-photo-wrap">
+                <div className="tr-custom-photo-box">
+                  <div className="tr-custom-photo-frame">
+                    {RAL_COLOURS.map((c) => (
+                      <Image
+                        key={c.name}
+                        src={c.img}
+                        alt={`Cabinet in ${c.name}`}
+                        fill
+                        className="tr-cabinet-img"
+                        style={{ opacity: activeColor.name === c.name ? 1 : 0 }}
+                      />
+                    ))}
+                  </div>
+                  <div className="tr-custom-photo-caption">
+                    <div
+                      className="tr-custom-photo-swatch-dot"
+                      style={{
+                        background: activeColor.hex,
+                        border: `2px solid ${activeColor.border}`,
+                      }}
+                    />
+                    <div className="tr-custom-photo-caption-text">
+                      <span className="tr-custom-photo-caption-label">
+                        Selected Finish
+                      </span>
+                      <span className="tr-custom-photo-caption-name">
+                        {activeColor.name}
+                      </span>
+                      <span className="tr-custom-photo-caption-desc">
+                        {activeColor.description}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
