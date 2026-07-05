@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const customers = [
   { src: "/nisa-local.png", alt: "Nisa Local", label: "Nisa Local" },
@@ -21,13 +23,20 @@ export default function OurCustomers() {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const [loadedCount, setLoadedCount] = useState(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!sectionRef.current) return;
+
     const ctx = gsap.context(() => {
-      // Heading fade/slide in
-      gsap.from(headingRef.current, {
-        opacity: 0,
-        y: 24,
+      // Set explicit starting state first so there's no flash
+      gsap.set(headingRef.current, { opacity: 0, y: 24 });
+      const cards = gridRef.current?.querySelectorAll(".customer-card");
+      if (cards?.length) gsap.set(cards, { opacity: 0, y: 30, scale: 0.95 });
+
+      gsap.to(headingRef.current, {
+        opacity: 1,
+        y: 0,
         duration: 0.7,
         ease: "power3.out",
         scrollTrigger: {
@@ -37,13 +46,11 @@ export default function OurCustomers() {
         },
       });
 
-      // Cards staggered fade/scale in
-      const cards = gridRef.current?.querySelectorAll(".customer-card");
-      if (cards && cards.length) {
-        gsap.from(cards, {
-          opacity: 0,
-          y: 30,
-          scale: 0.95,
+      if (cards?.length) {
+        gsap.to(cards, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
           duration: 0.6,
           ease: "power2.out",
           stagger: 0.08,
@@ -54,10 +61,13 @@ export default function OurCustomers() {
           },
         });
       }
+
+      // Recalculate trigger positions once everything (esp. images) has settled
+      ScrollTrigger.refresh();
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [loadedCount]);
 
   return (
     <section
@@ -123,6 +133,7 @@ export default function OurCustomers() {
                   alt={customer.alt}
                   fill
                   className="object-contain"
+                  onLoad={() => setLoadedCount((c) => c + 1)}
                 />
               </div>
 
