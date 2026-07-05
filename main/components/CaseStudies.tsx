@@ -29,6 +29,10 @@ export default function ArnegWorks() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
 
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const videoWrapRef = useRef<HTMLDivElement | null>(null);
+  const [videoError, setVideoError] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -93,6 +97,19 @@ export default function ArnegWorks() {
             scrollTrigger: { trigger: ".aw-slider-wrap", start: "top 85%" },
           }
         );
+
+        gsap.fromTo(
+          ".aw-video-wrap",
+          { y: 60, opacity: 0, scale: 0.97 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            ease: "expo.out",
+            duration: 1.1,
+            scrollTrigger: { trigger: ".aw-video-wrap", start: "top 85%" },
+          }
+        );
       }, sectionRef);
     })();
 
@@ -141,6 +158,55 @@ export default function ArnegWorks() {
       document.body.style.overflow = "";
     };
   }, []);
+
+  // Autoplay video when scrolled into view, pause when scrolled out
+  useEffect(() => {
+    const wrap = videoWrapRef.current;
+    const v = videoRef.current;
+    if (!wrap || !v || videoError) return;
+
+    const tryPlay = () => {
+      v.muted = true;
+      const playPromise = v.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay blocked (e.g. user hasn't interacted with the page yet).
+          // It will retry on the next intersection change or user interaction.
+        });
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          tryPlay();
+        } else {
+          v.pause();
+        }
+      },
+      { threshold: 0.3, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    observer.observe(wrap);
+
+    // Also retry on first user interaction, in case the browser blocked
+    // the initial programmatic autoplay attempt.
+    const retryOnInteraction = () => {
+      const rect = wrap.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (inView && v.paused) tryPlay();
+    };
+    window.addEventListener("scroll", retryOnInteraction, { passive: true });
+    window.addEventListener("click", retryOnInteraction);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", retryOnInteraction);
+      window.removeEventListener("click", retryOnInteraction);
+    };
+  }, [videoError, mounted]);
+
+  // Video error fallback only — playback is handled by native browser controls
 
   const lightbox =
     mounted && lightboxIndex !== null
@@ -561,6 +627,138 @@ export default function ArnegWorks() {
         .aw-lb-prev { left: -72px; }
         .aw-lb-next { right: -72px; }
 
+        /* ══ VIDEO SECTION ══ */
+        .aw-video-section {
+          position: relative;
+          margin-top: 88px;
+        }
+
+        .aw-video-glow {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 720px;
+          height: 420px;
+          background: radial-gradient(circle, rgba(220,38,38,0.16) 0%, rgba(59,130,246,0.08) 45%, transparent 72%);
+          filter: blur(50px);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .aw-video-wrap {
+          position: relative;
+          z-index: 1;
+          border-radius: 22px;
+          overflow: hidden;
+          aspect-ratio: 16 / 8.2;
+          background: #0d1117;
+          isolation: isolate;
+          max-width: 640px;
+          margin: 0 auto;
+          padding: 2px;
+          background:
+            linear-gradient(#0d1117, #0d1117) padding-box,
+            linear-gradient(135deg, rgba(220,38,38,0.55), rgba(255,255,255,0.08) 35%, rgba(59,130,246,0.35) 75%) border-box;
+          border: 1px solid transparent;
+          box-shadow:
+            0 1px 0 rgba(255,255,255,0.06) inset,
+            0 32px 72px rgba(0,0,0,0.55),
+            0 0 0 1px rgba(255,255,255,0.03);
+          transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), box-shadow 0.5s ease;
+        }
+
+        .aw-video-wrap:hover {
+          transform: translateY(-3px);
+          box-shadow:
+            0 1px 0 rgba(255,255,255,0.08) inset,
+            0 40px 88px rgba(0,0,0,0.6),
+            0 0 0 1px rgba(220,38,38,0.25);
+        }
+
+        .aw-video-inner {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          border-radius: 20px;
+          overflow: hidden;
+        }
+
+        .aw-video-el {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .aw-video-fallback {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          background: linear-gradient(135deg, #0d1117 0%, #001845 100%);
+        }
+
+        .aw-video-fallback-icon {
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.04);
+          color: rgba(248,244,239,0.35);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+        }
+
+        .aw-video-fallback-text {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: rgba(248,244,239,0.4);
+          margin: 0;
+        }
+
+        .aw-video-tag {
+          position: absolute;
+          top: 16px;
+          left: 16px;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: rgba(15,20,35,0.55);
+          border: 1px solid rgba(255,255,255,0.14);
+          color: #f8f4ef;
+          padding: 6px 12px;
+          border-radius: 999px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          backdrop-filter: blur(10px);
+          z-index: 3;
+        }
+
+        .aw-video-tag-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #dc2626;
+          box-shadow: 0 0 8px rgba(220,38,38,0.8);
+        }
+
+        @media (max-width: 640px) {
+          .aw-video-wrap { aspect-ratio: 4 / 3.2; max-width: 100%; }
+        }
+
         @media (max-width: 1100px) {
           .aw-header {
             flex-direction: column;
@@ -669,6 +867,46 @@ export default function ArnegWorks() {
                 ))}
               </Swiper>
             )}
+          </div>
+
+          {/* ══ VIDEO SECTION — added below gallery ══ */}
+          <div className="aw-video-section">
+            <div className="aw-video-glow" />
+
+            <div className="aw-video-wrap" ref={videoWrapRef}>
+              <div className="aw-video-inner">
+                {videoError ? (
+                  <div className="aw-video-fallback">
+                    <span className="aw-video-fallback-icon">▶</span>
+                    <p className="aw-video-fallback-text">
+                      Video coming soon
+                    </p>
+                  </div>
+                ) : (
+                  <video
+                    ref={videoRef}
+                    className="aw-video-el"
+                    poster="/showcase-poster.jpg"
+                    controls
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                    preload="auto"
+                    onError={() => setVideoError(true)}
+                  >
+                    <source src="/showcase-video.mp4" type="video/mp4" />
+                  </video>
+                )}
+
+                {!videoError && (
+                  <div className="aw-video-tag">
+                    <span className="aw-video-tag-dot" />
+                    Showreel
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
