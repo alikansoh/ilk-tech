@@ -47,11 +47,13 @@ export const metadata: Metadata = {
     template: "%s | ILK Technology",
   },
   description:
-    "ILK Technology is the UK's authorised Arneg distribution partner supplying commercial refrigeration cabinets, cold rooms, plug-in systems, checkouts and shelving. 20+ years experience. UK-wide delivery.",
+    "ILK Technology is the UK's authorised Arneg distribution partner and True Refrigeration supplier, providing commercial refrigeration cabinets, cold rooms, plug-in systems, bar refrigeration, checkouts and shelving. 20+ years experience. UK-wide delivery.",
   keywords: [
     "commercial refrigeration UK",
     "Arneg distribution partner UK",
     "Arneg dealer UK",
+    "True Refrigeration UK",
+    "True bar refrigerator UK",
     "commercial refrigeration cabinets",
     "remote multideck cabinets",
     "Osaka 2 refrigeration",
@@ -59,6 +61,7 @@ export const metadata: Metadata = {
     "Panama 3 display cabinet",
     "cold rooms UK",
     "plug-in refrigeration",
+    "bar refrigeration UK",
     "supermarket refrigeration",
     "retail refrigeration supplier",
     "Oscartielle UK",
@@ -87,7 +90,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: "ILK Technology | Commercial Refrigeration & Arneg UK Distribution Partner",
     description:
-      "Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold. Commercial refrigeration cabinets, cold rooms, plug-in systems, checkouts and shelving. 20+ years experience.",
+      "Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold, and UK supplier of True Refrigeration bar units. Commercial refrigeration cabinets, cold rooms, plug-in systems, checkouts and shelving. 20+ years experience.",
     images: [
       {
         url: OG_IMAGE,
@@ -155,7 +158,7 @@ const organizationSchema = {
   },
   image: OG_IMAGE,
   description:
-    "ILK Technology is the UK's authorised distribution partner for Arneg, Oscartielle, Intrac and Incold, supplying commercial refrigeration cabinets, cold rooms, plug-in systems, checkouts and shelving to retailers and food service businesses across the UK.",
+    "ILK Technology is the UK's authorised distribution partner for Arneg, Oscartielle, Intrac and Incold, and UK supplier of True Refrigeration bar units, supplying commercial refrigeration cabinets, cold rooms, plug-in systems, bar refrigeration, checkouts and shelving to retailers and food service businesses across the UK.",
   foundingDate: "2005",
   numberOfEmployees: {
     "@type": "QuantitativeValue",
@@ -255,6 +258,11 @@ const organizationSchema = {
       },
       {
         "@type": "OfferCatalog",
+        name: "Bar Refrigeration",
+        description: "True Refrigeration bar refrigerators for pubs, restaurants and hospitality venues",
+      },
+      {
+        "@type": "OfferCatalog",
         name: "Checkouts & Shelving",
         description: "Retail checkout counters and shelving systems",
       },
@@ -269,7 +277,9 @@ const organizationSchema = {
     "Retail Display Cabinets",
     "Cold Rooms",
     "Supermarket Refrigeration",
+    "Bar Refrigeration",
     "Arneg Products",
+    "True Refrigeration Products",
     "Retail Fit-out",
   ],
 };
@@ -318,8 +328,8 @@ export default function RootLayout({
 
         {/* Dublin Core meta */}
         <meta name="DC.title"       content="ILK Technology — Commercial Refrigeration & Arneg UK Distribution Partner" />
-        <meta name="DC.description" content="Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold. 20+ years experience in commercial refrigeration." />
-        <meta name="DC.subject"     content="Commercial Refrigeration, Arneg, Retail Equipment, Cold Rooms" />
+        <meta name="DC.description" content="Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold, and UK supplier of True Refrigeration bar units. 20+ years experience in commercial refrigeration." />
+        <meta name="DC.subject"     content="Commercial Refrigeration, Arneg, True Refrigeration, Retail Equipment, Cold Rooms, Bar Refrigeration" />
         <meta name="DC.language"    content="en-GB" />
         <meta name="DC.coverage"    content="United Kingdom" />
         <meta name="DC.publisher"   content="ILK Technology Ltd" />
