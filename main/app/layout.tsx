@@ -43,15 +43,17 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "ILK Technology | Commercial Refrigeration & Arneg UK Distribution Partner",
+    default: "ILK Technology | Arneg & True Refrigeration UK Distribution Partner",
     template: "%s | ILK Technology",
   },
   description:
-    "ILK Technology is the UK's authorised Arneg distribution partner and True Refrigeration supplier, providing commercial refrigeration cabinets, cold rooms, plug-in systems, bar refrigeration, checkouts and shelving. 20+ years experience. UK-wide delivery.",
+    "ILK Technology is the UK's authorised distribution partner for Arneg and True Refrigeration, providing commercial refrigeration cabinets, cold rooms, plug-in systems, bar refrigeration, checkouts and shelving. 20+ years experience. UK-wide delivery.",
   keywords: [
     "commercial refrigeration UK",
     "Arneg distribution partner UK",
     "Arneg dealer UK",
+    "True Refrigeration UK distribution partner",
+    "True Refrigeration authorised dealer UK",
     "True Refrigeration UK",
     "True bar refrigerator UK",
     "commercial refrigeration cabinets",
@@ -88,15 +90,15 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "ILK Technology | Commercial Refrigeration & Arneg UK Distribution Partner",
+    title: "ILK Technology | Arneg & True Refrigeration UK Distribution Partner",
     description:
-      "Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold, and UK supplier of True Refrigeration bar units. Commercial refrigeration cabinets, cold rooms, plug-in systems, checkouts and shelving. 20+ years experience.",
+      "Authorised UK distribution partner for Arneg and True Refrigeration, and UK distribution partner for Oscartielle, Intrac and Incold. Commercial refrigeration cabinets, cold rooms, plug-in systems, bar refrigeration, checkouts and shelving. 20+ years experience.",
     images: [
       {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "ILK Technology — Commercial Refrigeration Supplier and Arneg UK Distribution Partner",
+        alt: "ILK Technology — Arneg & True Refrigeration UK Distribution Partner",
         type: "image/png",
       },
     ],
@@ -158,7 +160,7 @@ const organizationSchema = {
   },
   image: OG_IMAGE,
   description:
-    "ILK Technology is the UK's authorised distribution partner for Arneg, Oscartielle, Intrac and Incold, and UK supplier of True Refrigeration bar units, supplying commercial refrigeration cabinets, cold rooms, plug-in systems, bar refrigeration, checkouts and shelving to retailers and food service businesses across the UK.",
+    "ILK Technology is the UK's authorised distribution partner for Arneg and True Refrigeration, and for Oscartielle, Intrac and Incold, supplying commercial refrigeration cabinets, cold rooms, plug-in systems, bar refrigeration, checkouts and shelving to retailers and food service businesses across the UK.",
   foundingDate: "2005",
   numberOfEmployees: {
     "@type": "QuantitativeValue",
@@ -232,6 +234,13 @@ const organizationSchema = {
     "https://www.linkedin.com/company/ilk-technology27/",
     "https://www.facebook.com/profile.php?id=61570825201141",
   ],
+  brand: [
+    { "@type": "Brand", name: "Arneg" },
+    { "@type": "Brand", name: "True Refrigeration" },
+    { "@type": "Brand", name: "Oscartielle" },
+    { "@type": "Brand", name: "Intrac" },
+    { "@type": "Brand", name: "Incold" },
+  ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
     name: "Commercial Refrigeration Products",
@@ -255,6 +264,11 @@ const organizationSchema = {
         "@type": "OfferCatalog",
         name: "Plug-in Refrigeration",
         description: "Self-contained plug-in refrigeration and freezer units",
+      },
+      {
+        "@type": "OfferCatalog",
+        name: "True Refrigeration",
+        description: "True Refrigeration undercounter fridges & freezers, pizza prep tables, sandwich/salad units, upright refrigeration and glass door merchandisers",
       },
       {
         "@type": "OfferCatalog",
@@ -290,7 +304,7 @@ const websiteSchema = {
   "@id": `${SITE_URL}/#website`,
   url: SITE_URL,
   name: "ILK Technology",
-  description: "UK Commercial Refrigeration Supplier and Authorised Arneg Distribution Partner",
+  description: "UK Commercial Refrigeration Supplier and Authorised Distribution Partner for Arneg and True Refrigeration",
   publisher: { "@id": `${SITE_URL}/#organization` },
   potentialAction: {
     "@type": "SearchAction",
@@ -327,8 +341,8 @@ export default function RootLayout({
         <meta name="ICBM"          content="51.5654417, -0.3055085" />
 
         {/* Dublin Core meta */}
-        <meta name="DC.title"       content="ILK Technology — Commercial Refrigeration & Arneg UK Distribution Partner" />
-        <meta name="DC.description" content="Authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold, and UK supplier of True Refrigeration bar units. 20+ years experience in commercial refrigeration." />
+        <meta name="DC.title"       content="ILK Technology — Arneg & True Refrigeration UK Distribution Partner" />
+        <meta name="DC.description" content="Authorised UK distribution partner for Arneg and True Refrigeration, and for Oscartielle, Intrac and Incold. 20+ years experience in commercial refrigeration." />
         <meta name="DC.subject"     content="Commercial Refrigeration, Arneg, True Refrigeration, Retail Equipment, Cold Rooms, Bar Refrigeration" />
         <meta name="DC.language"    content="en-GB" />
         <meta name="DC.coverage"    content="United Kingdom" />
