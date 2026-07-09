@@ -155,7 +155,16 @@ const trueBrandSchema = {
 };
 
 /* ─────────────────────────────────────────────
-   JSON-LD — ItemList of Products (rich results)
+   JSON-LD — ItemList of entities (rich results)
+   NOTE: Uses @type "Thing" rather than "Product".
+   Google's structured data validator requires every
+   "Product" entity to include "offers", "review", or
+   "aggregateRating". Since this is a distributor listing
+   page (not a live checkout page with real prices or
+   reviews), declaring these as Product and faking those
+   fields would violate Google's structured data
+   guidelines. "Thing" still carries entity/keyword
+   context for SEO without triggering that validation.
 ───────────────────────────────────────────── */
 const trueProductListSchema = {
   "@context": "https://schema.org",
@@ -169,104 +178,88 @@ const trueProductListSchema = {
       "@type": "ListItem",
       position: 1,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True TUC-48-HC Undercounter Refrigerator",
-        sku: "TUC-48-HC",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "48-inch two-door undercounter refrigerator with hydrocarbon refrigerant, stainless steel exterior, built for heavy commercial use.",
-        category: "Undercounter Refrigeration",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
     {
       "@type": "ListItem",
       position: 2,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True TUC-27F-HC Undercounter Freezer",
-        sku: "TUC-27F-HC",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "27-inch single-door undercounter freezer with digital temperature display and full commercial specification.",
-        category: "Undercounter Refrigeration",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
     {
       "@type": "ListItem",
       position: 3,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True TPP-AT2-93-HC Pizza Prep Table",
-        sku: "TPP-AT2-93-HC",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "93-inch three-door pizza prep table with dual mega-top pans and hinged lids for high-volume pizza operations.",
-        category: "Prep Tables",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
     {
       "@type": "ListItem",
       position: 4,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True TSSU-60-24M-B-ST-FGLID-HC Sandwich/Salad Mega Top",
-        sku: "TSSU-60-24M-B-ST-FGLID-HC",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "60-inch two-door mega top with full glass lid, ideal for salad bars and open food presentation.",
-        category: "Prep Tables",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
     {
       "@type": "ListItem",
       position: 5,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True TSSU-72-30M-B-ST-HC Sandwich/Salad Unit",
-        sku: "TSSU-72-30M-B-ST-HC",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "72-inch three-door sandwich and salad prep unit with 30 pan positions for demanding service environments.",
-        category: "Prep Tables",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
     {
       "@type": "ListItem",
       position: 6,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True TGN-2F-2S Upright Freezer",
-        sku: "TGN-2F-2S",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "49-inch two-section upright freezer with low-profile top mount compressor and adjustable shelving.",
-        category: "Upright Refrigeration",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
     {
       "@type": "ListItem",
       position: 7,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True GDM-35-HC Glass Door Merchandiser",
-        sku: "GDM-35-HC~FGD01",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "35 cu. ft. glass door merchandiser with LED lighting for high-visibility retail display.",
-        category: "Upright Refrigeration",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
     {
       "@type": "ListItem",
       position: 8,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "True T-23-HC Upright Refrigerator",
-        sku: "T-23-HC",
-        brand: { "@type": "Brand", name: "True Refrigeration" },
         description:
           "23 cu. ft. single-door upright refrigerator, the industry-standard unit for commercial kitchen refrigeration.",
-        category: "Upright Refrigeration",
+        url: "https://ilktechnology.com/truerefrigeration",
       },
     },
   ],

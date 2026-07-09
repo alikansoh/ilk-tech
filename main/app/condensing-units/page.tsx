@@ -154,6 +154,17 @@ const jehBrandSchema = {
 
 /* ─────────────────────────────────────────────
    JSON-LD — ItemList of Product Series (rich results)
+   NOTE: Uses @type "Thing" rather than "Product".
+   Google's structured data validator requires every
+   "Product" entity to include "offers", "review", or
+   "aggregateRating". These are series-level descriptions
+   (no live price or reviews), so declaring them as
+   Product and faking those fields would violate Google's
+   structured data guidelines. "Thing" still carries the
+   entity/keyword context for SEO without triggering that
+   validation error. "category" was dropped since it's a
+   Product/Offer-specific field; the same information is
+   already present in the description text.
 ───────────────────────────────────────────── */
 const jehProductListSchema = {
   "@context": "https://schema.org",
@@ -167,24 +178,22 @@ const jehProductListSchema = {
       "@type": "ListItem",
       position: 1,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "J&E Hall Fusion Hybrid Condensing Unit",
-        brand: { "@type": "Brand", name: "J&E Hall" },
         description:
           "Small and medium capacity condensing units with Tecumseh compressor, supporting both A1 and A2L refrigerants (R448A/R449A) across 10 model codes with H1/H2 head sizes and medium/low temperature ranges.",
-        category: "Condensing Units",
+        url: "https://ilktechnology.com/condensing-units",
       },
     },
     {
       "@type": "ListItem",
       position: 2,
       item: {
-        "@type": "Product",
+        "@type": "Thing",
         name: "J&E Hall Fusion Scroll Condensing Unit",
-        brand: { "@type": "Brand", name: "J&E Hall" },
         description:
           "Medium to large capacity condensing units with Copeland scroll compressor, micro-channel condenser coils, IP55 panel, and EVI low-temperature options across 22 model codes and B2–B6 frame sizes.",
-        category: "Condensing Units",
+        url: "https://ilktechnology.com/condensing-units",
       },
     },
   ],

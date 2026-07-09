@@ -135,24 +135,37 @@ const barRefrigeration1PageSchema = {
 };
 
 /* ─────────────────────────────────────────────
-   JSON-LD — Product (spec data pulled from content.tsx)
+   JSON-LD — Entity (spec data pulled from content.tsx)
+   NOTE: Uses @type "Thing" rather than "Product".
+   Google's structured data validator requires every
+   "Product" entity to include "offers", "review", or
+   "aggregateRating". This page doesn't publish a live
+   price or reviews, so declaring it as Product and
+   faking those fields would violate Google's structured
+   data guidelines. "Thing" preserves all the same spec
+   data (now folded into additionalProperty, since sku
+   is a Product/Offer-specific field) for SEO/entity
+   context without triggering that validation error.
+   If a real price becomes available, this can be
+   switched back to "Product" with a valid "offers" block.
 ───────────────────────────────────────────── */
 const tbr32ProductSchema = {
   "@context": "https://schema.org",
-  "@type": "Product",
+  "@type": "Thing",
   "@id": "https://ilktechnology.com/products/bar-refrigeration-1/#product",
   name: "TBR32-RISZ1-L-B-G-2 Bar Refrigerator",
   image: "https://ilktechnology.com/media.png",
   description:
     "Black exterior bar refrigerator with 1 glass swing door, 290 litre gross volume, R290 refrigerant, automatic defrost, and 3 adjustable shelves. 7-year warranty covering parts, compressor and labour.",
-  sku: "TBR32-RISZ1-L-B-G-2",
-  brand: { "@type": "Brand", name: "ILK Technology" },
-  category: "Bar Refrigerators",
-  width: { "@type": "QuantitativeValue", value: 813, unitCode: "MMT" },
-  depth: { "@type": "QuantitativeValue", value: 631, unitCode: "MMT" },
-  height: { "@type": "QuantitativeValue", value: 881, unitCode: "MMT" },
-  weight: { "@type": "QuantitativeValue", value: 121, unitCode: "KGM" },
+  url: "https://ilktechnology.com/products/bar-refrigeration-1",
   additionalProperty: [
+    { "@type": "PropertyValue", name: "SKU", value: "TBR32-RISZ1-L-B-G-2" },
+    { "@type": "PropertyValue", name: "Brand", value: "ILK Technology" },
+    { "@type": "PropertyValue", name: "Category", value: "Bar Refrigerators" },
+    { "@type": "PropertyValue", name: "Width", value: "813 mm" },
+    { "@type": "PropertyValue", name: "Depth", value: "631 mm" },
+    { "@type": "PropertyValue", name: "Height", value: "881 mm" },
+    { "@type": "PropertyValue", name: "Weight", value: "121 kg" },
     {
       "@type": "PropertyValue",
       name: "Temperature Range",
