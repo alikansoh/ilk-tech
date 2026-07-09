@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   description:
     "ILK Technology is the authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold. Browse our full brand portfolio of commercial refrigeration cabinets, cold rooms, retail shelving and checkouts.",
   alternates: {
-    canonical: "https://ilktechnology.com/brands",
+    canonical: "https://ilktechnology.com/arneg",
   },
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://ilktechnology.com/brands",
+    url: "https://ilktechnology.com/arneg",
     title: "Our Brands | Arneg, Oscartielle, Intrac & Incold — ILK Technology UK",
     description:
       "Authorised UK distributor for Arneg, Oscartielle, Intrac and Incold. Commercial refrigeration cabinets, cold rooms, plug-in units, retail shelving and checkouts — delivered UK-wide.",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
 const brandsPageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "@id": "https://ilktechnology.com/brands/#webpage",
+  "@id": "https://ilktechnology.com/arneg/#webpage",
   url: "https://ilktechnology.com/brands",
   name: "Our Brands — Arneg, Oscartielle, Intrac & Incold UK Distributor",
   description:
@@ -72,7 +72,7 @@ const brandsPageSchema = {
         "@type": "ListItem",
         position: 2,
         name: "Our Brands",
-        item: "https://ilktechnology.com/brands",
+        item: "https://ilktechnology.com/arneg",
       },
     ],
   },

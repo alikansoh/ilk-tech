@@ -10,6 +10,13 @@ import {
   type FormEvent,
 } from "react";
 
+/* ─── ENQUIRY API ───
+   The form posts to /api/send-enquiry (see app/api/send-enquiry/route.ts),
+   which sends the email via Brevo's transactional email API. Brevo
+   credentials live server-side in that route — never in this client file.
+*/
+const ENQUIRY_API_ENDPOINT = "/api/send-enquiry";
+
 /* ─── BRAND TOKENS ─── */
 const NAVY = "#0B2540";
 const RED = "#C8102E";
@@ -192,6 +199,8 @@ const RAL_COLOURS: RalColour[] = [
 /* ─── INQUIRY MODAL ─── */
 function InquiryModal({ product, onClose }: InquiryModalProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<InquiryFormState>({
     name: "",
     email: "",
@@ -201,9 +210,38 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
     product: product?.code ?? "",
   });
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError(null);
+    setSending(true);
+
+    try {
+      const res = await fetch(ENQUIRY_API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          company: form.company,
+          phone: form.phone,
+          message: form.message,
+          product: form.product,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Enquiry send failed:", err);
+      setError(
+        "Something went wrong sending your enquiry. Please try again, or contact us directly."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   if (!product) return null;
@@ -298,8 +336,18 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
                   }
                 />
               </div>
-              <button type="submit" className="tr-btn-primary tr-btn-full">
-                Send Enquiry →
+              {error && (
+                <p style={{ color: RED, fontSize: 12.5, marginTop: -6, marginBottom: 4 }}>
+                  {error}
+                </p>
+              )}
+              <button
+                type="submit"
+                className="tr-btn-primary tr-btn-full"
+                disabled={sending}
+                style={sending ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
+              >
+                {sending ? "Sending…" : "Send Enquiry →"}
               </button>
             </form>
           </>
