@@ -15,7 +15,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_GB",
     url: "https://ilktechnology.com/arneg",
-    title: "Our Brands | Arneg, Oscartielle, Intrac & Incold — ILK Technology UK",
+    title:
+      "Our Brands | Arneg, Oscartielle, Intrac & Incold — ILK Technology UK",
     description:
       "Authorised UK distributor for Arneg, Oscartielle, Intrac and Incold. Commercial refrigeration cabinets, cold rooms, plug-in units, retail shelving and checkouts — delivered UK-wide.",
     images: [
@@ -53,12 +54,16 @@ const brandsPageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "@id": "https://ilktechnology.com/arneg/#webpage",
-  url: "https://ilktechnology.com/brands",
+  url: "https://ilktechnology.com/arneg",
   name: "Our Brands — Arneg, Oscartielle, Intrac & Incold UK Distributor",
   description:
     "ILK Technology is the authorised UK distribution partner for Arneg, Oscartielle, Intrac and Incold — supplying commercial refrigeration, cold rooms, retail shelving and checkouts across the UK.",
-  isPartOf: { "@id": "https://ilktechnology.com/#website" },
-  about: { "@id": "https://ilktechnology.com/#organization" },
+  isPartOf: {
+    "@id": "https://ilktechnology.com/#website",
+  },
+  about: {
+    "@id": "https://ilktechnology.com/#organization",
+  },
   breadcrumb: {
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -80,14 +85,14 @@ const brandsPageSchema = {
 };
 
 /* ─────────────────────────────────────────────
-   JSON-LD — ItemList of brand partners
-   Helps Google understand the brands you represent
+   JSON-LD — ItemList of Brand Partners
 ───────────────────────────────────────────── */
 const brandListSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: "ILK Technology Brand Partners",
-  description: "Authorised UK distribution partners represented by ILK Technology",
+  description:
+    "Authorised UK distribution partners represented by ILK Technology",
   numberOfItems: 4,
   itemListElement: [
     {
@@ -149,11 +154,15 @@ export default function BrandsPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(brandsPageSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(brandsPageSchema),
+        }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(brandListSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(brandListSchema),
+        }}
       />
       <BrandsContent />
     </>

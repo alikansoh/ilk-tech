@@ -47,6 +47,21 @@
     <priority>0.60</priority>
   </url>
 
+  <!-- True Refrigeration brand page -->
+  <url>
+    <loc>https://ilktechnology.com/truerefrigeration/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://ilktechnology.com/condensing-units/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
   <!-- Product detail pages discovered in repository -->
   <url>
     <loc>https://ilktechnology.com/products/osaka-2/</loc>
@@ -79,6 +94,20 @@
 
   <url>
     <loc>https://ilktechnology.com/products/osaka-3-sc/</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://ilktechnology.com/products/bar-refrigeration/</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://ilktechnology.com/products/bar-refrigeration-1/</loc>
     <lastmod>2026-05-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
