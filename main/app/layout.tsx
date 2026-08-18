@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { GoogleTagManager } from "@next/third-parties/google";
+import Chat from "@/components/chat";
 import Script from "next/script";
 
 /* ─────────────────────────────────────────────
@@ -374,6 +375,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <Chat/>
         <Navbar />
         <main id="main-content">
           {children}

@@ -23,7 +23,7 @@ const RED = "#C8102E";
 const SILVER = "#8A9BB0";
 const MUTED = "#6B7280";
 const BORDER = "rgba(11,37,64,0.10)";
-const ACCENT       = "#741C4D";
+const ACCENT = "#741C4D";
 const ACCENT_HOVER = "#9B2566";
 
 /* ─── STAINLESS STEEL HEX ─── */
@@ -143,7 +143,8 @@ const RAL_COLOURS: RalColour[] = [
     hex: STAINLESS_HEX,
     border: "#8A9BB0",
     img: "/true-custom.jpeg",
-    description: "The industry standard finish — brushed, durable, and timeless.",
+    description:
+      "The industry standard finish — brushed, durable, and timeless.",
   },
   {
     name: "Green",
@@ -249,7 +250,9 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
   return (
     <div className="tr-modal-overlay" onClick={onClose}>
       <div className="tr-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="tr-modal-close" onClick={onClose}>✕</button>
+        <button className="tr-modal-close" onClick={onClose}>
+          ✕
+        </button>
         {submitted ? (
           <div className="tr-modal-success">
             <div className="tr-modal-success-icon">✓</div>
@@ -337,7 +340,14 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
                 />
               </div>
               {error && (
-                <p style={{ color: RED, fontSize: 12.5, marginTop: -6, marginBottom: 4 }}>
+                <p
+                  style={{
+                    color: RED,
+                    fontSize: 12.5,
+                    marginTop: -6,
+                    marginBottom: 4,
+                  }}
+                >
                   {error}
                 </p>
               )}
@@ -345,7 +355,9 @@ function InquiryModal({ product, onClose }: InquiryModalProps) {
                 type="submit"
                 className="tr-btn-primary tr-btn-full"
                 disabled={sending}
-                style={sending ? { opacity: 0.7, cursor: "not-allowed" } : undefined}
+                style={
+                  sending ? { opacity: 0.7, cursor: "not-allowed" } : undefined
+                }
               >
                 {sending ? "Sending…" : "Send Enquiry →"}
               </button>
@@ -370,7 +382,10 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
 
   const envScene = new THREE.Scene();
   const envGeo = new THREE.SphereGeometry(10, 32, 16);
-  const envMatTop = new THREE.MeshBasicMaterial({ color: 0xd8e4f0, side: THREE.BackSide });
+  const envMatTop = new THREE.MeshBasicMaterial({
+    color: 0xd8e4f0,
+    side: THREE.BackSide,
+  });
   envScene.add(new THREE.Mesh(envGeo, envMatTop));
   const envLight1 = new THREE.PointLight(0xffffff, 2.0, 30);
   envLight1.position.set(5, 8, 5);
@@ -414,7 +429,7 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
 
   const cabinetMat = new THREE.MeshStandardMaterial({
     color: initialHex,
-    roughness: 0.30,
+    roughness: 0.3,
     metalness: 0.88,
     envMap: envTexture,
     envMapIntensity: 0.7,
@@ -431,7 +446,7 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   const ssDark = new THREE.MeshStandardMaterial({
     color: 0x7a8490,
     roughness: 0.22,
-    metalness: 0.90,
+    metalness: 0.9,
     envMap: envTexture,
     envMapIntensity: 1.2,
   });
@@ -455,7 +470,7 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   const handleBracketMat = new THREE.MeshStandardMaterial({
     color: 0xa8b0bc,
     roughness: 0.18,
-    metalness: 0.90,
+    metalness: 0.9,
     envMap: envTexture,
     envMapIntensity: 1.0,
   });
@@ -503,31 +518,46 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
   cabinet.castShadow = true;
   root.add(cabinet);
 
-  const topCap = new THREE.Mesh(new THREE.BoxGeometry(2.24, 0.06, 1.14), ssDark);
+  const topCap = new THREE.Mesh(
+    new THREE.BoxGeometry(2.24, 0.06, 1.14),
+    ssDark
+  );
   topCap.position.y = 1.83;
   root.add(topCap);
 
-  const ventPan = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.30, 1.1), darkMat);
+  const ventPan = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.3, 1.1), darkMat);
   ventPan.position.y = -1.95;
   root.add(ventPan);
 
   for (let i = 0; i < 7; i++) {
-    const slat = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.016, 0.9), ssDeep);
+    const slat = new THREE.Mesh(
+      new THREE.BoxGeometry(1.85, 0.016, 0.9),
+      ssDeep
+    );
     slat.position.set(0, -1.95 + i * 0.038 + 0.02, 0);
     root.add(slat);
   }
 
-  const kickPlate = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.08, 1.1), ssDark);
+  const kickPlate = new THREE.Mesh(
+    new THREE.BoxGeometry(2.2, 0.08, 1.1),
+    ssDark
+  );
   kickPlate.position.y = -1.76;
   root.add(kickPlate);
 
   const lDoor = new THREE.Group();
   lDoor.add(new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.18, 0.07), frameMat));
-  const lRecess = new THREE.Mesh(new THREE.BoxGeometry(0.86, 2.86, 0.022), ssDark);
+  const lRecess = new THREE.Mesh(
+    new THREE.BoxGeometry(0.86, 2.86, 0.022),
+    ssDark
+  );
   lRecess.position.z = 0.024;
   lDoor.add(lRecess);
   for (let i = 0; i < 4; i++) {
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.008, 0.012), ssDeep);
+    const stripe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.82, 0.008, 0.012),
+      ssDeep
+    );
     stripe.position.set(0, -1.2 + i * 0.8, 0.032);
     lDoor.add(stripe);
   }
@@ -536,18 +566,27 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
 
   const rDoor = new THREE.Group();
   rDoor.add(new THREE.Mesh(new THREE.BoxGeometry(1.04, 3.18, 0.07), frameMat));
-  const rRecess = new THREE.Mesh(new THREE.BoxGeometry(0.86, 2.86, 0.022), ssDark);
+  const rRecess = new THREE.Mesh(
+    new THREE.BoxGeometry(0.86, 2.86, 0.022),
+    ssDark
+  );
   rRecess.position.z = 0.024;
   rDoor.add(rRecess);
   for (let i = 0; i < 4; i++) {
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.008, 0.012), ssDeep);
+    const stripe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.82, 0.008, 0.012),
+      ssDeep
+    );
     stripe.position.set(0, -1.2 + i * 0.8, 0.032);
     rDoor.add(stripe);
   }
   rDoor.position.set(0.54, 0.12, 0.59);
   root.add(rDoor);
 
-  const divider = new THREE.Mesh(new THREE.BoxGeometry(0.05, 3.18, 0.09), ssDark);
+  const divider = new THREE.Mesh(
+    new THREE.BoxGeometry(0.05, 3.18, 0.09),
+    ssDark
+  );
   divider.position.set(0, 0.12, 0.585);
   root.add(divider);
 
@@ -561,11 +600,17 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     bar.castShadow = true;
     g.add(bar);
 
-    const capTop = new THREE.Mesh(new THREE.SphereGeometry(0.028, 14, 14), handleBarMat);
+    const capTop = new THREE.Mesh(
+      new THREE.SphereGeometry(0.028, 14, 14),
+      handleBarMat
+    );
     capTop.position.y = 0.38;
     g.add(capTop);
 
-    const capBot = new THREE.Mesh(new THREE.SphereGeometry(0.028, 14, 14), handleBarMat);
+    const capBot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.028, 14, 14),
+      handleBarMat
+    );
     capBot.position.y = -0.38;
     g.add(capBot);
 
@@ -605,22 +650,34 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     root.add(g);
   };
 
-  makeHandle(-0.10);
-  makeHandle(+0.10);
+  makeHandle(-0.1);
+  makeHandle(+0.1);
 
-  const dispBase = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.13, 0.045), darkMat);
-  dispBase.position.set(0.75, 1.70, 0.585);
+  const dispBase = new THREE.Mesh(
+    new THREE.BoxGeometry(0.4, 0.13, 0.045),
+    darkMat
+  );
+  dispBase.position.set(0.75, 1.7, 0.585);
   root.add(dispBase);
 
-  const screen = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.075, 0.02), screenMat);
-  screen.position.set(0.75, 1.70, 0.612);
+  const screen = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 0.075, 0.02),
+    screenMat
+  );
+  screen.position.set(0.75, 1.7, 0.612);
   root.add(screen);
 
-  const ledStrip = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.026, 0.01), ledMat);
-  ledStrip.position.set(0.75, 1.70, 0.625);
+  const ledStrip = new THREE.Mesh(
+    new THREE.BoxGeometry(0.2, 0.026, 0.01),
+    ledMat
+  );
+  ledStrip.position.set(0.75, 1.7, 0.625);
   root.add(ledStrip);
 
-  const logoPan = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.10, 0.013), ssDark);
+  const logoPan = new THREE.Mesh(
+    new THREE.BoxGeometry(0.58, 0.1, 0.013),
+    ssDark
+  );
   logoPan.position.set(-0.54, -1.52, 0.59);
   root.add(logoPan);
 
@@ -631,7 +688,7 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     lock.position.set(x, 1.42, 0.63);
     root.add(lock);
     const lockRing = new THREE.Mesh(
-      new THREE.TorusGeometry(0.030, 0.008, 8, 16),
+      new THREE.TorusGeometry(0.03, 0.008, 8, 16),
       handleBracketMat
     );
     lockRing.rotation.x = Math.PI / 2;
@@ -646,21 +703,30 @@ function buildCabinetScene(THREE: any, renderer: any, initialHex: string) {
     [0.85, -1, -0.35],
   ];
   castorPositions.forEach(([cx, cy, cz]) => {
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.048, 0.24, 10), ssDark);
+    const stem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.048, 0.048, 0.24, 10),
+      ssDark
+    );
     stem.position.set(cx, cy - 0.82, cz);
     root.add(stem);
-    const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.068, 0.065, 16), darkMat);
+    const wheel = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.068, 0.068, 0.065, 16),
+      darkMat
+    );
     wheel.rotation.x = Math.PI / 2;
     wheel.position.set(cx, cy - 1.02, cz);
     root.add(wheel);
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.07, 12), ssDark);
+    const hub = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.028, 0.028, 0.07, 12),
+      ssDark
+    );
     hub.rotation.x = Math.PI / 2;
     hub.position.set(cx, cy - 1.02, cz);
     root.add(hub);
   });
 
   const glassL = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 1.9), glassMat);
-  glassL.position.set(-0.80, 0.12, 0.596);
+  glassL.position.set(-0.8, 0.12, 0.596);
   root.add(glassL);
   const glassR = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 1.9), glassMat);
   glassR.position.set(0.34, 0.12, 0.596);
@@ -685,7 +751,9 @@ export default function TrueRefrigerationPage() {
 
   const [carouselIdx, setCarouselIdx] = useState<number>(0);
   const [activeColor, setActiveColor] = useState<RalColour>(RAL_COLOURS[0]);
-  const [enquiryProduct, setEnquiryProduct] = useState<EnquiryTarget | null>(null);
+  const [enquiryProduct, setEnquiryProduct] = useState<EnquiryTarget | null>(
+    null
+  );
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -706,15 +774,21 @@ export default function TrueRefrigerationPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const THREE: any = await import("three");
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+      });
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.appendChild(renderer.domElement);
 
-      const { scene, camera, cabinetMat, frameMat, root } =
-        buildCabinetScene(THREE, renderer, STAINLESS_HEX);
+      const { scene, camera, cabinetMat, frameMat, root } = buildCabinetScene(
+        THREE,
+        renderer,
+        STAINLESS_HEX
+      );
 
       heroMatsRef.current = { cabinet: cabinetMat, frame: frameMat };
 
@@ -809,48 +883,96 @@ export default function TrueRefrigerationPage() {
 
       ctx = gsap.context(() => {
         gsap.from(".tr-hero-eyebrow", {
-          opacity: 0, x: -20, duration: 0.7, ease: "power3.out", delay: 0.2,
+          opacity: 0,
+          x: -20,
+          duration: 0.7,
+          ease: "power3.out",
+          delay: 0.2,
         });
         gsap.from(".tr-hero-title", {
-          opacity: 0, y: 40, duration: 0.9, ease: "power3.out", delay: 0.35,
+          opacity: 0,
+          y: 40,
+          duration: 0.9,
+          ease: "power3.out",
+          delay: 0.35,
         });
         gsap.from(".tr-hero-body", {
-          opacity: 0, y: 24, duration: 0.8, ease: "power3.out", delay: 0.6,
+          opacity: 0,
+          y: 24,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: 0.6,
         });
         gsap.from(".tr-hero-actions", {
-          opacity: 0, y: 16, duration: 0.7, ease: "power3.out", delay: 0.8,
+          opacity: 0,
+          y: 16,
+          duration: 0.7,
+          ease: "power3.out",
+          delay: 0.8,
         });
         gsap.to(".tr-hero-img-wrap", {
-          yPercent: 12, ease: "none",
-          scrollTrigger: { trigger: ".tr-hero", start: "top top", end: "bottom top", scrub: true },
+          yPercent: 12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".tr-hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
         });
         gsap.to(".tr-hero-text-col", {
-          opacity: 0, y: -30, ease: "none",
-          scrollTrigger: { trigger: ".tr-hero", start: "45% top", end: "bottom top", scrub: true },
+          opacity: 0,
+          y: -30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".tr-hero",
+            start: "45% top",
+            end: "bottom top",
+            scrub: true,
+          },
         });
         gsap.from(".tr-intro-left", {
-          opacity: 0, x: -36, duration: 0.85, ease: "power3.out",
+          opacity: 0,
+          x: -36,
+          duration: 0.85,
+          ease: "power3.out",
           scrollTrigger: { trigger: ".tr-intro", start: "top 80%" },
         });
         gsap.from(".tr-prod-card", {
-          opacity: 0, y: 44, stagger: 0.1, duration: 0.8, ease: "power3.out",
+          opacity: 0,
+          y: 44,
+          stagger: 0.1,
+          duration: 0.8,
+          ease: "power3.out",
           scrollTrigger: { trigger: ".tr-products-grid", start: "top 82%" },
         });
         gsap.from(".tr-warranty-block", {
-          opacity: 0, y: 36, duration: 0.9, ease: "power3.out",
+          opacity: 0,
+          y: 36,
+          duration: 0.9,
+          ease: "power3.out",
           scrollTrigger: { trigger: ".tr-warranty-block", start: "top 82%" },
         });
         gsap.from(".tr-custom-block", {
-          opacity: 0, y: 36, duration: 0.9, ease: "power3.out",
+          opacity: 0,
+          y: 36,
+          duration: 0.9,
+          ease: "power3.out",
           scrollTrigger: { trigger: ".tr-custom-block", start: "top 82%" },
         });
         gsap.from(".tr-cta-block", {
-          opacity: 0, y: 36, duration: 0.9, ease: "power3.out",
+          opacity: 0,
+          y: 36,
+          duration: 0.9,
+          ease: "power3.out",
           scrollTrigger: { trigger: ".tr-cta-block", start: "top 82%" },
         });
         gsap.utils.toArray(".tr-rule").forEach((el: unknown) => {
           gsap.from(el as Element, {
-            scaleX: 0, transformOrigin: "left", duration: 0.7, ease: "power2.out",
+            scaleX: 0,
+            transformOrigin: "left",
+            duration: 0.7,
+            ease: "power2.out",
             scrollTrigger: { trigger: el as Element, start: "top 88%" },
           });
         });
@@ -1226,8 +1348,9 @@ export default function TrueRefrigerationPage() {
         }
         .tr-prod-enquire:hover { gap: 10px; }
         .tr-prod-grid-footer {
-          display: flex; align-items: center; justify-content: flex-end;
+          display: flex; flex-direction: column; align-items: flex-end;
           margin-top: 18px;
+          gap: 20px;
         }
        .tr-prod-discover-all {
   display: inline-flex;
@@ -1265,6 +1388,21 @@ export default function TrueRefrigerationPage() {
 }
         .tr-prod-discover-all:hover { color: ${NAVY}; border-color: rgba(11,37,64,0.3); }
         .tr-prod-discover-all svg { flex-shrink: 0; }
+
+       .tr-prod-grid-image {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  align-self: center;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid ${BORDER};
+  box-shadow: 0 4px 18px rgba(11,37,64,0.08);
+}
+        .tr-prod-grid-image img {
+          width: 100%; height: auto; display: block;
+        }
+
         @media (max-width: 1060px) { .tr-products-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 720px)  { .tr-products-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 440px)  { .tr-products-grid { grid-template-columns: 1fr; } }
@@ -1783,7 +1921,6 @@ export default function TrueRefrigerationPage() {
       )}
 
       <div className="tr-page">
-
         {/* ══════ HERO ══════ */}
         <section className="tr-hero">
           <div className="tr-hero-inner">
@@ -1827,7 +1964,8 @@ export default function TrueRefrigerationPage() {
                     7<span>yr</span>
                   </div>
                   <div className="tr-hero-warranty-lbl">
-                    Parts, Compressor &amp; Labour<br />
+                    Parts, Compressor &amp; Labour
+                    <br />
                     UK · Europe · Ireland
                   </div>
                 </div>
@@ -1841,7 +1979,9 @@ export default function TrueRefrigerationPage() {
                     style={{ transform: `translateY(-${carouselIdx * 24}px)` }}
                   >
                     {[...SECTORS, SECTORS[0]].map((s, i) => (
-                      <div key={i} className="tr-sector-item">{s}</div>
+                      <div key={i} className="tr-sector-item">
+                        {s}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -1855,7 +1995,11 @@ export default function TrueRefrigerationPage() {
                   alt="True Refrigeration commercial unit"
                   fill
                   priority
-                  style={{ objectFit: "contain", objectPosition: "center", padding: "32px" }}
+                  style={{
+                    objectFit: "contain",
+                    objectPosition: "center",
+                    padding: "32px",
+                  }}
                 />
               </div>
             </div>
@@ -1864,10 +2008,11 @@ export default function TrueRefrigerationPage() {
 
         {/* ══════ BODY ══════ */}
         <div className="tr-inner">
-
           {/* ── INTRO ── */}
           <div className="tr-section-hd">
-            <span className="tr-section-label">True Refrigeration · Authorised Distributor</span>
+            <span className="tr-section-label">
+              True Refrigeration · Authorised Distributor
+            </span>
             <span className="tr-section-accent">Global Leader</span>
           </div>
 
@@ -1886,10 +2031,10 @@ export default function TrueRefrigerationPage() {
                 For over 80 years, True has continuously pushed the boundaries
                 of performance by developing energy-efficient technologies,
                 refining designs, and delivering refrigeration solutions that
-                consistently surpass the expectations of professionals worldwide.
-                Their legacy is rooted in craftsmanship, innovation, and
-                dedication, shaping the industry and setting the standard for
-                professional refrigeration.
+                consistently surpass the expectations of professionals
+                worldwide. Their legacy is rooted in craftsmanship, innovation,
+                and dedication, shaping the industry and setting the standard
+                for professional refrigeration.
               </p>
               <div className="tr-rule" />
             </div>
@@ -1934,7 +2079,12 @@ export default function TrueRefrigerationPage() {
                   alt="7 Year Warranty — Parts, Compressor & Labour"
                   width={720}
                   height={720}
-                  style={{ width: "100%", height: "auto", objectFit: "contain", display: "block" }}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "contain",
+                    display: "block",
+                  }}
                 />
               </div>
             </div>
@@ -2010,10 +2160,27 @@ export default function TrueRefrigerationPage() {
                 className="tr-prod-discover-all"
               >
                 <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
-                  <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M1 9L9 1M9 1H3M9 1V7"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 Discover the Full Range on TrueRef
               </a>
+
+              {/* ── Image placed directly under the "Discover the Full Range" button ── */}
+              <div className="tr-prod-grid-image">
+                <Image
+                  src="/new.jpeg"
+                  alt="True Refrigeration full range"
+                  width={1160}
+                  height={650}
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+              </div>
             </div>
           </div>
 
@@ -2081,10 +2248,11 @@ export default function TrueRefrigerationPage() {
                   </h3>
                   <p className="tr-custom-body">
                     Make your refrigeration units stand out. Customise your True
-                    products and craft cabinets to match your brand using our range
-                    of customisation options. From hardware upgrades to innovative
-                    lighting, they provide comprehensive solutions to ensure your
-                    refrigeration units meet your brand and operational needs.
+                    products and craft cabinets to match your brand using our
+                    range of customisation options. From hardware upgrades to
+                    innovative lighting, they provide comprehensive solutions to
+                    ensure your refrigeration units meet your brand and
+                    operational needs.
                   </p>
                 </div>
 
@@ -2099,7 +2267,9 @@ export default function TrueRefrigerationPage() {
                           alt={`Cabinet in ${c.name}`}
                           fill
                           className="tr-cabinet-img"
-                          style={{ opacity: activeColor.name === c.name ? 1 : 0 }}
+                          style={{
+                            opacity: activeColor.name === c.name ? 1 : 0,
+                          }}
                         />
                       ))}
                     </div>
@@ -2112,25 +2282,45 @@ export default function TrueRefrigerationPage() {
                         }}
                       />
                       <div className="tr-card-caption-text">
-                        <span className="tr-card-caption-label">Selected Finish</span>
-                        <span className="tr-card-caption-name">{activeColor.name}</span>
-                        <span className="tr-card-caption-desc">{activeColor.description}</span>
+                        <span className="tr-card-caption-label">
+                          Selected Finish
+                        </span>
+                        <span className="tr-card-caption-name">
+                          {activeColor.name}
+                        </span>
+                        <span className="tr-card-caption-desc">
+                          {activeColor.description}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Colour swatches */}
-                <div className="tr-custom-colour-grid-wrap" style={{ marginTop: 28 }}>
+                <div
+                  className="tr-custom-colour-grid-wrap"
+                  style={{ marginTop: 28 }}
+                >
                   <div className="tr-colour-grid">
                     {RAL_COLOURS.map((c) => (
                       <div
                         key={c.name}
-                        style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
                       >
                         <div
-                          className={`tr-colour-swatch ${activeColor.name === c.name ? "tr-colour-swatch--active" : ""}`}
-                          style={{ background: c.hex, border: `2px solid ${c.border}` }}
+                          className={`tr-colour-swatch ${
+                            activeColor.name === c.name
+                              ? "tr-colour-swatch--active"
+                              : ""
+                          }`}
+                          style={{
+                            background: c.hex,
+                            border: `2px solid ${c.border}`,
+                          }}
                           onClick={() => setActiveColor(c)}
                           title={c.name}
                         />
@@ -2151,9 +2341,12 @@ export default function TrueRefrigerationPage() {
                   style={{ width: "100%", height: "auto", display: "block" }}
                 />
                 <div className="tr-custom-top-chart-caption">
-                  <span className="tr-custom-top-chart-caption-label">Performance</span>
+                  <span className="tr-custom-top-chart-caption-label">
+                    Performance
+                  </span>
                   <span className="tr-custom-top-chart-caption-text">
-                    Consistent growth across key markets — reflecting over 80 years of innovation and industry trust.
+                    Consistent growth across key markets — reflecting over 80
+                    years of innovation and industry trust.
                   </span>
                 </div>
               </div>
@@ -2192,9 +2385,15 @@ export default function TrueRefrigerationPage() {
                       }}
                     />
                     <div className="tr-card-caption-text">
-                      <span className="tr-card-caption-label">Selected Finish</span>
-                      <span className="tr-card-caption-name">{activeColor.name}</span>
-                      <span className="tr-card-caption-desc">{activeColor.description}</span>
+                      <span className="tr-card-caption-label">
+                        Selected Finish
+                      </span>
+                      <span className="tr-card-caption-name">
+                        {activeColor.name}
+                      </span>
+                      <span className="tr-card-caption-desc">
+                        {activeColor.description}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -2222,7 +2421,9 @@ export default function TrueRefrigerationPage() {
 
           {/* ── CTA ── */}
           <div className="tr-section-hd tr-spacer">
-            <span className="tr-section-label">Authorised Distributor · UK</span>
+            <span className="tr-section-label">
+              Authorised Distributor · UK
+            </span>
           </div>
 
           <div className="tr-cta-block">
@@ -2255,7 +2456,9 @@ export default function TrueRefrigerationPage() {
               </h3>
               <p className="tr-cta-right-body">
                 Send your requirements to{" "}
-                <strong style={{ color: "rgba(255,255,255,0.75)" }}>ILK Technology</strong>{" "}
+                <strong style={{ color: "rgba(255,255,255,0.75)" }}>
+                  ILK Technology
+                </strong>{" "}
                 — model codes, site conditions, or custom finish preferences —
                 and we&apos;ll come back with pricing, availability, and
                 technical guidance within one business day.
@@ -2291,10 +2494,12 @@ export default function TrueRefrigerationPage() {
           {/* ── BRAND LOGO BAR ── */}
           <div className="tr-logo-bar" style={{ marginTop: 2 }}>
             <div className="tr-logo-bar-left">
-              <span className="tr-logo-bar-label">Authorised UK Distributor</span>
+              <span className="tr-logo-bar-label">
+                Authorised UK Distributor
+              </span>
               <p className="tr-logo-bar-tagline">
-                <strong>Authorised distributor of True Refrigeration</strong>{" "}
-                — supplying the full range of commercial refrigeration and
+                <strong>Authorised distributor of True Refrigeration</strong> —
+                supplying the full range of commercial refrigeration and
                 catering equipment, backed by over 80 years of American
                 engineering excellence.
               </p>
@@ -2309,7 +2514,6 @@ export default function TrueRefrigerationPage() {
               />
             </div>
           </div>
-
         </div>
       </div>
     </>
