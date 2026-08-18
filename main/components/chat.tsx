@@ -184,20 +184,14 @@ export default function AIChatWidget() {
           display: inline-flex; align-items: center; gap: 5px;
           font-size: 11.5px; font-weight: 700; text-decoration: none;
           padding: 6px 11px; border-radius: 16px;
-          transition: background-color 0.15s, border-color 0.15s;
-          box-shadow: none;
-          -webkit-tap-highlight-color: transparent;
-          touch-action: manipulation;
-        }
-        .ai-chat-msg-action:active {
-          transform: none;
+          transition: opacity 0.15s;
         }
         .ai-chat-msg-action--call {
-          background: ${RED}; color: #fff;
+          background: white; color: #fff;
           border: 1px solid ${RED};
         }
         .ai-chat-msg-action--call:hover {
-          background: #a50e25; border-color: #a50e25;
+          background: white; border-color: #a50e25;
         }
         .ai-chat-msg-action--contact {
           background: #fff; color: ${NAVY};
@@ -231,7 +225,7 @@ export default function AIChatWidget() {
         }
         .ai-chat-input {
           flex: 1; border: 1px solid rgba(11,37,64,0.18);
-          border-radius: 20px; padding: 9px 15px; font-size: 13px;
+          border-radius: 20px; padding: 9px 15px; font-size: 16px;
           outline: none; font-family: inherit; color: ${NAVY};
           transition: border-color 0.15s;
         }
