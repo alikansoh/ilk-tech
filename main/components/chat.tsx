@@ -248,7 +248,7 @@ export default function AIChatWidget() {
         <div className="ai-chat-panel">
           <div className="ai-chat-header">
             <div>
-              <div className="ai-chat-header-title">Ask about True Refrigeration</div>
+              <div className="ai-chat-header-title">Ask about Ilk Technology </div>
               <div className="ai-chat-header-sub">Usually replies instantly</div>
             </div>
             <button

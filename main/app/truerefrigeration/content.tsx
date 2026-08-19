@@ -1391,7 +1391,7 @@ export default function TrueRefrigerationPage() {
 
        .tr-prod-grid-image {
   width: 100%;
-  max-width: 700px;
+  max-width: 940px;
   margin: 0 auto;
   align-self: center;
   border-radius: 4px;

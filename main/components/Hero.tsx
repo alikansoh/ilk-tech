@@ -15,13 +15,17 @@ const STATS = [
 ] as const;
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-// PERF DECISIONS:
-// • Mobile: ZERO animations, ZERO backdrop-filter, ZERO box-shadow,
-//   ZERO perspective, ZERO WebkitTextStroke, ZERO GSAP.
-//   All of these caused forced reflow / non-composited animation hits.
-// • Wipe uses `clip-path` instead of `transform:scaleX` — GPU composited,
-//   avoids the "non-composited animation" PSI warning.
-// • `will-change` only applied on sm+ to avoid unnecessary memory cost on mobile.
+// PERF DECISIONS (updated):
+// • Mobile: cheap, GPU-composited animations (transform + opacity only) are
+//   now enabled — word reveal, fade-ups, stat cards. These are composited
+//   and don't trigger the "non-composited animation" PSI warning.
+// • Mobile STILL avoids: backdrop-filter (huge paint cost), box-shadow glow,
+//   WebkitTextStroke paint, perspective/stacking context, and GSAP parallax —
+//   these remain sm+ only since they carry real paint/compositing cost
+//   independent of whether they're "animated".
+// • Wipe uses `clip-path` instead of `transform:scaleX` — GPU composited.
+// • `will-change` applied narrowly and removed implicitly once animation ends
+//   (kept on both mobile+desktop now since these are composited props).
 // • Counter JS deferred via requestIdleCallback on mobile.
 // • GSAP import() never issued on mobile (guarded before the async call).
 const HERO_STYLES = `
@@ -53,7 +57,6 @@ const HERO_STYLES = `
     .hero-wipe {
       animation-duration: 0.55s;
       animation-delay: 0.05s;
-      will-change: clip-path;
     }
   }
 
@@ -62,33 +65,31 @@ const HERO_STYLES = `
     animation: hero-line 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both;
   }
 
-  /* Mobile: no animation — already visible, no compositing layer */
-  .hero-word { display: inline-block; }
+  /* Word reveal — now runs on mobile too (transform+opacity only, composited) */
+  .hero-word {
+    display: inline-block;
+    opacity: 0;
+    animation: hero-word 0.36s cubic-bezier(0.16,1,0.3,1) both;
+    will-change: transform, opacity;
+  }
   @media (min-width: 640px) {
     .hero-word {
-      opacity: 0;
-      animation: hero-word 0.42s cubic-bezier(0.16,1,0.3,1) both;
-      /* No rotateX — avoids non-composited animation warning */
-      will-change: transform, opacity;
+      animation-duration: 0.42s;
     }
   }
 
-  /* Mobile: no fade-up animations — avoids layout thrash + compositing cost */
+  /* Fade-ups — now run on mobile too (transform+opacity only, composited) */
+  .hero-desc,
+  .hero-cta,
+  .hero-stat {
+    opacity: 0;
+    animation: hero-fade-up 0.34s ease-out both;
+    will-change: transform, opacity;
+  }
   @media (min-width: 640px) {
-    .hero-desc {
-      opacity: 0;
-      animation: hero-fade-up 0.42s ease-out both;
-      will-change: transform, opacity;
-    }
-    .hero-cta {
-      opacity: 0;
-      animation: hero-fade-up 0.38s ease-out both;
-      will-change: transform, opacity;
-    }
-    .hero-stat {
-      animation: hero-fade-up 0.38s ease-out both;
-      will-change: transform, opacity;
-    }
+    .hero-desc { animation-duration: 0.42s; }
+    .hero-cta  { animation-duration: 0.38s; }
+    .hero-stat { animation-duration: 0.38s; }
   }
 
   /* Stat card — NO backdrop-filter on mobile (huge paint cost) */
@@ -126,29 +127,32 @@ const HERO_STYLES = `
     background: rgb(239,68,68);
   }
 
-  /* Outline text: mobile gets plain white (no -webkit-text-stroke paint) */
-  .hero-outline-word { color: transparent; }
+  /* Outline text: same hollow stroke look on every breakpoint */
+  .hero-outline-word {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255,255,255,0.5);
+  }
   @media (min-width: 640px) {
     .hero-outline-word {
       -webkit-text-stroke: 2.5px rgba(255,255,255,0.5);
     }
   }
 
-  /* Perspective: sm+ only — no stacking context / compositing on mobile */
+  /* Perspective: sm+ only — no stacking context / compositing cost on mobile */
   @media (min-width: 640px) {
     .hero-content-perspective { perspective: 1000px; }
   }
 
-  /* Shimmer: hidden on mobile */
+  /* Shimmer: hidden on mobile (hover-only effect anyway, no value on touch) */
   @media (max-width: 639px) { .hero-cta-shimmer { display: none; } }
 
-  /* CTA shadow: sm+ only */
+  /* CTA shadow: sm+ only — box-shadow glow has real paint cost */
   @media (min-width: 640px) {
     .hero-cta-primary { box-shadow: 0 0 32px rgba(239,68,68,0.2); }
     .hero-cta-primary:hover { box-shadow: 0 0 48px rgba(239,68,68,0.35); }
   }
 
-  /* Reduced-motion: kill all */
+  /* Reduced-motion: kill all, on every breakpoint */
   @media (prefers-reduced-motion: reduce) {
     .hero-wipe,.hero-line,.hero-word,
     .hero-desc,.hero-cta,.hero-stat {
