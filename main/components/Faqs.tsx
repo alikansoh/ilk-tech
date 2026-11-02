@@ -18,6 +18,21 @@ export default function FAQSection({
 }) {
   const defaultFaqs: FAQ[] = [
     {
+      question: "Where can I buy a commercial fridge in the UK?",
+      answer:
+        "ILK Technology supplies commercial fridges and freezers UK-wide from our Wembley, London base. As authorised Arneg and True Refrigeration partners we offer display fridges, multideck chillers, upright and undercounter fridges, bar fridges and cold rooms, with delivery and installation across England, Scotland and Wales.",
+    },
+    {
+      question: "Which commercial fridge is best for my shop, restaurant or bar?",
+      answer:
+        "Supermarkets and convenience stores usually choose open or glass-door multideck display fridges such as the Arneg Osaka 2, Osaka 3, Osaka 3 SC and Osaka 3P, or the Panama 2, Panama 3, Panama 3 SC and Panama 3P. Restaurants and kitchens suit upright, undercounter and prep-table fridges from True Refrigeration, while pubs and bars need back-bar bottle coolers. Call us for free advice and a quote.",
+    },
+    {
+      question: "Do you deliver and install commercial fridges across the UK?",
+      answer:
+        "Yes — we deliver commercial fridges and freezers nationwide, including London, Birmingham, Manchester, Leeds, Glasgow and Bristol, and offer professional installation and commissioning.",
+    },
+    {
       question: "What products do you supply and install?",
       answer:
         "We supply refrigeration cabinets, remote & plug-in systems, cold rooms, checkouts, shelving and bespoke installations. Some products are in stock and bespoke options are available on request.",
